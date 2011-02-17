@@ -1,0 +1,2 @@
+This is a sample file to try out Mercurial.
+This is a new line on the main test branch that is not in the feature branch yet.
