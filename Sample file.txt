@@ -1,1 +1,1 @@
-This is a sample file to test out Mercurial.
+This is a sample file to try out Mercurial.
