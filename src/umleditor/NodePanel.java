@@ -7,7 +7,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 
 public class NodePanel extends JPanel implements MouseListener{
-	
+
+	private static final long serialVersionUID = 912113941232687505L;
 	ClassNode classNode;
 	ClassDiagram parentDiagram;
 	
@@ -32,7 +33,16 @@ public class NodePanel extends JPanel implements MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		this.makeSelected();
+		int clickCount = e.getClickCount();
+		if(clickCount > 1)
+		{
+			// open edit dialog
+		}
+		else
+		{
+			parentDiagram.setSelectedNode(classNode);
+			this.makeSelected();
+		}
 	}
 
 	@Override
@@ -55,7 +65,7 @@ public class NodePanel extends JPanel implements MouseListener{
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		parentDiagram.addRelationship(this);
 		
 	}
 
