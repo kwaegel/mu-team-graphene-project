@@ -17,6 +17,7 @@ public class UMLEditor extends JFrame implements ActionListener {
 	private static final long serialVersionUID = -9139566399320553797L;
 	JMenuBar menuBar;
 	JToolBar toolBar;
+	JButton deleteButton;
 	ClassDiagram classDiagram;
 	boolean addNewClassModeEnabled;
 	
@@ -43,6 +44,11 @@ public class UMLEditor extends JFrame implements ActionListener {
 	public void disableAddNewClassMode()
 	{
 		addNewClassModeEnabled = false;
+	}
+	
+	public void setDeleteButtonState(boolean enabled)
+	{
+		deleteButton.setEnabled(enabled);
 	}
 	
 	private void setUpMenuBar()
@@ -81,7 +87,9 @@ public class UMLEditor extends JFrame implements ActionListener {
 		toolBar.add(addClassButton);
 		addNewClassModeEnabled = false;
 		
-		JButton deleteButton = new JButton("Delete");
+		deleteButton = new JButton("Delete");
+		deleteButton.setActionCommand("DELETE");
+		deleteButton.addActionListener(this);
 		deleteButton.setEnabled(false);
 		toolBar.add(deleteButton);
 		
@@ -104,6 +112,9 @@ public class UMLEditor extends JFrame implements ActionListener {
 		{
 			addNewClassModeEnabled = !addNewClassModeEnabled;
 		}
-		
+		else if (arg0.getActionCommand() == "DELETE")
+		{
+			classDiagram.deleteSelectedNode();
+		}
 	}
 }

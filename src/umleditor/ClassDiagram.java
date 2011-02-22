@@ -34,7 +34,34 @@ public class ClassDiagram implements MouseListener {
 	
 	private void unselectNode()
 	{
-		selectedNode.getNodePanel().makeUnselected();
+		if(selectedNode != null)
+		{
+			selectedNode.getNodePanel().makeUnselected();
+			selectedNode = null;
+		}
+	}
+	
+	public void setSelectedNode(ClassNode node)
+	{
+		selectedNode = node;
+		parentEditor.setDeleteButtonState(true);
+	}
+	
+	public void deleteSelectedNode()
+	{
+		NodePanel panelToRemove = selectedNode.getNodePanel();
+		view.remove(panelToRemove);
+		listofNodes.remove(selectedNode);
+		selectedNode = null;
+		parentEditor.setDeleteButtonState(false);
+	}
+	
+	public void addRelationship(NodePanel secondNode)
+	{
+		if (selectedNode != null)
+		{
+			// add relationship
+		}
 	}
 
 	@Override
