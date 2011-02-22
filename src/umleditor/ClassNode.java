@@ -16,6 +16,7 @@ public class ClassNode {
 	//	Instantiates list of members, fields, and relationships
 	public ClassNode(NodePanel node)
 	{
+		
 		nodePanel = node;
 		className = "Name";
 		listofMembers = new ArrayList<String>();
