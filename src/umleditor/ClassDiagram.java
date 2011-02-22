@@ -3,11 +3,13 @@ package umleditor;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
+import java.util.LinkedList;
 import javax.swing.JPanel;
 
 public class ClassDiagram implements MouseListener {
 
+	LinkedList<ClassNode> listofNodes;
+	ClassNode selectedNode;
 	UMLEditor parentEditor;
 	JPanel view;
 	
