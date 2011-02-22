@@ -10,9 +10,9 @@ public class ClassNode {
 	ArrayList<String> listofOperations;
 	ArrayList<Relationship> relationships;
 	
-	public ClassNode()
+	public ClassNode(NodePanel panel)
 	{
-		
+		nodePanel = panel;
 	}
 	
 	public String getName()
@@ -23,6 +23,11 @@ public class ClassNode {
 	public void setName(String name)
 	{
 		className = name;
+	}
+	
+	public NodePanel getNodePanel()
+	{
+		return (nodePanel);
 	}
 
 }
