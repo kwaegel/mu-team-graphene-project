@@ -106,9 +106,4 @@ public class UMLEditor extends JFrame implements ActionListener {
 		}
 		
 	}
-	
-	public static void main(String[] args) 
-	{
-		
-	}
 }

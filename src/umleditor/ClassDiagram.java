@@ -24,11 +24,17 @@ public class ClassDiagram implements MouseListener {
 	
 	private void createNode()
 	{
-		NodePanel newNodePanel = new NodePanel();
+		NodePanel newNodePanel = new NodePanel(this);
 		view.add(newNodePanel); // set up mig layout on view, then get appropriate parameters
 		
-		// ClassNode newClassNode = new ClassNode(newNodePanel);
+		ClassNode newClassNode = new ClassNode(newNodePanel);
+		newNodePanel.setNode(newClassNode);
 		// add newClassNode to list of nodes
+	}
+	
+	private void unselectNode()
+	{
+		selectedNode.getNodePanel().makeUnselected();
 	}
 
 	@Override
@@ -39,10 +45,14 @@ public class ClassDiagram implements MouseListener {
 		{
 			// add new class mode enabled, so add a new class
 			System.out.println("adding new node...");
-			createNode();
+			this.createNode();
 			if(!arg0.isShiftDown())
 				parentEditor.disableAddNewClassMode();
-		}	
+		}
+		else
+		{
+			this.unselectNode();
+		}
 	}
 
 	@Override
