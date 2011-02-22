@@ -91,8 +91,8 @@ public class ClassNode {
 		relationships.remove(relationship);
 	}
 	
-	public NodePanel getNodePanel(NodePanel Node){
-		return Node;
+	public NodePanel getNodePanel(){
+		return nodePanel;
 		
 	}
 	
