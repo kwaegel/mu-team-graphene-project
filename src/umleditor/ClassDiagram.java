@@ -1,5 +1,11 @@
 package umleditor;
 
-public class ClassDiagram {
+import java.util.LinkedList;
 
+
+public class ClassDiagram {
+	
+	LinkedList<ClassNode> listofNodes;
+	ClassNode selectedNode;
+	View viewPanel;
 }
