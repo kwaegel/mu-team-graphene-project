@@ -1,9 +1,11 @@
 package umleditor;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class NodePanel extends JPanel implements MouseListener{
@@ -12,10 +14,19 @@ public class NodePanel extends JPanel implements MouseListener{
 	ClassNode classNode;
 	ClassDiagram parentDiagram;
 	
-	public NodePanel(ClassDiagram parent)
+	JLabel className;
+	
+	public NodePanel(ClassNode node, ClassDiagram parent)
 	{
+		classNode = node;
 		parentDiagram = parent;
 		this.addMouseListener(this);
+		
+		// Setup defaults.
+		this.setLayout(new GridLayout(0,1));
+		className = new JLabel(node.getName());
+		
+		this.add(className);
 	}
 	
 	public void setNode(ClassNode node)

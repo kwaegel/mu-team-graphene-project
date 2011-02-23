@@ -101,11 +101,6 @@ public class UMLEditor extends JFrame implements ActionListener {
 		classDiagram = new ClassDiagram(this);
 	}
 
-
-	public static void main(String[] args) {
-		new UMLEditor();
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand() == "ADD")
@@ -116,5 +111,9 @@ public class UMLEditor extends JFrame implements ActionListener {
 		{
 			classDiagram.deleteSelectedNode();
 		}
+	}
+	
+		public static void main(String[] args) {
+		new UMLEditor();
 	}
 }
