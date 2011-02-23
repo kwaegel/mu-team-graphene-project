@@ -1,9 +1,13 @@
 package umleditor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
+
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 public class ClassDiagram implements MouseListener {
@@ -18,8 +22,15 @@ public class ClassDiagram implements MouseListener {
 		parentEditor = parent;
 		
 		view = new JPanel();
+		view.setLayout(new FlowLayout());
 		view.addMouseListener(this);
+		view.setBorder(BorderFactory.createLineBorder(Color.red, 2));
 		parentEditor.add(view, BorderLayout.CENTER);
+	}
+	
+	public JPanel getViewPanel()
+	{
+		return view;
 	}
 	
 	private ClassNode createNode()
