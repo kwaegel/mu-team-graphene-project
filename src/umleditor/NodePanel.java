@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -22,9 +23,12 @@ public class NodePanel extends JPanel implements MouseListener{
 		parentDiagram = parent;
 		this.addMouseListener(this);
 		
-		// Setup defaults.
+		// Set appearance and layout.
+		this.setBorder(BorderFactory.createLineBorder(Color.blue));
 		this.setLayout(new GridLayout(0,1));
-		className = new JLabel(node.getName());
+		
+		// Setup defaults.
+		className = new JLabel("Name: " + node.getName());
 		
 		this.add(className);
 	}
