@@ -4,21 +4,23 @@ import java.util.ArrayList;
 
 public class ClassNode {
 	
+	private static int nodesCreated = 0;
+	
 	private NodePanel nodePanel;
 	private String className;
 	private ArrayList<String> listofMembers;
 	private ArrayList<String> listofFields;
 	private ArrayList<Relationship> relationships;
 	
-	//Constructor:
-	//	Sets a reference to its Node Panel
-	//	className set to Name
-	//	Instantiates list of members, fields, and relationships
-	public ClassNode(NodePanel node)
+	/**
+	 * Constructor with a default class name.
+	 * 
+	 * @param diagram - the diagram this node belongs to.
+	 */
+	public ClassNode(ClassDiagram diagram)
 	{
-		
-		nodePanel = node;
-		className = "Name";
+		nodePanel = new NodePanel(this, diagram);
+		className = "New Class " + (++nodesCreated);
 		listofMembers = new ArrayList<String>();
 		listofFields = new ArrayList<String>();
 		relationships  = new ArrayList<Relationship>();
