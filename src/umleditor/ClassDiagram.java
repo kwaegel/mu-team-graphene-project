@@ -94,6 +94,12 @@ public class ClassDiagram implements MouseListener
 
 	private void addRelationship(ClassNode firstNode, ClassNode secondNode)
 	{
+		// Do not add relationships between idential classes.
+		if (firstNode == secondNode)
+		{
+			return;
+		}
+
 		RelationshipType[] possibleValues = RelationshipType.values();
 
 		int selection = JOptionPane.showOptionDialog(parentEditor,

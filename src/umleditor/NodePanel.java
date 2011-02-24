@@ -121,7 +121,6 @@ public class NodePanel extends JPanel implements MouseListener
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		System.out.println("Mouse pressed on " + associatedNode.getName());
 		parentDiagram.setSelectedNode(associatedNode);
 		this.makeSelected();
 	}
@@ -129,17 +128,12 @@ public class NodePanel extends JPanel implements MouseListener
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		System.out.println("Mouse released on " + associatedNode.getName());
-
 		Component comp = parentDiagram.getComponentUnder(e);
 
 		if (comp instanceof NodePanel)
 		{
 			ClassNode targetNode = ((NodePanel) comp).getClassNode();
-			System.out.println("Mouse released over " + targetNode.getName()
-					+ "\n");
 			parentDiagram.addRelationship(targetNode);
-
 		}
 	}
 }
