@@ -27,7 +27,12 @@ public class ClassDiagram implements MouseListener {
 
 		listofNodes = new LinkedList<ClassNode>();
 	}
-
+	
+	/**
+	 * Create a new node and add it to the list of nodes. Also add it's {@link NodePanel} to the view.
+	 * 
+	 * @return the newly created node.
+	 */
 	private void createNode(Point addLocation) {
 		ClassNode newClassNode = new ClassNode();
 		NodePanel newNodePanel = new NodePanel(this, newClassNode);

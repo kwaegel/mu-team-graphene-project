@@ -1,24 +1,24 @@
 package umleditor;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import net.miginfocom.swing.MigLayout;
-
 public class NodePanel extends JPanel implements MouseListener {
 
 	private static final long serialVersionUID = 912113941232687505L;
 
-	ClassNode associatedNode;
-	ClassDiagram parentDiagram;
+	private ClassNode associatedNode;
+	private ClassDiagram parentDiagram;
 
 	public NodePanel(ClassDiagram parent, ClassNode node) {
 		super();
@@ -28,7 +28,8 @@ public class NodePanel extends JPanel implements MouseListener {
 		associatedNode.attachPanel(this);
 
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setLayout(new MigLayout("wrap 1", "", ""));
+		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		this.setMinimumSize(new Dimension(100, 1));
 		this.createDisplay();
 		this.addMouseListener(this);
 	}
@@ -48,31 +49,30 @@ public class NodePanel extends JPanel implements MouseListener {
 
 		// add class name
 		String className = associatedNode.getName();
-		JLabel titleLable = new JLabel(className);
-		this.add(titleLable, "align center");
+		JLabel titleLabel = new JLabel(className);
+		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		this.add(titleLabel, SwingConstants.CENTER);
 
 		// add separator
 		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-		separator.setPreferredSize(new Dimension(80, 1));
 		this.add(separator);
 
-		// add fields
-		for (int i = 0; i < associatedNode.getNumFields(); ++i) {
-			String fieldName = associatedNode.getField(i);
-			JLabel fieldLabel = new JLabel(fieldName);
-			this.add(fieldLabel);
+		// add methods
+		for (int i = 0; i < associatedNode.getNumMethods(); ++i) {
+			String methodName = associatedNode.getMethod(i);
+			JLabel methodLabel = new JLabel(methodName);
+			this.add(methodLabel);
 		}
 
 		// add separator
 		JSeparator separator2 = new JSeparator(SwingConstants.HORIZONTAL);
-		separator2.setPreferredSize(new Dimension(80, 1));
 		this.add(separator2);
 
-		// add members
-		for (int i = 0; i < associatedNode.getNumMembers(); ++i) {
-			String memberName = associatedNode.getMember(i);
-			JLabel memberLabel = new JLabel(memberName);
-			this.add(memberLabel);
+		// add attributes
+		for (int i = 0; i < associatedNode.getNumAttributes(); ++i) {
+			String attributeName = associatedNode.getAttribute(i);
+			JLabel attributeLabel = new JLabel(attributeName);
+			this.add(attributeLabel);
 		}
 
 	}

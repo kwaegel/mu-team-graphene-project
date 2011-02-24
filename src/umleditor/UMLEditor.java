@@ -16,7 +16,8 @@ import javax.swing.JToolBar;
 public class UMLEditor extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = -9139566399320553797L;
-	private Color unselectedButtonColor = Color.lightGray;
+	private Color unselectedButtonColor = javax.swing.UIManager
+			.getColor("Button.background");
 	private Color selectedButtonColor = Color.gray;
 
 	private JMenuBar menuBar;
@@ -88,7 +89,6 @@ public class UMLEditor extends JFrame implements ActionListener {
 		addClassButton.setActionCommand("ADD");
 		addClassButton.addActionListener(this);
 		addClassButton.setFocusPainted(false);
-		addClassButton.setBackground(unselectedButtonColor);
 		toolBar.add(addClassButton);
 		addNewClassModeEnabled = false;
 
@@ -96,7 +96,6 @@ public class UMLEditor extends JFrame implements ActionListener {
 		deleteButton.setActionCommand("DELETE");
 		deleteButton.addActionListener(this);
 		deleteButton.setEnabled(false);
-		deleteButton.setBackground(unselectedButtonColor);
 		toolBar.add(deleteButton);
 
 		this.add(toolBar, BorderLayout.SOUTH);
@@ -104,10 +103,6 @@ public class UMLEditor extends JFrame implements ActionListener {
 
 	private void setUpClassDiagram() {
 		classDiagram = new ClassDiagram(this);
-	}
-
-	public static void main(String[] args) {
-		new UMLEditor();
 	}
 
 	@Override
@@ -127,5 +122,14 @@ public class UMLEditor extends JFrame implements ActionListener {
 		} else if (arg0.getActionCommand() == "DELETE") {
 			classDiagram.deleteSelectedNode();
 		}
+	}
+
+	/**
+	 * Entry point for the program.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		new UMLEditor();
 	}
 }
