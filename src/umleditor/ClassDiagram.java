@@ -140,6 +140,11 @@ public class ClassDiagram implements MouseListener
 			this.unselectCurrentNode();
 		}
 	}
+	
+	public LinkedList<ClassNode> getNodes()
+	{
+		return listofNodes;
+	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0)

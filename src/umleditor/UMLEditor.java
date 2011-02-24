@@ -7,10 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
 public class UMLEditor extends JFrame implements ActionListener {
@@ -62,6 +66,8 @@ public class UMLEditor extends JFrame implements ActionListener {
 
 		JMenu fileMenu = new JMenu("File");
 		JMenuItem newOption = new JMenuItem("New");
+		newOption.setActionCommand("NEW");
+		newOption.addActionListener(this);
 		fileMenu.add(newOption);
 		JMenuItem loadOption = new JMenuItem("Load...");
 		fileMenu.add(loadOption);
@@ -72,6 +78,8 @@ public class UMLEditor extends JFrame implements ActionListener {
 		fileMenu.add(printOption);
 		fileMenu.addSeparator();
 		JMenuItem exitOption = new JMenuItem("Exit");
+		exitOption.setActionCommand("EXIT");
+		exitOption.addActionListener(this);
 		fileMenu.add(exitOption);
 		menuBar.add(fileMenu);
 
@@ -120,6 +128,97 @@ public class UMLEditor extends JFrame implements ActionListener {
 			// toggle Add-Class state
 			addNewClassModeEnabled = !addNewClassModeEnabled;
 		} else if (arg0.getActionCommand() == "DELETE") {
+			
+			classDiagram.deleteSelectedNode();
+			
+		} else if(arg0.getActionCommand() == "NEW")
+		{
+			clearDiagram();
+			
+		}else if(arg0.getActionCommand() == "EXIT")
+		{
+			JDialog quit = new JDialog();
+			quit.setVisible(true);
+			quit.setTitle("Exit");
+//			JLabel text = new JLabel("Are you sure you want to quit?");
+//			quit.add(text);
+//			
+//			ActionListener exitDialog = new ActionListener()
+//			{
+//				@Override
+//				public void actionPerformed(ActionEvent arg0) {
+//					if (arg0.getActionCommand() == "YES") 
+//					{
+//						System.exit(0);
+//						
+//					}else{ 
+//						
+//						//quit.close();
+//						
+//					}
+//				}
+//			};
+//			JButton yes = new JButton("Yes");
+//			yes.setActionCommand("YES");
+//			yes.addActionListener(exitDialog);
+//			JButton no = new JButton("No");
+//			no.setActionCommand("NO");
+//			no.addActionListener(exitDialog);
+//			quit.add(yes);
+//			quit.add(no);
+			
+			//JOptionPane.showConfirmDialog(parentComponent, message)
+			
+			
+//			Object[] yesno = {"Yes", "No"};
+//			int n = JOptionPane.showOptionDialog(quit, "Are you sure you want to quit?",
+//					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, yesno, yesno[1]);
+//			
+//			
+//			
+//			JOptionPane options = new JOptionPane("Are you sure you want to quit?",
+//			JOptionPane.QUESTION_MESSAGE,
+//			JOptionPane.YES_NO_OPTION);
+//			options.setContentPane(optionPane);
+//			optionPane.addPropertyChangeListener(new PropertyChangeListener() {
+//				public void propertyChange(PropertyChangeEvent e) {
+//					String prop = e.getPropertyName();
+//
+//					if (options.isVisible() && (e.getSource() == optionPane)
+//							&& (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+//						// If you were going to check something
+//						// before closing the window, you'd do
+//						// it here.
+//						options.setVisible(false);
+//					}
+//				}
+//			});
+//			dialog.pack();
+//			dialog.setVisible(true);
+
+//			int value = ((Integer)options.getValue()).intValue();
+//			if (value == JOptionPane.YES_OPTION) {
+//			    System.exit(0);
+//			} else if (value == JOptionPane.NO_OPTION) {
+//				
+//			}
+			
+			JOptionPane optionPane = new JOptionPane ("Sure you want to exit?", 
+						JOptionPane.YES_NO_OPTION);
+			
+			optionPane.setVisible(true);
+
+			
+			
+		}
+	}
+	//Used when New is selected in the File menu.
+	//Deletes everything in the diagram
+	public void clearDiagram()
+	{
+		while(classDiagram.getNodes().size() > 0)
+		{
+			classDiagram.setSelectedNode(classDiagram.getNodes().getFirst());
 			classDiagram.deleteSelectedNode();
 		}
 	}
