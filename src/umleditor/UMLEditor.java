@@ -137,78 +137,16 @@ public class UMLEditor extends JFrame implements ActionListener {
 			
 		}else if(arg0.getActionCommand() == "EXIT")
 		{
-			JDialog quit = new JDialog();
-			quit.setVisible(true);
-			quit.setTitle("Exit");
-//			JLabel text = new JLabel("Are you sure you want to quit?");
-//			quit.add(text);
-//			
-//			ActionListener exitDialog = new ActionListener()
-//			{
-//				@Override
-//				public void actionPerformed(ActionEvent arg0) {
-//					if (arg0.getActionCommand() == "YES") 
-//					{
-//						System.exit(0);
-//						
-//					}else{ 
-//						
-//						//quit.close();
-//						
-//					}
-//				}
-//			};
-//			JButton yes = new JButton("Yes");
-//			yes.setActionCommand("YES");
-//			yes.addActionListener(exitDialog);
-//			JButton no = new JButton("No");
-//			no.setActionCommand("NO");
-//			no.addActionListener(exitDialog);
-//			quit.add(yes);
-//			quit.add(no);
-			
-			//JOptionPane.showConfirmDialog(parentComponent, message)
-			
-			
-//			Object[] yesno = {"Yes", "No"};
-//			int n = JOptionPane.showOptionDialog(quit, "Are you sure you want to quit?",
-//					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, yesno, yesno[1]);
-//			
-//			
-//			
-//			JOptionPane options = new JOptionPane("Are you sure you want to quit?",
-//			JOptionPane.QUESTION_MESSAGE,
-//			JOptionPane.YES_NO_OPTION);
-//			options.setContentPane(optionPane);
-//			optionPane.addPropertyChangeListener(new PropertyChangeListener() {
-//				public void propertyChange(PropertyChangeEvent e) {
-//					String prop = e.getPropertyName();
-//
-//					if (options.isVisible() && (e.getSource() == optionPane)
-//							&& (prop.equals(JOptionPane.VALUE_PROPERTY))) {
-//						// If you were going to check something
-//						// before closing the window, you'd do
-//						// it here.
-//						options.setVisible(false);
-//					}
-//				}
-//			});
-//			dialog.pack();
-//			dialog.setVisible(true);
-
-//			int value = ((Integer)options.getValue()).intValue();
-//			if (value == JOptionPane.YES_OPTION) {
-//			    System.exit(0);
-//			} else if (value == JOptionPane.NO_OPTION) {
-//				
-//			}
-			
-			JOptionPane optionPane = new JOptionPane ("Sure you want to exit?", 
-						JOptionPane.YES_NO_OPTION);
-			
-			optionPane.setVisible(true);
-
-			
+			//When save is implemented, message will be changed to: Do you want to save?
+			JFrame frame = new JFrame();
+			String message = "Are you sure you want to quit?";
+			int answer = JOptionPane.showConfirmDialog(frame, message);
+			if(answer == JOptionPane.YES_OPTION)
+			{
+				System.exit(0);
+			}else if(answer == JOptionPane.NO_OPTION){
+				
+			}
 			
 		}
 	}
