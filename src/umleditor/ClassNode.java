@@ -3,23 +3,29 @@ package umleditor;
 import java.util.ArrayList;
 
 public class ClassNode {
+	
+	private static int nodesCreated = 0;
 
 	private NodePanel nodePanel;
 	private String className;
-	private ArrayList<String> listofMembers;
-	private ArrayList<String> listofFields;
+	private ArrayList<String> listOfAttributes;
+	private ArrayList<String> listOfMethods;
 	private ArrayList<Relationship> relationships;
 
-	// Constructor:
-	// Sets a reference to its Node Panel
-	// className set to Name
-	// Instantiates list of members, fields, and relationships
+	/**
+	 * Constructor with a default class name.
+	 * 
+	 * @param diagram
+	 *            - the diagram this node belongs to.
+	 * @param creationPoint
+	 *            - the point to create the node at.
+	 */
 	public ClassNode() {
-		className = "DefaultClass";
-		listofMembers = new ArrayList<String>();
-		listofMembers.add("member 1");
-		listofFields = new ArrayList<String>();
-		listofFields.add("field 1");
+		className = "NewClass" + ++nodesCreated;
+		listOfAttributes = new ArrayList<String>();
+		listOfAttributes.add("attribute 1");
+		listOfMethods = new ArrayList<String>();
+		listOfMethods.add("method 1");
 		relationships = new ArrayList<Relationship>();
 	}
 
@@ -37,52 +43,52 @@ public class ClassNode {
 		className = name;
 	}
 
-	// Add String member to listofMembers
-	public void addMember(String member) {
-		listofMembers.add(member);
+	// Add String attribute to listofAttributes
+	public void addAttribute(String attribute) {
+		listOfAttributes.add(attribute);
 	}
 
-	// Returns the name of the Member at the index in listofMembers
-	public String getMember(int index) {
-		return listofMembers.get(index);
+	// Returns the name of the Attribute at the index in listofAttributes
+	public String getAttribute(int index) {
+		return listOfAttributes.get(index);
 	}
 
-	// Sets the member at index in listofMembers with parameter String member
-	public void setMember(int index, String member) {
-		listofMembers.set(index, member);
+	// Sets the attribute at index in listofAttributes with parameter String attribute
+	public void setAttribute(int index, String attribute) {
+		listOfAttributes.set(index, attribute);
 	}
 
-	// Removes the member in listofMembers at the index
-	public void removeMember(int index) {
-		listofMembers.remove(index);
+	// Removes the attribute in listofAttributes at the index
+	public void removeAttribute(int index) {
+		listOfAttributes.remove(index);
 	}
 
-	public int getNumMembers() {
-		return (listofMembers.size());
+	public int getNumAttributes() {
+		return (listOfAttributes.size());
 	}
 
-	// Adds String field to listofFields
-	public void addField(String field) {
-		listofFields.add(field);
+	// Adds String method to listofMethods
+	public void addMethod(String method) {
+		listOfMethods.add(method);
 	}
 
-	// Returns the String at the index in listofFields
-	public String getField(int index) {
-		return listofFields.get(index);
+	// Returns the String at the index in listofMethods
+	public String getMethod(int index) {
+		return listOfMethods.get(index);
 	}
 
-	// Sets the field in listofFields at the index with parameter String field
-	public void setField(int index, String field) {
-		listofFields.set(index, field);
+	// Sets the method in listofMethods at the index with parameter String method
+	public void setMethod(int index, String method) {
+		listOfMethods.set(index, method);
 	}
 
-	// Removes the field in listofFields at the index
-	public void removeField(int index) {
-		listofFields.remove(index);
+	// Removes the method in listofMethods at the index
+	public void removeMethod(int index) {
+		listOfMethods.remove(index);
 	}
 
-	public int getNumFields() {
-		return (listofFields.size());
+	public int getNumMethods() {
+		return (listOfMethods.size());
 	}
 
 	// Removes the Relationship from the relationships ArrayList
