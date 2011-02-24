@@ -17,7 +17,9 @@ public class ClassNode {
 	public ClassNode() {
 		className = "DefaultClass";
 		listofMembers = new ArrayList<String>();
+		listofMembers.add("member 1");
 		listofFields = new ArrayList<String>();
+		listofFields.add("field 1");
 		relationships = new ArrayList<Relationship>();
 	}
 

@@ -39,7 +39,7 @@ public class ClassDiagram implements MouseListener {
 		view.validate();
 	}
 
-	private void unselectNode() {
+	private void unselectCurrentNode() {
 		if (selectedNode != null) {
 			selectedNode.getNodePanel().makeUnselected();
 			selectedNode = null;
@@ -48,7 +48,7 @@ public class ClassDiagram implements MouseListener {
 	}
 
 	public void setSelectedNode(ClassNode node) {
-		unselectNode();
+		unselectCurrentNode();
 		selectedNode = node;
 		parentEditor.setDeleteButtonState(true);
 		parentEditor.disableAddNewClassMode();
@@ -79,7 +79,7 @@ public class ClassDiagram implements MouseListener {
 			if (!arg0.isShiftDown())
 				parentEditor.disableAddNewClassMode();
 		} else {
-			this.unselectNode();
+			this.unselectCurrentNode();
 		}
 	}
 
