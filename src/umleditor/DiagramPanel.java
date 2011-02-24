@@ -2,6 +2,7 @@ package umleditor;
 
 import java.awt.Graphics;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -28,6 +29,11 @@ public class DiagramPanel extends JPanel
 	public void removeRelationship(Relationship r)
 	{
 		m_relationships.remove(r);
+	}
+
+	public void removeRelationships(List<Relationship> relationshipList)
+	{
+		m_relationships.removeAll(relationshipList);
 	}
 
 	@Override
