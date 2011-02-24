@@ -35,8 +35,7 @@ public class ClassDiagram implements MouseListener
 	}
 
 	/**
-	 * Create a new node and add it to the list of nodes. Also add it's
-	 * {@link NodePanel} to the view.
+	 * Create a new node and add it to the list of nodes. Also add it's {@link NodePanel} to the view.
 	 * 
 	 * @return the newly created node.
 	 */
