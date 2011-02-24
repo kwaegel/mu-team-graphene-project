@@ -8,7 +8,6 @@ import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
@@ -18,16 +17,13 @@ public class ClassDiagram implements MouseListener
 	private LinkedList<ClassNode> listofNodes;
 	private ClassNode selectedNode;
 	private UMLEditor parentEditor;
-	private JPanel view;
-	private LinkedList<Relationship> m_relationships;
+	private DiagramPanel view;
 
 	public ClassDiagram(UMLEditor parent)
 	{
-		m_relationships = new LinkedList<Relationship>();
-
 		parentEditor = parent;
 
-		view = new JPanel();
+		view = new DiagramPanel();
 		view.addMouseListener(this);
 		view.setLayout(new MigLayout());
 		parentEditor.add(view, BorderLayout.CENTER);
@@ -114,7 +110,7 @@ public class ClassDiagram implements MouseListener
 
 		firstNode.addRelationship(rel);
 		secondNode.addRelationship(rel);
-		m_relationships.add(rel);
+		view.addRelationship(rel);
 
 		rel.draw(view.getGraphics());
 	}
