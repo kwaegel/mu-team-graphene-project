@@ -29,7 +29,7 @@ public class NodePanel extends JPanel implements MouseListener
 		this.setLayout(new FlowLayout());
 
 		// Setup defaults.
-		className = new JLabel("Name: " + node.getName());
+		className = new JLabel(node.getName());
 		this.add(className);
 	}
 

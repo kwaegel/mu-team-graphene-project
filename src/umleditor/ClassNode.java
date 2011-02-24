@@ -1,5 +1,8 @@
 package umleditor;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class ClassNode
@@ -18,8 +21,10 @@ public class ClassNode
 	 * 
 	 * @param diagram
 	 *            - the diagram this node belongs to.
+	 * @param creationPoint
+	 *            - the point to create the node at.
 	 */
-	public ClassNode(ClassDiagram diagram)
+	public ClassNode(ClassDiagram diagram, Point creationPoint)
 	{
 		listofMembers = new ArrayList<String>();
 		listofFields = new ArrayList<String>();
@@ -28,10 +33,15 @@ public class ClassNode
 		className = "New Class " + (++nodesCreated);
 
 		nodePanel = new NodePanel(this, diagram);
+		Dimension dims = new Dimension(100, 100); // Set how big the class view
+													// should be.
+		Rectangle r = new Rectangle(creationPoint, dims); // Set where the node
+															// should be shown.
+		nodePanel.setBounds(r);
+		nodePanel.setSize(dims);
 
 		// Add the view diagram to the main view panel.
 		diagram.getViewPanel().add(nodePanel);
-		diagram.getViewPanel().revalidate();
 	}
 
 	// Returns the name of the Class Node

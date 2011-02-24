@@ -2,7 +2,7 @@ package umleditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
@@ -22,7 +22,8 @@ public class ClassDiagram implements MouseListener
 	{
 		parentEditor = parent;
 
-		view = new JPanel(new FlowLayout());
+		view = new JPanel();
+		view.setLayout(null);
 		view.addMouseListener(this);
 		view.setBorder(BorderFactory.createLineBorder(Color.red, 2));
 		parentEditor.add(view, BorderLayout.CENTER);
@@ -39,9 +40,11 @@ public class ClassDiagram implements MouseListener
 	 * 
 	 * @return the newly created node.
 	 */
-	private ClassNode createNode()
+	private ClassNode createNode(Point creationPoint)
 	{
-		ClassNode newNode = new ClassNode(this);
+		ClassNode newNode = new ClassNode(this, creationPoint);
+		view.revalidate(); // Check for any new components.
+		view.repaint(); // Repaint the diagram.
 
 		return newNode;
 	}
@@ -88,10 +91,7 @@ public class ClassDiagram implements MouseListener
 		if (parentEditor.isAddNewClassModeEnabled())
 		{
 			// add new class mode enabled, so add a new class
-			System.out.print("adding new node: ");
-			ClassNode newNode = createNode();
-
-			System.out.println("\"" + newNode.getName() + "\"");
+			createNode(e.getPoint());
 
 			if (!e.isShiftDown())
 			{
