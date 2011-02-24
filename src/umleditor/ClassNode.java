@@ -2,8 +2,9 @@ package umleditor;
 
 import java.util.ArrayList;
 
-public class ClassNode {
-	
+public class ClassNode
+{
+
 	private static int nodesCreated = 0;
 
 	private NodePanel nodePanel;
@@ -20,7 +21,8 @@ public class ClassNode {
 	 * @param creationPoint
 	 *            - the point to create the node at.
 	 */
-	public ClassNode() {
+	public ClassNode()
+	{
 		className = "NewClass" + ++nodesCreated;
 		listOfAttributes = new ArrayList<String>();
 		listOfAttributes.add("attribute 1");
@@ -29,76 +31,98 @@ public class ClassNode {
 		relationships = new ArrayList<Relationship>();
 	}
 
-	public void attachPanel(NodePanel panel) {
+	public void attachPanel(NodePanel panel)
+	{
 		nodePanel = panel;
 	}
 
 	// Returns the name of the Class Node
-	public String getName() {
+	public String getName()
+	{
 		return className;
 	}
 
 	// Sets the name of the Class Node
-	public void setName(String name) {
+	public void setName(String name)
+	{
 		className = name;
 	}
 
 	// Add String attribute to listofAttributes
-	public void addAttribute(String attribute) {
+	public void addAttribute(String attribute)
+	{
 		listOfAttributes.add(attribute);
 	}
 
 	// Returns the name of the Attribute at the index in listofAttributes
-	public String getAttribute(int index) {
+	public String getAttribute(int index)
+	{
 		return listOfAttributes.get(index);
 	}
 
-	// Sets the attribute at index in listofAttributes with parameter String attribute
-	public void setAttribute(int index, String attribute) {
+	// Sets the attribute at index in listofAttributes with parameter String
+	// attribute
+	public void setAttribute(int index, String attribute)
+	{
 		listOfAttributes.set(index, attribute);
 	}
 
 	// Removes the attribute in listofAttributes at the index
-	public void removeAttribute(int index) {
+	public void removeAttribute(int index)
+	{
 		listOfAttributes.remove(index);
 	}
 
-	public int getNumAttributes() {
+	public int getNumAttributes()
+	{
 		return (listOfAttributes.size());
 	}
 
 	// Adds String method to listofMethods
-	public void addMethod(String method) {
+	public void addMethod(String method)
+	{
 		listOfMethods.add(method);
 	}
 
 	// Returns the String at the index in listofMethods
-	public String getMethod(int index) {
+	public String getMethod(int index)
+	{
 		return listOfMethods.get(index);
 	}
 
-	// Sets the method in listofMethods at the index with parameter String method
-	public void setMethod(int index, String method) {
+	// Sets the method in listofMethods at the index with parameter String
+	// method
+	public void setMethod(int index, String method)
+	{
 		listOfMethods.set(index, method);
 	}
 
 	// Removes the method in listofMethods at the index
-	public void removeMethod(int index) {
+	public void removeMethod(int index)
+	{
 		listOfMethods.remove(index);
 	}
 
-	public int getNumMethods() {
+	public int getNumMethods()
+	{
 		return (listOfMethods.size());
+	}
+
+	public void addRelationship(Relationship relationship)
+	{
+		relationships.add(relationship);
 	}
 
 	// Removes the Relationship from the relationships ArrayList
 	// Method is called when the other class removes the relationship
-	public void removeRelationship(Relationship relationship) {
+	public void removeRelationship(Relationship relationship)
+	{
 		relationships.remove(relationship);
 	}
 
 	// Returns this ClassNode's NodePanel
-	public NodePanel getNodePanel() {
+	public NodePanel getNodePanel()
+	{
 		return nodePanel;
 
 	}
