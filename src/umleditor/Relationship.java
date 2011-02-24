@@ -1,6 +1,7 @@
 package umleditor;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  * Relationship defines a connection between two ClassNodes. Relationships will
@@ -10,6 +11,7 @@ import java.awt.Graphics;
  */
 public class Relationship
 {
+	private int x1, x2, y1, y2;
 
 	/**
 	 * The type of relationship.
@@ -47,7 +49,19 @@ public class Relationship
 	{
 		firstNode = first;
 		secondNode = second;
+		calculateEndPoints(first, second);
 		this.type = type;
+	}
+
+	private void calculateEndPoints(ClassNode first, ClassNode second)
+	{
+		Rectangle firstBounds = first.getNodePanel().getBounds();
+		Rectangle secondBounds = second.getNodePanel().getBounds();
+
+		x1 = firstBounds.x;
+		x2 = secondBounds.x;
+		y1 = firstBounds.y;
+		y2 = secondBounds.y;
 	}
 
 	/**
@@ -74,11 +88,6 @@ public class Relationship
 	 */
 	public void draw(Graphics viewGraphics)
 	{
-		int x1 = firstNode.getNodePanel().getBounds().x;
-		int y1 = firstNode.getNodePanel().getBounds().y;
-		int x2 = secondNode.getNodePanel().getBounds().x;
-		int y2 = secondNode.getNodePanel().getBounds().y;
-
 		// TODO: need to draw ends depending on type.
 		viewGraphics.drawLine(x1, y1, x2, y2);
 	}

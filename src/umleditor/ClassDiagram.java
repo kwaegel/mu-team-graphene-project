@@ -70,8 +70,9 @@ public class ClassDiagram implements MouseListener
 	public void deleteSelectedNode()
 	{
 		NodePanel panelToRemove = selectedNode.getNodePanel();
+		view.removeRelationships(selectedNode.GetRelationships());
 		view.remove(panelToRemove);
-		view.paintImmediately(panelToRemove.getBounds());
+		view.repaint();
 		listofNodes.remove(selectedNode);
 		selectedNode = null;
 		parentEditor.setDeleteButtonState(false);
