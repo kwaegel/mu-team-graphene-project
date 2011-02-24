@@ -1,6 +1,6 @@
 package umleditor;
 
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
 /**
  * Relationship defines a connection between two ClassNodes. Relationships will
@@ -38,15 +38,11 @@ public class Relationship
 	private ClassNode secondNode;
 
 	/**
-	 * the graphics of the View, given to the relationship by the ClassDiagram
-	 * when the relationship is created, allows relationship to draw itself.
+	 * 
+	 * @param first
+	 * @param second
+	 * @param type
 	 */
-	private Graphics2D viewGraphics;
-
-	/**
-	 * Methods: getFirst(): returns getSecond(): draw():
-	 * */
-
 	public Relationship(ClassNode first, ClassNode second, RelationshipType type)
 	{
 		firstNode = first;
@@ -76,9 +72,15 @@ public class Relationship
 	 * determined by location of NodePanels associated with first and second
 	 * nodes
 	 */
-	public void draw()
+	public void draw(Graphics viewGraphics)
 	{
-		viewGraphics.draw3DRect(5, 10, 8, 9, true);
+		int x1 = firstNode.getNodePanel().getBounds().x;
+		int y1 = firstNode.getNodePanel().getBounds().y;
+		int x2 = secondNode.getNodePanel().getBounds().x;
+		int y2 = secondNode.getNodePanel().getBounds().y;
+
+		// TODO: need to draw ends depending on type.
+		viewGraphics.drawLine(x1, y1, x2, y2);
 	}
-	
+
 }
