@@ -1,25 +1,30 @@
 package umleditor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
+import umleditor.Relationship.RelationshipType;
 
 public class ClassDiagram implements MouseListener
 {
-
 	private LinkedList<ClassNode> listofNodes;
 	private ClassNode selectedNode;
 	private UMLEditor parentEditor;
 	private JPanel view;
+	private LinkedList<Relationship> m_relationships;
 
 	public ClassDiagram(UMLEditor parent)
 	{
+		m_relationships = new LinkedList<Relationship>();
+
 		parentEditor = parent;
 
 		view = new JPanel();
@@ -76,24 +81,54 @@ public class ClassDiagram implements MouseListener
 		parentEditor.setDeleteButtonState(false);
 	}
 
-	public void addRelationship(NodePanel secondNode)
+	public Component getComponentUnder(MouseEvent evt)
+	{
+		Point p = ((Component) evt.getSource()).getLocation();
+		evt.translatePoint((int) p.getX(), (int) p.getY());
+		return view.getComponentAt(evt.getX(), evt.getY());
+	}
+
+	public void addRelationship(ClassNode secondNode)
 	{
 		if (selectedNode != null)
 		{
-			// add relationship
+			addRelationship(selectedNode, secondNode);
 		}
 	}
 
+	private void addRelationship(ClassNode firstNode, ClassNode secondNode)
+	{
+		RelationshipType[] possibleValues = RelationshipType.values();
+
+		int selection = JOptionPane.showOptionDialog(parentEditor,
+				"Choose a type of relationship", "Relationship Chooser",
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+				possibleValues, RelationshipType.Aggeration);
+
+		RelationshipType selectedType = possibleValues[selection];
+
+		System.out.println("Selection was " + selectedType);
+
+		Relationship rel = new Relationship(firstNode, secondNode,
+				Relationship.RelationshipType.Aggeration);
+
+		firstNode.addRelationship(rel);
+		secondNode.addRelationship(rel);
+		m_relationships.add(rel);
+
+		rel.draw(view.getGraphics());
+	}
+
 	@Override
-	public void mouseClicked(MouseEvent arg0)
+	public void mouseClicked(MouseEvent e)
 	{
 		// mouse clicked in the view, not on any node
 		// check to see if adding a class is enabled
 		if (parentEditor.isAddNewClassModeEnabled())
 		{
 			// add new class mode enabled, so add a new class
-			this.createNode(arg0.getPoint());
-			if (!arg0.isShiftDown())
+			this.createNode(e.getPoint());
+			if (!e.isShiftDown())
 			{
 				parentEditor.disableAddNewClassMode();
 			}

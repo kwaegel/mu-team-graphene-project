@@ -13,14 +13,16 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-public class NodePanel extends JPanel implements MouseListener {
+public class NodePanel extends JPanel implements MouseListener
+{
 
 	private static final long serialVersionUID = 912113941232687505L;
 
 	private ClassNode associatedNode;
 	private ClassDiagram parentDiagram;
 
-	public NodePanel(ClassDiagram parent, ClassNode node) {
+	public NodePanel(ClassDiagram parent, ClassNode node)
+	{
 		super();
 
 		parentDiagram = parent;
@@ -34,16 +36,24 @@ public class NodePanel extends JPanel implements MouseListener {
 		this.addMouseListener(this);
 	}
 
-	public void makeUnselected() {
+	public ClassNode getClassNode()
+	{
+		return associatedNode;
+	}
+
+	public void makeUnselected()
+	{
 		this.setBackground(Color.white);
 	}
 
-	public void makeSelected() {
+	public void makeSelected()
+	{
 		this.setBackground(Color.pink);
 	}
 
 	// recreated display from values in classNode
-	private void createDisplay() {
+	private void createDisplay()
+	{
 		// clear everything in the class diagram
 		this.removeAll();
 
@@ -58,7 +68,8 @@ public class NodePanel extends JPanel implements MouseListener {
 		this.add(separator);
 
 		// add methods
-		for (int i = 0; i < associatedNode.getNumMethods(); ++i) {
+		for (int i = 0; i < associatedNode.getNumMethods(); ++i)
+		{
 			String methodName = associatedNode.getMethod(i);
 			JLabel methodLabel = new JLabel(methodName);
 			this.add(methodLabel);
@@ -69,7 +80,8 @@ public class NodePanel extends JPanel implements MouseListener {
 		this.add(separator2);
 
 		// add attributes
-		for (int i = 0; i < associatedNode.getNumAttributes(); ++i) {
+		for (int i = 0; i < associatedNode.getNumAttributes(); ++i)
+		{
 			String attributeName = associatedNode.getAttribute(i);
 			JLabel attributeLabel = new JLabel(attributeName);
 			this.add(attributeLabel);
@@ -78,38 +90,56 @@ public class NodePanel extends JPanel implements MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked(MouseEvent e)
+	{
 		int clickCount = e.getClickCount();
-		if (clickCount > 1) {
+		if (clickCount > 1)
+		{
 			// open edit dialog
-		} else {
+		}
+		else
+		{
 			parentDiagram.setSelectedNode(associatedNode);
 			this.makeSelected();
 		}
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent e)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
+	public void mouseExited(MouseEvent e)
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+	public void mousePressed(MouseEvent e)
+	{
+		System.out.println("Mouse pressed on " + associatedNode.getName());
+		parentDiagram.setSelectedNode(associatedNode);
+		this.makeSelected();
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		parentDiagram.addRelationship(this);
+	public void mouseReleased(MouseEvent e)
+	{
+		System.out.println("Mouse released on " + associatedNode.getName());
 
+		Component comp = parentDiagram.getComponentUnder(e);
+
+		if (comp instanceof NodePanel)
+		{
+			ClassNode targetNode = ((NodePanel) comp).getClassNode();
+			System.out.println("Mouse released over " + targetNode.getName()
+					+ "\n");
+			parentDiagram.addRelationship(targetNode);
+
+		}
 	}
-
 }
