@@ -22,7 +22,7 @@ public class ClassDiagram implements MouseListener {
 
 		view = new JPanel();
 		view.addMouseListener(this);
-		view.setLayout(new MigLayout());
+		view.setLayout(new MigLayout("", "", ""));
 		parentEditor.add(view, BorderLayout.CENTER);
 
 		listofNodes = new LinkedList<ClassNode>();
