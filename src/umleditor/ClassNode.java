@@ -46,12 +46,16 @@ public class ClassNode
 	public void setName(String name)
 	{
 		className = name;
+		nodePanel.createDisplay();
+		nodePanel.getParent().validate();
 	}
 
 	// Add String attribute to listofAttributes
 	public void addAttribute(String attribute)
 	{
 		listOfAttributes.add(attribute);
+		nodePanel.createDisplay();
+		nodePanel.getParent().validate();
 	}
 
 	// Returns the name of the Attribute at the index in listofAttributes
@@ -65,12 +69,16 @@ public class ClassNode
 	public void setAttribute(int index, String attribute)
 	{
 		listOfAttributes.set(index, attribute);
+		nodePanel.createDisplay();
+		nodePanel.getParent().validate();
 	}
 
 	// Removes the attribute in listofAttributes at the index
 	public void removeAttribute(int index)
 	{
 		listOfAttributes.remove(index);
+		nodePanel.createDisplay();
+		nodePanel.getParent().validate();
 	}
 
 	public int getNumAttributes()
@@ -82,6 +90,8 @@ public class ClassNode
 	public void addMethod(String method)
 	{
 		listOfMethods.add(method);
+		nodePanel.createDisplay();
+		nodePanel.getParent().validate();
 	}
 
 	// Returns the String at the index in listofMethods
@@ -95,12 +105,16 @@ public class ClassNode
 	public void setMethod(int index, String method)
 	{
 		listOfMethods.set(index, method);
+		nodePanel.createDisplay();
+		nodePanel.getParent().validate();
 	}
 
 	// Removes the method in listofMethods at the index
 	public void removeMethod(int index)
 	{
 		listOfMethods.remove(index);
+		nodePanel.createDisplay();
+		nodePanel.getParent().validate();
 	}
 
 	public int getNumMethods()
