@@ -1,6 +1,7 @@
 package umleditor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClassNode
 {
@@ -132,6 +133,11 @@ public class ClassNode
 	public void removeRelationship(Relationship relationship)
 	{
 		relationships.remove(relationship);
+	}
+
+	public List<Relationship> GetRelationships()
+	{
+		return relationships;
 	}
 
 	// Returns this ClassNode's NodePanel
