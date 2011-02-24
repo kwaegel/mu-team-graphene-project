@@ -1,13 +1,19 @@
 package umleditor;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 public class NodePanel extends JPanel implements MouseListener
 {
@@ -18,19 +24,29 @@ public class NodePanel extends JPanel implements MouseListener
 
 	JLabel className;
 
-	public NodePanel(ClassNode node, ClassDiagram parent)
+	public NodePanel(ClassNode node, ClassDiagram parent, Point creationPoint)
 	{
 		classNode = node;
 		parentDiagram = parent;
 		this.addMouseListener(this);
 
-		// Set appearance and layout.
-		this.setBorder(BorderFactory.createLineBorder(Color.blue));
-		this.setLayout(new FlowLayout());
+		// Set the size and position
+		Dimension dims = new Dimension(100, 100); // Set how big the class view should be.
+		Rectangle r = new Rectangle(creationPoint, dims); // Set where the node should be shown.
+		setBounds(r);
+		setSize(dims);
 
-		// Setup defaults.
+		// Set appearance and layout.
+		this.setBackground(Color.white);
+		this.setBorder(BorderFactory.createLineBorder(Color.blue));
+		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
+		// Setup default data.
 		className = new JLabel(node.getName());
-		this.add(className);
+		className.setAlignmentX(Component.CENTER_ALIGNMENT);
+		this.add(className, JLabel.CENTER);
+
+		this.add(new JSeparator(SwingConstants.HORIZONTAL));
 	}
 
 	public void setNode(ClassNode node)
