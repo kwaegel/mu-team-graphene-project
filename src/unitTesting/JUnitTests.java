@@ -1,6 +1,11 @@
-package umleditor;
+package unitTesting;
 
 import org.junit.Test;
+
+import umleditor.ClassDiagram;
+import umleditor.ClassNode;
+import umleditor.NodePanel;
+import umleditor.UMLEditor;
 import static org.junit.Assert.*;
 
 public class JUnitTests extends UMLEditor {
