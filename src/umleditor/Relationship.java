@@ -4,13 +4,12 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Point2D;
-
-import javax.vecmath.Point2i;
 
 /**
  * Relationship defines a connection between two ClassNodes. Relationships will be maintained by the individual classes
@@ -78,7 +77,7 @@ public class Relationship
 
 	Polygon m_arrow; // Try CubicCurve2D?
 
-	Point2i start, end;
+	Point start, end;
 
 	/**
 	 * 
@@ -104,8 +103,37 @@ public class Relationship
 		Rectangle firstBounds = firstNode.getNodePanel().getBounds();
 		Rectangle secondBounds = secondNode.getNodePanel().getBounds();
 
-		start = new Point2i(firstBounds.x, firstBounds.y);
-		end = new Point2i(secondBounds.x, secondBounds.y);
+		// Find the center points of each edge for the first node.
+		Point[] startEdges = new Point[4];
+		startEdges[0] = new Point((int) (firstBounds.x + firstBounds.width / 2.0f), firstBounds.y);
+		startEdges[1] = new Point(firstBounds.x + firstBounds.width, (int) (firstBounds.y + firstBounds.height / 2.0f));
+		startEdges[2] = new Point((int) (firstBounds.x + firstBounds.width / 2.0f), firstBounds.y + firstBounds.height);
+		startEdges[3] = new Point(firstBounds.x, (int) (firstBounds.y + firstBounds.height / 2.0f));
+
+		// Find the center points of each edge for the second node.
+		Point[] endEdges = new Point[4];
+		endEdges[0] = new Point((int) (secondBounds.x + secondBounds.width / 2.0f), secondBounds.y);
+		endEdges[1] = new Point(secondBounds.x + secondBounds.width,
+				(int) (secondBounds.y + secondBounds.height / 2.0f));
+		endEdges[2] = new Point((int) (secondBounds.x + secondBounds.width / 2.0f), secondBounds.y
+				+ secondBounds.height);
+		endEdges[3] = new Point(secondBounds.x, (int) (secondBounds.y + secondBounds.height / 2.0f));
+
+		// Search for the closest two edge points to use for drawing.
+		double minDistence = Float.POSITIVE_INFINITY;
+		for (Point startPoint : startEdges)
+		{
+			for (Point endPoint : endEdges)
+			{
+				double dist = startPoint.distance(endPoint);
+				if (dist < minDistence)
+				{
+					start = startPoint;
+					end = endPoint;
+					minDistence = dist;
+				}
+			}
+		}
 	}
 
 	private void setEndFill()
@@ -197,12 +225,11 @@ public class Relationship
 		// Save the previous stroke pattern;
 		Stroke oldStroke = g2d.getStroke();
 
-		// draw the main line
+		// Dependencies need to be drawn with a dashed line.
 		if (type == RelationshipType.Dependency)
 		{
-			// Switched to dashed lines.
-			g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[] {
-					10.0f, 10.0f }, 5.0f));
+			g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[] { 8.0f,
+					8.0f }, 5.0f));
 		}
 
 		// Draw the main line
