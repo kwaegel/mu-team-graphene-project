@@ -8,13 +8,13 @@ import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
-
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
 public class ClassDiagram implements MouseListener
 {
 	private LinkedList<ClassNode> listofNodes;
+
 	private ClassNode selectedNode;
 	private UMLEditor parentEditor;
 	private DiagramPanel view;
@@ -32,8 +32,7 @@ public class ClassDiagram implements MouseListener
 	}
 
 	/**
-	 * Create a new node and add it to the list of nodes. Also add it's
-	 * {@link NodePanel} to the view.
+	 * Create a new node and add it to the list of nodes. Also add it's {@link NodePanel} to the view.
 	 * 
 	 * @return the newly created node.
 	 */
@@ -103,17 +102,13 @@ public class ClassDiagram implements MouseListener
 
 		RelationshipType[] possibleValues = RelationshipType.values();
 
-		int selection = JOptionPane.showOptionDialog(parentEditor,
-				"Choose a type of relationship", "Relationship Chooser",
-				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-				possibleValues, RelationshipType.Aggeration);
+		int selection = JOptionPane.showOptionDialog(parentEditor, "Choose a type of relationship",
+				"Relationship Chooser", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, possibleValues,
+				RelationshipType.Aggeration);
 
 		RelationshipType selectedType = possibleValues[selection];
 
-		System.out.println("Selection was " + selectedType);
-
-		Relationship rel = new Relationship(firstNode, secondNode,
-				Relationship.RelationshipType.Aggeration);
+		Relationship rel = new Relationship(firstNode, secondNode, selectedType);
 
 		firstNode.addRelationship(rel);
 		secondNode.addRelationship(rel);
@@ -141,7 +136,7 @@ public class ClassDiagram implements MouseListener
 			this.unselectCurrentNode();
 		}
 	}
-	
+
 	public LinkedList<ClassNode> getNodes()
 	{
 		return listofNodes;

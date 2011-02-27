@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -15,7 +14,8 @@ import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
 
-public class NodePanel extends JPanel implements MouseListener {
+public class NodePanel extends JPanel implements MouseListener
+{
 
 	private static final long serialVersionUID = 912113941232687505L;
 
@@ -53,7 +53,8 @@ public class NodePanel extends JPanel implements MouseListener {
 	}
 
 	// recreated display from values in classNode
-	public void createDisplay() {
+	public void createDisplay()
+	{
 		// clear everything in the class diagram
 		this.removeAll();
 
