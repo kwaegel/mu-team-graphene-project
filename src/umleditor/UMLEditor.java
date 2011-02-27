@@ -7,21 +7,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
-public class UMLEditor extends JFrame implements ActionListener {
+public class UMLEditor extends JFrame implements ActionListener
+{
 
 	private static final long serialVersionUID = -9139566399320553797L;
-	private Color unselectedButtonColor = javax.swing.UIManager
-			.getColor("Button.background");
+	private Color unselectedButtonColor = javax.swing.UIManager.getColor("Button.background");
 	private Color selectedButtonColor = Color.gray;
 
 	private JMenuBar menuBar;
@@ -34,7 +31,8 @@ public class UMLEditor extends JFrame implements ActionListener {
 
 	private boolean addNewClassModeEnabled;
 
-	public UMLEditor() {
+	public UMLEditor()
+	{
 		super("UML Editor");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setPreferredSize(new Dimension(800, 800));
@@ -48,20 +46,24 @@ public class UMLEditor extends JFrame implements ActionListener {
 		this.setVisible(true);
 	}
 
-	public boolean isAddNewClassModeEnabled() {
+	public boolean isAddNewClassModeEnabled()
+	{
 		return (addNewClassModeEnabled);
 	}
 
-	public void disableAddNewClassMode() {
+	public void disableAddNewClassMode()
+	{
 		addNewClassModeEnabled = false;
 		addClassButton.setBackground(unselectedButtonColor);
 	}
 
-	public void setDeleteButtonState(boolean enabled) {
+	public void setDeleteButtonState(boolean enabled)
+	{
 		deleteButton.setEnabled(enabled);
 	}
 
-	private void setUpMenuBar() {
+	private void setUpMenuBar()
+	{
 		menuBar = new JMenuBar();
 
 		JMenu fileMenu = new JMenu("File");
@@ -90,7 +92,8 @@ public class UMLEditor extends JFrame implements ActionListener {
 
 	}
 
-	private void setUpToolBar() {
+	private void setUpToolBar()
+	{
 		toolBar = new JToolBar();
 
 		addClassButton = new JButton("Add Class");
@@ -109,17 +112,21 @@ public class UMLEditor extends JFrame implements ActionListener {
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
 
-	private void setUpClassDiagram() {
+	private void setUpClassDiagram()
+	{
 		classDiagram = new ClassDiagram(this);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		if (arg0.getActionCommand() == "ADD") {
+	public void actionPerformed(ActionEvent arg0)
+	{
+		if (arg0.getActionCommand() == "ADD")
+		{
 			// in most cases, we'll get this action event because we're enabling
 			// Add-Class mode, so set background appropriately
 			addClassButton.setBackground(selectedButtonColor);
-			if (addNewClassModeEnabled) {
+			if (addNewClassModeEnabled)
+			{
 				// in the rare case that the user is clicking AddClass again
 				// without adding a node to unselect Add-Class mode
 				// change background to unselected color
@@ -127,34 +134,41 @@ public class UMLEditor extends JFrame implements ActionListener {
 			}
 			// toggle Add-Class state
 			addNewClassModeEnabled = !addNewClassModeEnabled;
-		} else if (arg0.getActionCommand() == "DELETE") {
-			
+		}
+		else if (arg0.getActionCommand() == "DELETE")
+		{
+
 			classDiagram.deleteSelectedNode();
-			
-		} else if(arg0.getActionCommand() == "NEW")
+
+		}
+		else if (arg0.getActionCommand() == "NEW")
 		{
 			clearDiagram();
-			
-		}else if(arg0.getActionCommand() == "EXIT")
+
+		}
+		else if (arg0.getActionCommand() == "EXIT")
 		{
-			//When save is implemented, message will be changed to: Do you want to save?
+			// When save is implemented, message will be changed to: Do you want to save?
 			JFrame frame = new JFrame();
 			String message = "Are you sure you want to quit?";
 			int answer = JOptionPane.showConfirmDialog(frame, message);
-			if(answer == JOptionPane.YES_OPTION)
+			if (answer == JOptionPane.YES_OPTION)
 			{
 				System.exit(0);
-			}else if(answer == JOptionPane.NO_OPTION){
-				
 			}
-			
+			else if (answer == JOptionPane.NO_OPTION)
+			{
+
+			}
+
 		}
 	}
-	//Used when New is selected in the File menu.
-	//Deletes everything in the diagram
+
+	// Used when New is selected in the File menu.
+	// Deletes everything in the diagram
 	public void clearDiagram()
 	{
-		while(classDiagram.getNodes().size() > 0)
+		while (classDiagram.getNodes().size() > 0)
 		{
 			classDiagram.setSelectedNode(classDiagram.getNodes().getFirst());
 			classDiagram.deleteSelectedNode();
@@ -166,7 +180,8 @@ public class UMLEditor extends JFrame implements ActionListener {
 	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		new UMLEditor();
 	}
 }

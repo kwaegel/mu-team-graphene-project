@@ -1,16 +1,13 @@
 package umleditor;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
@@ -19,13 +16,20 @@ import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
 
-public class EditPanel extends JDialog{
+public class EditPanel extends JDialog
+{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 108292737166911948L;
 
 	private ClassNode associatedNode;
 
 	private JTextField classTitleEditField;
 
-	public EditPanel(ClassNode nodeToModify) {
+	public EditPanel(ClassNode nodeToModify)
+	{
 		super();
 
 		associatedNode = nodeToModify;
@@ -35,7 +39,8 @@ public class EditPanel extends JDialog{
 		displayNodeProperties();
 	}
 
-	private void initialize() {
+	private void initialize()
+	{
 		super.setTitle("Edit Class");
 		super.setModalityType(ModalityType.APPLICATION_MODAL);
 		super.setLocation(200, 200);
@@ -43,25 +48,29 @@ public class EditPanel extends JDialog{
 		super.setLayout(new MigLayout("wrap 1", "0[]0", ""));
 	}
 
-	private void displayNodeProperties() {
+	private void displayNodeProperties()
+	{
 		JLabel classTitle = new JLabel("Class Name:");
 		this.add(classTitle);
 
 		String className = associatedNode.getName();
 		classTitleEditField = new JTextField(className);
 		classTitleEditField.setPreferredSize(new Dimension(100, 25));
-		classTitleEditField.addFocusListener(new FocusListener() {
-			
+		classTitleEditField.addFocusListener(new FocusListener()
+		{
+
 			@Override
-			public void focusLost(FocusEvent e) {
-				
+			public void focusLost(FocusEvent e)
+			{
+
 				classTitleEditField.setBackground(Color.white);
 				String newClassName = classTitleEditField.getText();
 				associatedNode.setName(newClassName);
 			}
-			
+
 			@Override
-			public void focusGained(FocusEvent e) {
+			public void focusGained(FocusEvent e)
+			{
 				classTitleEditField.setBackground(Color.orange);
 			}
 		});
@@ -80,10 +89,12 @@ public class EditPanel extends JDialog{
 		displayMethodsList();
 
 		JButton closeButton = new JButton("Exit");
-		closeButton.addActionListener(new ActionListener() {
+		closeButton.addActionListener(new ActionListener()
+		{
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e)
+			{
 				// TODO Auto-generated method stub
 				setVisible(false);
 			}
@@ -91,12 +102,13 @@ public class EditPanel extends JDialog{
 		this.add(closeButton, "align center, gapbottom 0");
 	}
 
-	private void displayAttributesList() {
+	private void displayAttributesList()
+	{
 
 		JLabel attributeLabel = new JLabel("Attributes:");
 		this.add(attributeLabel);
-		
-		for(int i = 0; i < associatedNode.getNumAttributes(); ++i)
+
+		for (int i = 0; i < associatedNode.getNumAttributes(); ++i)
 		{
 			JTextField attributeField = new JTextField(associatedNode.getAttribute(i));
 			attributeField.setPreferredSize(new Dimension(100, 25));
@@ -104,7 +116,8 @@ public class EditPanel extends JDialog{
 		}
 	}
 
-	private void displayMethodsList() {
+	private void displayMethodsList()
+	{
 
 	}
 
