@@ -1,5 +1,6 @@
 package umleditor;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -15,8 +16,8 @@ import javax.vecmath.Point2i;
  */
 public class Relationship
 {
-	private float arrowHeight = 10.0f;
-	private float arrowWidth = 10.0f;
+	private float arrowHeight = 12.0f;
+	private float arrowWidth = 15.0f;
 
 	/**
 	 * The type of relationship.
@@ -45,8 +46,6 @@ public class Relationship
 	Polygon m_arrow;
 
 	Point2i start, end;
-	int[] xPoints, yPoints;
-	int numPoints;
 
 	/**
 	 * 
@@ -80,62 +79,37 @@ public class Relationship
 	{
 		m_arrow = new Polygon();
 
-		if (end.x == start.x) // Handle degenerate case
+		// Calculate line direction vector.
+		double dirX = end.x - start.x;
+		double dirY = end.y - start.y;
+
+		// Normalize
+		double distence = Point2D.distance(start.x, start.y, end.x, end.y);
+		dirX /= distence;
+		dirY /= distence;
+
+		// Create a perpendicular vector
+		double perpX = dirY * this.arrowWidth / 2.0;
+		double perpY = -dirX * this.arrowWidth / 2.0;
+
+		// get the center point of the diamond (or center base of a triangle)
+		double centerX = end.x - dirX * arrowHeight;
+		double centerY = end.y - dirY * arrowHeight;
+
+		// Add tip point.
+		m_arrow.addPoint(end.x, end.y);
+
+		// Add left point.
+		m_arrow.addPoint((int) (centerX - perpX), (int) (centerY - perpY));
+
+		// Add back point if needed.
+		if (type == RelationshipType.Aggeration || type == RelationshipType.Composition)
 		{
-			int lowerY = end.y + (int) arrowHeight;
-
-			numPoints = 3;
-
-			// Add tip point
-			m_arrow.addPoint(end.x, end.y);
-
-			// add left point
-			m_arrow.addPoint((int) (end.x - arrowWidth / 2), lowerY);
-
-			// Add back point if needed.
-			if (type == RelationshipType.Aggeration || type == RelationshipType.Composition)
-			{
-				m_arrow.addPoint(end.x, (int) (end.y + 2 * arrowHeight));
-			}
-
-			// Add right point.
-			m_arrow.addPoint((int) (end.x + arrowWidth / 2), lowerY);
+			m_arrow.addPoint(end.x, (int) (end.y + 2 * arrowHeight));
 		}
-		else
-		{
-			// Dalculate line direction vector.
-			double dirX = end.x - start.x;
-			double dirY = end.y - start.y;
 
-			// Normalize
-			double distence = Point2D.distance(start.x, start.y, end.x, end.y);
-			dirX /= distence;
-			dirY /= distence;
-
-			// Create a perpendicular vector
-			double perpX = dirY * this.arrowWidth / 2.0;
-			double perpY = -dirX * this.arrowWidth / 2.0;
-
-			// get the center point of the diamond (or center base of a triangle)
-			double centerX = end.x - dirX; // Need to mult by length?
-			double centerY = end.y - dirY;
-
-			// Add tip point.
-			m_arrow.addPoint(end.x, end.y);
-
-			// Add left point.
-			m_arrow.addPoint((int) (centerX - perpX), (int) (centerY - perpY));
-
-			// Add back point if needed.
-			if (type == RelationshipType.Aggeration || type == RelationshipType.Composition)
-			{
-				m_arrow.addPoint(end.x, (int) (end.y + 2 * arrowHeight));
-			}
-
-			// Add right point.
-			m_arrow.addPoint((int) (centerX + perpX), (int) (centerY + perpY));
-
-		}
+		// Add right point.
+		m_arrow.addPoint((int) (centerX + perpX), (int) (centerY + perpY));
 	}
 
 	/**
@@ -170,38 +144,17 @@ public class Relationship
 		{
 			g2d.fillPolygon(m_arrow);
 		}
+		else if (type == RelationshipType.Generalization)
+		{
+			g2d.setColor(Color.white);
+			g2d.fillPolygon(m_arrow);
+			g2d.setColor(Color.black);
+			g2d.drawPolygon(m_arrow);
+		}
 		else
 		{
 			g2d.drawPolygon(m_arrow);
 		}
-
-		/*
-		 * Vector2d normal = new Vector2d(end.x-start.x, end.y-start.y); normal.normalize();
-		 * 
-		 * Point2d center = new Point2d(end.x, end.y); center.scaleAdd(-arrowHeight, normal);
-		 * 
-		 * 
-		 * // y=m*x+b
-		 * 
-		 * 
-		 * 
-		 * double m = (end.y-start.y)/(end.x-start.x); // get the slope double negRecipSlope = -1.0/m; Vector2d recipVec
-		 * = new Vector2d(end.y-start.y, end.x-start.x); recipVec.negate();
-		 * 
-		 * // get the normal direction Vector2d dir = new Vector2d(end.x-start.x, end.y - start.y);
-		 * 
-		 * 
-		 * // negative of the arrow height times the direction plus the tip position //Point2d center = new Point2d();
-		 * center.scaleAdd(-arrowHeight, dir, new Point2d(end.x, end.y));
-		 * 
-		 * Point2d rightPoint = new Point2d(recipSlope,); //rightPoint.scale Point2d leftPoint = new Point2d();
-		 * 
-		 * 
-		 * float centerX = end.x ; float centerY;
-		 * 
-		 * //Point2i p1 =
-		 */
-
 	}
 
 }
