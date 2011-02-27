@@ -104,7 +104,7 @@ public class ClassDiagram implements MouseListener
 
 		int selection = JOptionPane.showOptionDialog(parentEditor, "Choose a type of relationship",
 				"Relationship Chooser", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, possibleValues,
-				RelationshipType.Aggeration);
+				RelationshipType.Aggregation);
 
 		RelationshipType selectedType = possibleValues[selection];
 

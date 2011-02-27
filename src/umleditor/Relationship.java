@@ -1,10 +1,13 @@
 package umleditor;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.geom.Point2D;
 
 import javax.vecmath.Point2i;
@@ -16,8 +19,8 @@ import javax.vecmath.Point2i;
  */
 public class Relationship
 {
-	private float arrowHeight = 12.0f;
-	private float arrowWidth = 15.0f;
+	private static final float arrowHeight = 12.0f;
+	private static final float arrowWidth = 15.0f;
 
 	/**
 	 * The type of relationship.
@@ -25,8 +28,38 @@ public class Relationship
 	 */
 	public enum RelationshipType
 	{
-		Composition, Aggeration, Relationship, Association, Generalization
+		/**
+		 * A composition is represented by a filled diamond.
+		 */
+		Composition,
+		/**
+		 * An aggregation is represented by an open diamond.
+		 */
+		Aggregation,
+		/**
+		 * 
+		 */
+		Dependency,
+		/**
+		 * An association is represented by a plain (wireframe) arrow.
+		 */
+		Association,
+		/**
+		 * Generalization (or inheritance) is represented by a open triangle pointing to the more general (or parent)
+		 * class.
+		 */
+		Generalization
 	}
+
+	private enum FillType
+	{
+		None, Outline, Solid
+	}
+
+	/**
+	 * Specify how the polygon for the end arrow should be drawn.
+	 */
+	private FillType m_endFill;
 
 	/**
 	 * The type of relationship to draw.
@@ -63,6 +96,7 @@ public class Relationship
 
 		calculateEndPoints();
 		createArrowPoints();
+		setEndFill();
 	}
 
 	private void calculateEndPoints()
@@ -72,7 +106,22 @@ public class Relationship
 
 		start = new Point2i(firstBounds.x, firstBounds.y);
 		end = new Point2i(secondBounds.x, secondBounds.y);
+	}
 
+	private void setEndFill()
+	{
+		if (type == RelationshipType.Composition || type == RelationshipType.Dependency)
+		{
+			m_endFill = FillType.Solid;
+		}
+		else if (type == RelationshipType.Generalization || type == RelationshipType.Aggregation)
+		{
+			m_endFill = FillType.Outline;
+		}
+		else if (type == RelationshipType.Association)
+		{
+			m_endFill = FillType.None;
+		}
 	}
 
 	private void createArrowPoints()
@@ -89,8 +138,8 @@ public class Relationship
 		dirY /= distence;
 
 		// Create a perpendicular vector
-		double perpX = dirY * this.arrowWidth / 2.0;
-		double perpY = -dirX * this.arrowWidth / 2.0;
+		double perpX = dirY * arrowWidth / 2.0;
+		double perpY = -dirX * arrowWidth / 2.0;
 
 		// get the center point of the diamond (or center base of a triangle)
 		double centerX = end.x - dirX * arrowHeight;
@@ -103,9 +152,15 @@ public class Relationship
 		m_arrow.addPoint((int) (centerX - perpX), (int) (centerY - perpY));
 
 		// Add back point if needed.
-		if (type == RelationshipType.Aggeration || type == RelationshipType.Composition)
+		if (type == RelationshipType.Aggregation || type == RelationshipType.Composition)
 		{
 			m_arrow.addPoint((int) (end.x - 2 * dirX * arrowHeight), (int) (end.y - 2 * dirY * arrowHeight));
+		}
+
+		if (type == RelationshipType.Dependency)
+		{
+			// m_arrow.addPoint(end.x, end.y);
+			m_arrow.addPoint((int) (end.x - 0.5 * dirX * arrowHeight), (int) (end.y - 0.5 * dirY * arrowHeight));
 		}
 
 		// Add right point.
@@ -136,24 +191,41 @@ public class Relationship
 	{
 		Graphics2D g2d = (Graphics2D) viewGraphics;
 
+		// Enable anti-aliasing mode.
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// Save the previous stroke pattern;
+		Stroke oldStroke = g2d.getStroke();
+
 		// draw the main line
+		if (type == RelationshipType.Dependency)
+		{
+			// Switched to dashed lines.
+			g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[] {
+					10.0f, 10.0f }, 5.0f));
+		}
+
+		// Draw the main line
 		g2d.drawLine(start.x, start.y, end.x, end.y);
 
+		// Restore the previous stroke pattern
+		g2d.setStroke(oldStroke);
+
 		// Draw line end arrow.
-		if (type == RelationshipType.Composition)
+		switch (m_endFill)
 		{
-			g2d.fillPolygon(m_arrow);
-		}
-		else if (type == RelationshipType.Generalization)
-		{
-			g2d.setColor(Color.white);
-			g2d.fillPolygon(m_arrow);
-			g2d.setColor(Color.black);
-			g2d.drawPolygon(m_arrow);
-		}
-		else
-		{
-			g2d.drawPolygon(m_arrow);
+			case Solid:
+				g2d.fillPolygon(m_arrow);
+				break;
+			case Outline: {
+				g2d.setColor(Color.white);
+				g2d.fillPolygon(m_arrow);
+				g2d.setColor(Color.black);
+				g2d.drawPolygon(m_arrow);
+			}
+				break;
+			case None:// Do not draw an arrow.
+				break;
 		}
 	}
 
