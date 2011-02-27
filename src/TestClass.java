@@ -8,8 +8,8 @@ public class TestClass {
 	 */
 	public static void main(String[] args) {
 		
-		System.out.println("Hello UML!");
-		UMLEditor editor = new UMLEditor();
+		//System.out.println("Hello UML!");
+		//UMLEditor editor = new UMLEditor();
 
 	}
 
