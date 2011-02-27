@@ -43,7 +43,7 @@ public class Relationship
 	 */
 	private ClassNode secondNode;
 
-	Polygon m_arrow;
+	Polygon m_arrow; // Try CubicCurve2D?
 
 	Point2i start, end;
 
@@ -77,7 +77,7 @@ public class Relationship
 
 	private void createArrowPoints()
 	{
-		m_arrow = new Polygon();
+		m_arrow = new Polygon(); // Create a blank polygon
 
 		// Calculate line direction vector.
 		double dirX = end.x - start.x;
@@ -105,7 +105,7 @@ public class Relationship
 		// Add back point if needed.
 		if (type == RelationshipType.Aggeration || type == RelationshipType.Composition)
 		{
-			m_arrow.addPoint(end.x, (int) (end.y + 2 * arrowHeight));
+			m_arrow.addPoint((int) (end.x - 2 * dirX * arrowHeight), (int) (end.y - 2 * dirY * arrowHeight));
 		}
 
 		// Add right point.
