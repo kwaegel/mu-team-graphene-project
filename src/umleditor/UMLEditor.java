@@ -127,9 +127,9 @@ public class UMLEditor extends JFrame implements ActionListener
 			addClassButton.setBackground(selectedButtonColor);
 			if (addNewClassModeEnabled)
 			{
-				// in the rare case that the user is clicking AddClass again
-				// without adding a node to unselect Add-Class mode
-				// change background to unselected color
+				// if Add-Class mode was already selected,
+				// this click unselects it, so reset background 
+				// to normal color
 				addClassButton.setBackground(unselectedButtonColor);
 			}
 			// toggle Add-Class state
@@ -137,7 +137,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "DELETE")
 		{
-
 			classDiagram.deleteSelectedNode();
 
 		}

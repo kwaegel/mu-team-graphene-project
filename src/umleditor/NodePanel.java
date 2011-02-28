@@ -31,7 +31,7 @@ public class NodePanel extends JPanel implements MouseListener
 		associatedNode.attachPanel(this);
 
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setLayout(new MigLayout("wrap 1", "0[]0", ""));
+		this.setLayout(new MigLayout("wrap 1", "0[fill]0", ""));
 		this.setMinimumSize(new Dimension(100, 1));
 		this.createDisplay();
 		this.addMouseListener(this);
@@ -52,7 +52,9 @@ public class NodePanel extends JPanel implements MouseListener
 		this.setBackground(Color.pink);
 	}
 
-	// recreated display from values in classNode
+	/**
+	 * recreated display from values in classNode
+	 */
 	public void createDisplay()
 	{
 		// clear everything in the class diagram
@@ -61,12 +63,21 @@ public class NodePanel extends JPanel implements MouseListener
 		// add class name
 		String className = associatedNode.getName();
 		JLabel titleLabel = new JLabel(className);
-		this.add(titleLabel, "align center");
+		this.add(titleLabel, "alignx center, gapx 15:push 15:push");
 
 		// add separator
-		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-		separator.setPreferredSize(new Dimension(100, 1));
-		this.add(separator, "gapx 0 0");
+		addSeparator();
+		
+		// add attributes
+		for (int i = 0; i < associatedNode.getNumAttributes(); ++i)
+		{
+			String attributeName = associatedNode.getAttribute(i);
+			JLabel attributeLabel = new JLabel(attributeName);
+			this.add(attributeLabel, "gapx 3");
+		}
+		
+		// add separator
+		addSeparator();
 
 		// add methods
 		for (int i = 0; i < associatedNode.getNumMethods(); ++i)
@@ -75,20 +86,15 @@ public class NodePanel extends JPanel implements MouseListener
 			JLabel methodLabel = new JLabel(methodName);
 			this.add(methodLabel, "gapx 3");
 		}
-
-		// add separator
-		JSeparator separator2 = new JSeparator(SwingConstants.HORIZONTAL);
-		separator2.setPreferredSize(new Dimension(100, 1));
-		this.add(separator2, "gapx 0 0");
-
-		// add attributes
-		for (int i = 0; i < associatedNode.getNumAttributes(); ++i)
-		{
-			String attributeName = associatedNode.getAttribute(i);
-			JLabel attributeLabel = new JLabel(attributeName);
-			this.add(attributeLabel, "gapx 3");
-		}
-
+	}
+	
+	/**
+	 * Adds a separator to the ClassNode
+	 */
+	private void addSeparator()
+	{
+		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+		this.add(separator, "gapx 0, gapy 0");
 	}
 
 	@Override
@@ -110,15 +116,13 @@ public class NodePanel extends JPanel implements MouseListener
 	@Override
 	public void mouseEntered(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 	@Override
