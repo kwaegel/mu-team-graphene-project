@@ -32,7 +32,7 @@ public class NodePanel extends JPanel implements MouseListener
 
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setLayout(new MigLayout("wrap 1", "0[fill]0", ""));
-		this.setMinimumSize(new Dimension(100, 1));
+		this.setMinimumSize(new Dimension(1, 1));
 		this.setBackground(Color.white);
 		this.createDisplay();
 		this.addMouseListener(this);
@@ -74,7 +74,7 @@ public class NodePanel extends JPanel implements MouseListener
 		{
 			String attributeName = associatedNode.getAttribute(i);
 			JLabel attributeLabel = new JLabel(attributeName);
-			this.add(attributeLabel, "gapx 3");
+			this.add(attributeLabel, "gapx 3 3:push");
 		}
 		
 		// add separator
@@ -85,7 +85,7 @@ public class NodePanel extends JPanel implements MouseListener
 		{
 			String methodName = associatedNode.getMethod(i);
 			JLabel methodLabel = new JLabel(methodName);
-			this.add(methodLabel, "gapx 3");
+			this.add(methodLabel, "gapx 3 3:push");
 		}
 	}
 	
