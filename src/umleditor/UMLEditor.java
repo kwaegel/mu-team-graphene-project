@@ -67,22 +67,30 @@ public class UMLEditor extends JFrame implements ActionListener
 		menuBar = new JMenuBar();
 
 		JMenu fileMenu = new JMenu("File");
+		
 		JMenuItem newOption = new JMenuItem("New");
 		newOption.setActionCommand("NEW");
 		newOption.addActionListener(this);
 		fileMenu.add(newOption);
+		
 		JMenuItem loadOption = new JMenuItem("Load...");
 		fileMenu.add(loadOption);
+		
 		JMenuItem saveOption = new JMenuItem("Save");
 		fileMenu.add(saveOption);
+		
 		fileMenu.addSeparator();
+		
 		JMenuItem printOption = new JMenuItem("Print...");
 		fileMenu.add(printOption);
+		
 		fileMenu.addSeparator();
+		
 		JMenuItem exitOption = new JMenuItem("Exit");
 		exitOption.setActionCommand("EXIT");
 		exitOption.addActionListener(this);
 		fileMenu.add(exitOption);
+		
 		menuBar.add(fileMenu);
 
 		JMenu helpMenu = new JMenu("Help");
@@ -143,7 +151,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "NEW")
 		{
 			clearDiagram();
-
 		}
 		else if (arg0.getActionCommand() == "EXIT")
 		{
@@ -163,15 +170,15 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 	}
 
-	// Used when New is selected in the File menu.
-	// Deletes everything in the diagram
+	/**
+	 * Used when New is selected in the File menu.
+	 * Deletes everything in the diagram
+	 */
 	public void clearDiagram()
 	{
-		while (classDiagram.getNodes().size() > 0)
-		{
-			classDiagram.setSelectedNode(classDiagram.getNodes().getFirst());
-			classDiagram.deleteSelectedNode();
-		}
+		this.remove(classDiagram.getView());
+		classDiagram = new ClassDiagram(this);
+		this.validate();
 	}
 
 	/**

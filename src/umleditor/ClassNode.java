@@ -137,7 +137,7 @@ public class ClassNode
 		relationships.remove(relationship);
 	}
 
-	public List<Relationship> GetRelationships()
+	public List<Relationship> getRelationships()
 	{
 		return relationships;
 	}
