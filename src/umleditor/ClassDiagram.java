@@ -136,21 +136,7 @@ public class ClassDiagram implements MouseListener
 	@Override
 	public void mouseClicked(MouseEvent e)
 	{
-		// mouse clicked in the view, not on any node
-		// check to see if adding a class is enabled
-		if (parentEditor.isAddNewClassModeEnabled())
-		{
-			// add new class mode enabled, so add a new class
-			this.createNode(e.getPoint());
-			if (!e.isShiftDown())
-			{
-				parentEditor.disableAddNewClassMode();
-			}
-		}
-		else
-		{
-			this.unselectCurrentNode();
-		}
+
 	}
 
 	@Override
