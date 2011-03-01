@@ -186,7 +186,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	 */
 	public void clearDiagram()
 	{
-		//this.remove(classDiagram.getView().getParent());
+		this.disableAddNewClassMode();
 		classDiagram = new ClassDiagram(this);
 		this.validate();
 	}
