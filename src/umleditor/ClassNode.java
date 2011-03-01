@@ -48,7 +48,7 @@ public class ClassNode
 	{
 		className = name;
 		nodePanel.createDisplay();
-		nodePanel.getParent().validate();
+		nodePanel.revalidate();
 	}
 
 	// Add String attribute to listofAttributes
@@ -56,7 +56,7 @@ public class ClassNode
 	{
 		listOfAttributes.add(attribute);
 		nodePanel.createDisplay();
-		nodePanel.getParent().validate();
+		nodePanel.revalidate();
 	}
 
 	// Returns the name of the Attribute at the index in listofAttributes
@@ -71,7 +71,7 @@ public class ClassNode
 	{
 		listOfAttributes.set(index, attribute);
 		nodePanel.createDisplay();
-		nodePanel.getParent().validate();
+		nodePanel.revalidate();
 	}
 
 	// Removes the attribute in listofAttributes at the index
@@ -79,7 +79,7 @@ public class ClassNode
 	{
 		listOfAttributes.remove(index);
 		nodePanel.createDisplay();
-		nodePanel.getParent().validate();
+		nodePanel.revalidate();
 	}
 
 	public int getNumAttributes()
@@ -92,7 +92,7 @@ public class ClassNode
 	{
 		listOfMethods.add(method);
 		nodePanel.createDisplay();
-		nodePanel.getParent().validate();
+		nodePanel.revalidate();
 	}
 
 	// Returns the String at the index in listofMethods
@@ -107,7 +107,7 @@ public class ClassNode
 	{
 		listOfMethods.set(index, method);
 		nodePanel.createDisplay();
-		nodePanel.getParent().validate();
+		nodePanel.revalidate();
 	}
 
 	// Removes the method in listofMethods at the index
@@ -115,7 +115,7 @@ public class ClassNode
 	{
 		listOfMethods.remove(index);
 		nodePanel.createDisplay();
-		nodePanel.getParent().validate();
+		nodePanel.revalidate();
 	}
 
 	public int getNumMethods()
