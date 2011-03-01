@@ -100,8 +100,8 @@ public class Relationship
 
 	private void calculateEndPoints()
 	{
-		Rectangle firstBounds = firstNode.getNodePanel().getBounds();
-		Rectangle secondBounds = secondNode.getNodePanel().getBounds();
+		Rectangle firstBounds = firstNode.getBounds();
+		Rectangle secondBounds = secondNode.getBounds();
 
 		// Find the center points of each edge for the first node.
 		Point[] startEdges = new Point[4];
