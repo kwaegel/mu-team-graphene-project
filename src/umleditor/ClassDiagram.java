@@ -53,7 +53,6 @@ public class ClassDiagram implements MouseListener
 
 		String positionSpecs = "pos " + addLocation.x + " " + addLocation.y;
 		view.add(newNodePanel, positionSpecs);
-		view.validate();
 		view.revalidate();
 	}
 
