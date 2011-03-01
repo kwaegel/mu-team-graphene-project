@@ -68,30 +68,30 @@ public class UMLEditor extends JFrame implements ActionListener
 		menuBar = new JMenuBar();
 
 		JMenu fileMenu = new JMenu("File");
-		
+
 		JMenuItem newOption = new JMenuItem("New");
 		newOption.setActionCommand("NEW");
 		newOption.addActionListener(this);
 		fileMenu.add(newOption);
-		
+
 		JMenuItem loadOption = new JMenuItem("Load...");
 		fileMenu.add(loadOption);
-		
+
 		JMenuItem saveOption = new JMenuItem("Save");
 		fileMenu.add(saveOption);
-		
+
 		fileMenu.addSeparator();
-		
+
 		JMenuItem printOption = new JMenuItem("Print...");
 		fileMenu.add(printOption);
-		
+
 		fileMenu.addSeparator();
-		
+
 		JMenuItem exitOption = new JMenuItem("Exit");
 		exitOption.setActionCommand("EXIT");
 		exitOption.addActionListener(this);
 		fileMenu.add(exitOption);
-		
+
 		menuBar.add(fileMenu);
 
 		JMenu helpMenu = new JMenu("Help");
@@ -137,7 +137,7 @@ public class UMLEditor extends JFrame implements ActionListener
 			if (addNewClassModeEnabled)
 			{
 				// if Add-Class mode was already selected,
-				// this click unselects it, so reset background 
+				// this click unselects it, so reset background
 				// to normal color
 				addClassButton.setBackground(unselectedButtonColor);
 			}
@@ -155,7 +155,8 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "EXIT")
 		{
-			// When save is implemented, message will be changed to: Do you want to save?
+			// When save is implemented, message will be changed to: Do you want
+			// to save?
 			JFrame frame = new JFrame();
 			String message = "Are you sure you want to quit?";
 			int answer = JOptionPane.showConfirmDialog(frame, message);
@@ -172,8 +173,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Used when New is selected in the File menu.
-	 * Deletes everything in the diagram
+	 * Used when New is selected in the File menu. Deletes everything in the diagram
 	 */
 	public void clearDiagram()
 	{
