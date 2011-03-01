@@ -74,16 +74,16 @@ public class UMLEditor extends JFrame implements ActionListener
 		newOption.addActionListener(this);
 		fileMenu.add(newOption);
 
-		JMenuItem loadOption = new JMenuItem("Load...");
-		fileMenu.add(loadOption);
-
-		JMenuItem saveOption = new JMenuItem("Save");
-		fileMenu.add(saveOption);
-
-		fileMenu.addSeparator();
-
-		JMenuItem printOption = new JMenuItem("Print...");
-		fileMenu.add(printOption);
+		// JMenuItem loadOption = new JMenuItem("Load...");
+		// fileMenu.add(loadOption);
+		//
+		// JMenuItem saveOption = new JMenuItem("Save");
+		// fileMenu.add(saveOption);
+		//
+		// fileMenu.addSeparator();
+		//
+		// JMenuItem printOption = new JMenuItem("Print...");
+		// fileMenu.add(printOption);
 
 		fileMenu.addSeparator();
 
@@ -94,8 +94,8 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		menuBar.add(fileMenu);
 
-		JMenu helpMenu = new JMenu("Help");
-		menuBar.add(helpMenu);
+		// JMenu helpMenu = new JMenu("Help");
+		// menuBar.add(helpMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);
 
