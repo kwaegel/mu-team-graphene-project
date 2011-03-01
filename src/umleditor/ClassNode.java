@@ -1,5 +1,6 @@
 package umleditor;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,14 @@ public class ClassNode
 	public String getName()
 	{
 		return className;
+	}
+
+	/**
+	 * @return - the bounds of this node.
+	 */
+	public Rectangle getBounds()
+	{
+		return nodePanel.getBounds();
 	}
 
 	// Sets the name of the Class Node
