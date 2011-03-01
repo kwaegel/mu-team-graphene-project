@@ -36,6 +36,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		super("UML Editor");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setPreferredSize(new Dimension(800, 800));
+		this.setMinimumSize(new Dimension(250, 200));
 		this.setLocationByPlatform(true);
 
 		setUpMenuBar();
