@@ -30,7 +30,7 @@ public class ClassDiagram implements MouseListener
 		view.setLayout(new MigLayout("", "", ""));
 
 		// Add the view to a scroll pane.
-		JScrollPane scrollPane = new JScrollPane();
+		JScrollPane scrollPane = parent.getScrollPane();
 		scrollPane.setViewportView(view);
 
 		// Add the scroll pane to the frame

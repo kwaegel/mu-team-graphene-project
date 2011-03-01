@@ -12,6 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 public class UMLEditor extends JFrame implements ActionListener
@@ -26,6 +27,8 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private JButton deleteButton;
 	private JButton addClassButton;
+	
+	private JScrollPane scrollPane;
 
 	private ClassDiagram classDiagram;
 
@@ -41,6 +44,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		setUpMenuBar();
 		setUpToolBar();
+		setUpScrollPane();
 		setUpClassDiagram();
 
 		this.pack();
@@ -120,6 +124,11 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
+	
+	private void setUpScrollPane()
+	{
+		scrollPane = new JScrollPane();
+	}
 
 	private void setUpClassDiagram()
 	{
@@ -177,9 +186,14 @@ public class UMLEditor extends JFrame implements ActionListener
 	 */
 	public void clearDiagram()
 	{
-		this.remove(classDiagram.getView());
+		//this.remove(classDiagram.getView().getParent());
 		classDiagram = new ClassDiagram(this);
 		this.validate();
+	}
+	
+	public JScrollPane getScrollPane()
+	{
+		return(scrollPane);
 	}
 
 	/**
