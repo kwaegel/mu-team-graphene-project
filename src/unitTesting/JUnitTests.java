@@ -5,6 +5,8 @@ import org.junit.Test;
 import umleditor.ClassDiagram;
 import umleditor.ClassNode;
 import umleditor.NodePanel;
+import umleditor.NumberedTextField;
+import umleditor.NumberedTextField.FieldType;
 import umleditor.UMLEditor;
 import static org.junit.Assert.*;
 
@@ -36,12 +38,13 @@ public class JUnitTests extends UMLEditor
 	{
 		ClassDiagram testDiagram = new ClassDiagram(this);
 		ClassNode testNode = new ClassNode();
-		@SuppressWarnings("unused")
-		NodePanel testNodePanel = new NodePanel(testDiagram, testNode);
+		testNode.attachPanel(new NodePanel(testDiagram, testNode));
 
 		testDiagram.setSelectedNode(testNode);
 		testDiagram.deleteSelectedNode();
-
+		
+		assertNotNull(testDiagram.getView());
+		assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
 	}
 
 	/*
@@ -100,6 +103,23 @@ public class JUnitTests extends UMLEditor
 		testNode.setName("ThisIsTheTestNode");
 		String name = testNode.getName();
 		assertTrue("Error: Class name was not set, or get does not work", name.equals("ThisIsTheTestNode"));
+	}
+	
+	@Test
+	public void testNumberedTextFieldConstructor()
+	{
+		NumberedTextField ntf = new NumberedTextField("contentsoffield", 3, FieldType.Method);
+		assertTrue("Error: does not contain initial text", ntf.getText().equals("contentsoffield"));
+		assertTrue("Error: does not have correct number", ntf.getNumberIndex() == 3);
+		assertTrue("Error: does not have correct type", ntf.getType() == FieldType.Method);
+	}
+	
+	@Test
+	public void testNumberedTextFieldNumberSetter()
+	{
+		NumberedTextField ntf = new NumberedTextField("contentsoffield", 3, FieldType.Method);
+		ntf.setNumberIndex(4);
+		assertTrue("Error: did not change number", ntf.getNumberIndex() == 4);
 	}
 
 }
