@@ -206,7 +206,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener
 
 	private void addCloseButton()
 	{
-		JButton closeButton = new JButton("Exit");
+		JButton closeButton = new JButton("Close");
 		closeButton.setActionCommand("Exit");
 		closeButton.addActionListener(this);
 		everythingPanel.add(closeButton, "align center");
