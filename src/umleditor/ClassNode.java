@@ -28,8 +28,6 @@ public class ClassNode
 		className = "NewClass" + ++nodesCreated;
 		listOfAttributes = new ArrayList<String>();
 		listOfAttributes.add("attribute 1");
-		listOfAttributes.add("attribute 2");
-		listOfAttributes.add("attribute 3");
 		listOfMethods = new ArrayList<String>();
 		listOfMethods.add("method 1");
 		relationships = new ArrayList<Relationship>();
