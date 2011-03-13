@@ -34,7 +34,9 @@ public class NodePanel extends JPanel implements MouseListener
 		this.setLayout(new MigLayout("wrap 1", "0[fill]0", ""));
 		this.setMinimumSize(new Dimension(1, 1));
 		this.setBackground(Color.white);
+
 		this.createDisplay();
+
 		this.addMouseListener(this);
 	}
 
@@ -61,6 +63,12 @@ public class NodePanel extends JPanel implements MouseListener
 		// clear everything in the class diagram
 		this.removeAll();
 
+		// for moving the node
+		JLabel smallDragLabel = new JLabel();
+		smallDragLabel.setPreferredSize(new Dimension(20, 20));
+		smallDragLabel.addMouseMotionListener(parentDiagram);
+		this.add(smallDragLabel, "pos 0 0");
+
 		// add class name
 		String className = associatedNode.getName();
 		JLabel titleLabel = new JLabel(className);
@@ -68,7 +76,7 @@ public class NodePanel extends JPanel implements MouseListener
 
 		// add separator
 		addSeparator();
-		
+
 		// add attributes
 		for (int i = 0; i < associatedNode.getNumAttributes(); ++i)
 		{
@@ -76,7 +84,7 @@ public class NodePanel extends JPanel implements MouseListener
 			JLabel attributeLabel = new JLabel(attributeName);
 			this.add(attributeLabel, "gapx 3 3:push");
 		}
-		
+
 		// add separator
 		addSeparator();
 
@@ -88,7 +96,7 @@ public class NodePanel extends JPanel implements MouseListener
 			this.add(methodLabel, "gapx 3 3:push");
 		}
 	}
-	
+
 	/**
 	 * Adds a separator to the ClassNode
 	 */

@@ -3,8 +3,11 @@ package umleditor;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
@@ -13,7 +16,7 @@ import javax.swing.JScrollPane;
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
-public class ClassDiagram implements MouseListener
+public class ClassDiagram implements MouseListener, KeyListener, MouseMotionListener
 {
 	private LinkedList<ClassNode> listOfNodes;
 
@@ -27,6 +30,9 @@ public class ClassDiagram implements MouseListener
 
 		view = new DiagramPanel();
 		view.addMouseListener(this);
+		view.setFocusable(true);
+		view.requestFocus();
+		view.addKeyListener(this);
 		view.setLayout(new MigLayout("", "", ""));
 
 		// Add the view to a scroll pane.
@@ -74,12 +80,20 @@ public class ClassDiagram implements MouseListener
 		parentEditor.disableAddNewClassMode();
 	}
 
+	public ClassNode getSelectedNode()
+	{
+		return (selectedNode);
+	}
+
 	public void deleteSelectedNode()
 	{
 		NodePanel panelToRemove = selectedNode.getNodePanel();
 		view.removeRelationships(selectedNode.getRelationships());
 		view.remove(panelToRemove);
+		// need this call so deleting nodes not at edges of screen works properly
 		view.repaint();
+		// need this call so deleting nodes at edges of screen works properly
+		view.revalidate();
 		listOfNodes.remove(selectedNode);
 		selectedNode = null;
 		parentEditor.setDeleteButtonState(false);
@@ -136,22 +150,25 @@ public class ClassDiagram implements MouseListener
 	@Override
 	public void mouseClicked(MouseEvent e)
 	{
-
+		// do nothing
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0)
 	{
+		// do nothing
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0)
 	{
+		// do nothing
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0)
 	{
+		// do nothing
 	}
 
 	@Override
@@ -172,6 +189,55 @@ public class ClassDiagram implements MouseListener
 		{
 			this.unselectCurrentNode();
 		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0)
+	{
+		if (arg0.getKeyCode() == KeyEvent.VK_DELETE && selectedNode != null)
+		{
+			this.deleteSelectedNode();
+		}
+		else if (arg0.getKeyCode() == KeyEvent.VK_N)
+		{
+			Point mouseLocation = arg0.getComponent().getMousePosition();
+			if (mouseLocation != null)
+				this.createNode(mouseLocation);
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0)
+	{
+		// do nothing
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0)
+	{
+		// do nothing
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		// "invisible" JLabel will be component generating the event,
+		// its parent is the node panel we want to move
+		NodePanel nodePanelToMove = (NodePanel) e.getComponent().getParent();
+		this.setSelectedNode(nodePanelToMove.getClassNode());
+		nodePanelToMove.makeSelected();
+
+		view.remove(nodePanelToMove);
+		String newPositionSpecs = "pos " + (nodePanelToMove.getX() + e.getX()) + " "
+				+ (nodePanelToMove.getY() + e.getY());
+		view.add(nodePanelToMove, newPositionSpecs);
+		view.revalidate();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		// do nothing
 	}
 
 }

@@ -27,7 +27,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private JButton deleteButton;
 	private JButton addClassButton;
-	
+
 	private JScrollPane scrollPane;
 
 	private ClassDiagram classDiagram;
@@ -112,6 +112,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		addClassButton = new JButton("Add Class");
 		addClassButton.setActionCommand("ADD");
 		addClassButton.addActionListener(this);
+		addClassButton.setFocusable(false);
 		addClassButton.setFocusPainted(false);
 		toolBar.add(addClassButton);
 		addNewClassModeEnabled = false;
@@ -124,7 +125,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
-	
+
 	private void setUpScrollPane()
 	{
 		scrollPane = new JScrollPane();
@@ -156,7 +157,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "DELETE")
 		{
 			classDiagram.deleteSelectedNode();
-
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{
@@ -177,7 +177,6 @@ public class UMLEditor extends JFrame implements ActionListener
 			{
 
 			}
-
 		}
 	}
 
@@ -190,10 +189,10 @@ public class UMLEditor extends JFrame implements ActionListener
 		classDiagram = new ClassDiagram(this);
 		this.validate();
 	}
-	
+
 	public JScrollPane getScrollPane()
 	{
-		return(scrollPane);
+		return (scrollPane);
 	}
 
 	/**
