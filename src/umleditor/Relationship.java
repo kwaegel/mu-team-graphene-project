@@ -231,6 +231,10 @@ public class Relationship
 			g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[] { 8.0f,
 					8.0f }, 5.0f));
 		}
+		
+		// these two lines copy-pasted to make relationships redraw
+		calculateEndPoints();
+		createArrowPoints();
 
 		// Draw the main line
 		g2d.drawLine(start.x, start.y, end.x, end.y);
