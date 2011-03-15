@@ -40,6 +40,8 @@ public class ClassDiagram implements MouseListener, KeyListener, MouseMotionList
 		scrollPane.setViewportView(view);
 
 		// Add the scroll pane to the frame
+		// TODO: why are we adding the scroll pane in 
+		//       ClassDiagram and not in the editor itself??
 		parentEditor.add(scrollPane, BorderLayout.CENTER);
 
 		listOfNodes = new LinkedList<ClassNode>();
@@ -231,7 +233,10 @@ public class ClassDiagram implements MouseListener, KeyListener, MouseMotionList
 		String newPositionSpecs = "pos " + (nodePanelToMove.getX() + e.getX()) + " "
 				+ (nodePanelToMove.getY() + e.getY());
 		view.add(nodePanelToMove, newPositionSpecs);
+		// call to revalidate makes node draw in new place
 		view.revalidate();
+		// call to repaint makes relationships redraw
+		view.repaint();
 	}
 
 	@Override
