@@ -121,7 +121,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener
 
 		displayMethodsList();
 
-		addCloseButton();
+		addCloseButtons();
 	}
 
 	private void displayClassName()
@@ -204,12 +204,17 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener
 		everythingPanel.add(newMethodButton, "split 2, wrap 15:push");
 	}
 
-	private void addCloseButton()
+	private void addCloseButtons()
 	{
 		JButton closeButton = new JButton("Close");
 		closeButton.setActionCommand("Exit");
 		closeButton.addActionListener(this);
-		everythingPanel.add(closeButton, "align center");
+		everythingPanel.add(closeButton, "align center, split, gapright 30");
+		
+		JButton revertButton = new JButton("Discard Changes");
+		revertButton.setActionCommand("Discard");
+		revertButton.addActionListener(this);
+		everythingPanel.add(revertButton, "align center");
 	}
 
 	@Override
@@ -254,6 +259,10 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener
 		{
 			// get rid of JDialog
 			super.dispose();
+		}
+		else if (actionCommand == "Discard")
+		{
+			
 		}
 		else if (actionCommand.startsWith("New"))
 		{

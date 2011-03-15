@@ -129,6 +129,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	private void setUpScrollPane()
 	{
 		scrollPane = new JScrollPane();
+		this.add(scrollPane, BorderLayout.CENTER);
 	}
 
 	private void setUpClassDiagram()

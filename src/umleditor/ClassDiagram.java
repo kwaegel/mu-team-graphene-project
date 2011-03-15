@@ -35,14 +35,9 @@ public class ClassDiagram implements MouseListener, KeyListener, MouseMotionList
 		view.addKeyListener(this);
 		view.setLayout(new MigLayout("", "", ""));
 
-		// Add the view to a scroll pane.
+		// Add the view to the scroll pane.
 		JScrollPane scrollPane = parent.getScrollPane();
 		scrollPane.setViewportView(view);
-
-		// Add the scroll pane to the frame
-		// TODO: why are we adding the scroll pane in 
-		//       ClassDiagram and not in the editor itself??
-		parentEditor.add(scrollPane, BorderLayout.CENTER);
 
 		listOfNodes = new LinkedList<ClassNode>();
 	}
