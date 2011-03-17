@@ -1,6 +1,5 @@
 package umleditor;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -225,11 +224,15 @@ public class ClassDiagram implements MouseListener, KeyListener, MouseMotionList
 		nodePanelToMove.makeSelected();
 
 		view.remove(nodePanelToMove);
-		String newPositionSpecs = "pos " + (nodePanelToMove.getX() + e.getX()) + " "
-				+ (nodePanelToMove.getY() + e.getY());
+		// calculate new position, ensuring does not go off top or left of screen
+		int newPosX = Math.max(nodePanelToMove.getX() + e.getX(), 0);
+		int newPosY = Math.max(nodePanelToMove.getY() + e.getY(), 0);
+		String newPositionSpecs = "pos " + newPosX + " " + newPosY;
 		view.add(nodePanelToMove, newPositionSpecs);
-		// call to revalidate makes node draw in new place
+		
+		// call to revalidate makes node redraw
 		view.revalidate();
+		
 		// call to repaint makes relationships redraw
 		view.repaint();
 	}
