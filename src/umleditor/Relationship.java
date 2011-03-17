@@ -9,7 +9,11 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Relationship defines a connection between two ClassNodes. Relationships will be maintained by the individual classes
@@ -66,6 +70,13 @@ public class Relationship
 	private RelationshipType type;
 
 	/**
+	 * Contains a list of class nodes to draw between.
+	 */
+	private Point[] m_points;
+
+	private GeneralPath m_line;
+
+	/**
 	 * Contains a reference to the first ClassNode (relationship comes ‘from’ this one).
 	 */
 	private ClassNode firstNode;
@@ -75,9 +86,9 @@ public class Relationship
 	 */
 	private ClassNode secondNode;
 
-	Polygon m_arrow; // Try CubicCurve2D?
+	Point firstNodeOffset, secondNodeOffset;
 
-	Point start, end;
+	Polygon m_arrow;
 
 	/**
 	 * 
@@ -91,14 +102,25 @@ public class Relationship
 		firstNode = first;
 		secondNode = second;
 
+		int m_numLinePoints = 2;
+		m_points = new Point[m_numLinePoints];
+		m_line = new GeneralPath(GeneralPath.WIND_NON_ZERO, m_numLinePoints);
+
 		m_arrow = new Polygon();
 
-		calculateEndPoints();
+		firstNodeOffset = new Point();
+		secondNodeOffset = new Point();
+		calculatePathControlPoints();
+
+		addControlPoint(new Point(100, 100), 1);
+
+		createPathFromPoints();
+
 		createArrowPoints();
-		setEndFill();
+		setArrowFill();
 	}
 
-	private void calculateEndPoints()
+	private void calculatePathControlPoints()
 	{
 		Rectangle firstBounds = firstNode.getBounds();
 		Rectangle secondBounds = secondNode.getBounds();
@@ -128,15 +150,32 @@ public class Relationship
 				double dist = startPoint.distance(endPoint);
 				if (dist < minDistence)
 				{
-					start = startPoint;
-					end = endPoint;
+					m_points[0] = startPoint;
+					m_points[m_points.length - 1] = endPoint;
 					minDistence = dist;
 				}
 			}
 		}
+
+		firstNodeOffset.x = m_points[0].x - firstBounds.x;
+		firstNodeOffset.y = m_points[0].y - firstBounds.y;
+		secondNodeOffset.x = m_points[m_points.length - 1].x - secondBounds.x;
+		secondNodeOffset.y = m_points[m_points.length - 1].y - secondBounds.y;
 	}
 
-	private void setEndFill()
+	private void recalculateEndPoints()
+	{
+		Rectangle firstBounds = firstNode.getBounds();
+		Rectangle secondBounds = secondNode.getBounds();
+
+		m_points[0].x = firstBounds.x + firstNodeOffset.x;
+		m_points[0].y = firstBounds.y + firstNodeOffset.y;
+
+		m_points[m_points.length - 1].x = secondBounds.x + secondNodeOffset.x;
+		m_points[m_points.length - 1].y = secondBounds.y + secondNodeOffset.y;
+	}
+
+	private void setArrowFill()
 	{
 		if (type == RelationshipType.Composition || type == RelationshipType.Dependency)
 		{
@@ -155,6 +194,10 @@ public class Relationship
 	private void createArrowPoints()
 	{
 		m_arrow = new Polygon(); // Create a blank polygon
+
+		// Copy start and end data from line arrays.
+		Point start = m_points[0];
+		Point end = m_points[m_points.length - 1];
 
 		// Calculate line direction vector.
 		double dirX = end.x - start.x;
@@ -193,6 +236,37 @@ public class Relationship
 
 		// Add right point.
 		m_arrow.addPoint((int) (centerX + perpX), (int) (centerY + perpY));
+
+		// Copy points back to line array
+		m_points[0] = start;
+		m_points[m_points.length - 1] = end;
+	}
+
+	/**
+	 * Create the line from a list of points.
+	 * 
+	 * @param pointList
+	 */
+	private void createPathFromPoints()
+	{
+		m_line.reset();
+		m_line.moveTo(m_points[0].x, m_points[0].y);
+
+		for (int i = 1; i < m_points.length; i++)
+		{
+			Point p = m_points[i];
+			m_line.lineTo(p.x, p.y);
+		}
+	}
+
+	private void addControlPoint(Point newControlPoint, int indexOfPointAfterNewPoint)
+	{
+		// TODO: convert m_points to a linked list to avoid the conversion.
+		List<Point> pointList = new LinkedList<Point>(Arrays.asList(m_points));
+
+		pointList.add(indexOfPointAfterNewPoint, newControlPoint);
+
+		m_points = pointList.toArray(new Point[0]);
 	}
 
 	/**
@@ -231,13 +305,15 @@ public class Relationship
 			g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[] { 8.0f,
 					8.0f }, 5.0f));
 		}
-		
+
 		// these two lines copy-pasted to make relationships redraw
-		calculateEndPoints();
+		recalculateEndPoints();
+		createPathFromPoints();
 		createArrowPoints();
 
-		// Draw the main line
-		g2d.drawLine(start.x, start.y, end.x, end.y);
+		// Draw a line through all the line points.
+		// g2d.drawPolyline(m_xLinePoints, m_yLinePoints, m_numLinePoints);
+		g2d.draw(m_line);
 
 		// Restore the previous stroke pattern
 		g2d.setStroke(oldStroke);
