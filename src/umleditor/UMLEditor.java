@@ -17,8 +17,11 @@ import javax.swing.JToolBar;
 
 public class UMLEditor extends JFrame implements ActionListener
 {
-
 	private static final long serialVersionUID = -9139566399320553797L;
+	
+	public static int MOUSE_X;
+	public static int MOUSE_Y;
+	
 	private Color unselectedButtonColor = javax.swing.UIManager.getColor("Button.background");
 	private Color selectedButtonColor = Color.gray;
 

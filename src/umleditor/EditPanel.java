@@ -38,6 +38,11 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener
 	 * Class whose values this EditPanel will allow user to edit
 	 */
 	private ClassNode associatedNode;
+	
+	/**
+	 * 
+	 */
+	//private ClassNode copyOfOriginalNode;
 
 	/**
 	 * Scroll pane for contents of Edit panel, so can have lots of fields
@@ -76,6 +81,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener
 		super();
 
 		associatedNode = nodeToModify;
+		//copyOfOriginalNode = new ClassNode();
 
 		initialize();
 

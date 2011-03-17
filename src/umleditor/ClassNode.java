@@ -32,6 +32,19 @@ public class ClassNode
 		listOfMethods.add("method 1");
 		relationships = new ArrayList<Relationship>();
 	}
+	
+	/**
+	 * 
+	 * @param otherNode
+	 */
+	/*public ClassNode(ClassNode otherNode)
+	{
+		this.className = otherNode.className;
+		this.listOfAttributes = new ArrayList<String>(otherNode.listOfAttributes);
+		this.listOfMethods = new ArrayList<String>(otherNode.listOfMethods);
+		this.relationships = new ArrayList<Relationship>(otherNode.relationships);
+		this.nodePanel = otherNode.nodePanel;
+	}*/
 
 	public void attachPanel(NodePanel panel)
 	{

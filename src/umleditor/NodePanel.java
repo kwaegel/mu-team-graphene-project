@@ -2,7 +2,7 @@ package umleditor;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -18,6 +18,8 @@ public class NodePanel extends JPanel implements MouseListener
 {
 
 	private static final long serialVersionUID = 912113941232687505L;
+
+	private static int BOTTOM_DRAG_Y_BOUND = 30;
 
 	private ClassNode associatedNode;
 	private ClassDiagram parentDiagram;
@@ -37,6 +39,7 @@ public class NodePanel extends JPanel implements MouseListener
 		this.createDisplay();
 
 		this.addMouseListener(this);
+		this.addMouseMotionListener(parentDiagram);
 	}
 
 	public ClassNode getClassNode()
@@ -61,12 +64,6 @@ public class NodePanel extends JPanel implements MouseListener
 	{
 		// clear everything in the class diagram
 		this.removeAll();
-
-		// for moving the node
-		JLabel smallDragLabel = new JLabel();
-		smallDragLabel.setPreferredSize(new Dimension(20, 20));
-		smallDragLabel.addMouseMotionListener(parentDiagram);
-		this.add(smallDragLabel, "pos 0 0");
 
 		// add class name
 		String className = associatedNode.getName();
@@ -103,6 +100,11 @@ public class NodePanel extends JPanel implements MouseListener
 	{
 		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
 		this.add(separator);
+	}
+
+	public boolean isPointInDragArea(Point clickPoint)
+	{
+		return (clickPoint.y < (this.getLocation().y + BOTTOM_DRAG_Y_BOUND));
 	}
 
 	@Override
