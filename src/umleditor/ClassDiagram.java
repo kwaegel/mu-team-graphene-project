@@ -1,6 +1,7 @@
 package umleditor;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -217,30 +218,46 @@ public class ClassDiagram implements MouseListener, KeyListener, MouseMotionList
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		// "invisible" JLabel will be component generating the event,
-		// its parent is the node panel we want to move
-		NodePanel nodePanelToMove = (NodePanel) e.getComponent().getParent();
+		NodePanel nodePanelToMove = (NodePanel) e.getComponent();
 		this.setSelectedNode(nodePanelToMove.getClassNode());
 		nodePanelToMove.makeSelected();
 
-		view.remove(nodePanelToMove);
-		// calculate new position, ensuring does not go off top or left of screen
-		int newPosX = Math.max(nodePanelToMove.getX() + e.getX(), 0);
-		int newPosY = Math.max(nodePanelToMove.getY() + e.getY(), 0);
-		String newPositionSpecs = "pos " + newPosX + " " + newPosY;
-		view.add(nodePanelToMove, newPositionSpecs);
-		
-		// call to revalidate makes node redraw
-		view.revalidate();
-		
-		// call to repaint makes relationships redraw
-		view.repaint();
+		Point mousePosition = view.getMousePosition();
+		if (nodePanelToMove.isPointInDragArea(mousePosition))
+		{
+			nodePanelToMove.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+			view.remove(nodePanelToMove);
+			// calculate new position, ensuring does not go off top or left of screen
+			int newPosX = Math.max(nodePanelToMove.getX() + e.getX(), 0);
+			int newPosY = Math.max(nodePanelToMove.getY() + e.getY(), 0);
+			String newPositionSpecs = "pos " + newPosX + " " + newPosY;
+			view.add(nodePanelToMove, newPositionSpecs);
+
+			// call to revalidate makes node redraw
+			view.revalidate();
+
+			// call to repaint makes relationships redraw
+			view.repaint();
+		}
+		else
+		{
+			nodePanelToMove.setCursor(Cursor.getDefaultCursor());
+		}
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		// do nothing
+		Point mousePosition = view.getMousePosition();
+		NodePanel nodePanel = (NodePanel) e.getComponent();
+		if (nodePanel.isPointInDragArea(mousePosition))
+		{
+			nodePanel.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+		}
+		else
+		{
+			nodePanel.setCursor(Cursor.getDefaultCursor());
+		}
 	}
 
 }
