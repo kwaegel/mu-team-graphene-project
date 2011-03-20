@@ -1,13 +1,11 @@
 package umleditor;
 
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
@@ -16,7 +14,7 @@ import javax.swing.JScrollPane;
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
-public class ClassDiagram implements MouseListener, KeyListener, MouseMotionListener
+public class ClassDiagram implements MouseListener, KeyListener
 {
 	private LinkedList<ClassNode> listOfNodes;
 
@@ -75,6 +73,7 @@ public class ClassDiagram implements MouseListener, KeyListener, MouseMotionList
 		selectedNode = node;
 		parentEditor.setDeleteButtonState(true);
 		parentEditor.disableAddNewClassMode();
+		// node.makeSelected here?
 	}
 
 	public ClassNode getSelectedNode()
@@ -215,49 +214,23 @@ public class ClassDiagram implements MouseListener, KeyListener, MouseMotionList
 		// do nothing
 	}
 
-	@Override
-	public void mouseDragged(MouseEvent e)
+	public void movePanel(NodePanel nodePanelToMove, Point movePoint)
 	{
-		NodePanel nodePanelToMove = (NodePanel) e.getComponent();
 		this.setSelectedNode(nodePanelToMove.getClassNode());
 		nodePanelToMove.makeSelected();
 
-		Point mousePosition = view.getMousePosition();
-		if (nodePanelToMove.isPointInDragArea(mousePosition))
-		{
-			nodePanelToMove.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-			view.remove(nodePanelToMove);
-			// calculate new position, ensuring does not go off top or left of screen
-			int newPosX = Math.max(nodePanelToMove.getX() + e.getX(), 0);
-			int newPosY = Math.max(nodePanelToMove.getY() + e.getY(), 0);
-			String newPositionSpecs = "pos " + newPosX + " " + newPosY;
-			view.add(nodePanelToMove, newPositionSpecs);
+		view.remove(nodePanelToMove);
 
-			// call to revalidate makes node redraw
-			view.revalidate();
+		int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
+		int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
+		String newPositionSpecs = "pos " + newPosX + " " + newPosY;
+		view.add(nodePanelToMove, newPositionSpecs);
 
-			// call to repaint makes relationships redraw
-			view.repaint();
-		}
-		else
-		{
-			nodePanelToMove.setCursor(Cursor.getDefaultCursor());
-		}
-	}
+		// call to revalidate makes node redraw
+		view.revalidate();
 
-	@Override
-	public void mouseMoved(MouseEvent e)
-	{
-		Point mousePosition = view.getMousePosition();
-		NodePanel nodePanel = (NodePanel) e.getComponent();
-		if (nodePanel.isPointInDragArea(mousePosition))
-		{
-			nodePanel.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-		}
-		else
-		{
-			nodePanel.setCursor(Cursor.getDefaultCursor());
-		}
+		// call to repaint makes relationships redraw
+		view.repaint();
 	}
 
 }
