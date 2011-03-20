@@ -67,4 +67,5 @@ public class DiagramPanel extends JPanel
 			rel.draw(g);
 		}
 	}
+
 }
