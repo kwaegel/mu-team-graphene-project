@@ -11,6 +11,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,8 @@ public class Relationship
 {
 	private static final float arrowHeight = 12.0f;
 	private static final float arrowWidth = 15.0f;
+
+	private static final int clickDelta = 5;
 
 	/**
 	 * The type of relationship.
@@ -91,6 +94,7 @@ public class Relationship
 	Polygon m_arrow;
 
 	/**
+	 * Creates a relationship between two classes without offset information.
 	 * 
 	 * @param first
 	 * @param second
@@ -108,8 +112,36 @@ public class Relationship
 
 		m_arrow = new Polygon();
 
-		firstNodeOffset = new Point();
-		secondNodeOffset = new Point();
+		calculatePathControlPoints();
+
+		createPathFromPoints();
+
+		createArrowPoints();
+		setArrowFill();
+	}
+
+	/**
+	 * Creates a relationship between two classes using offset information.
+	 * 
+	 * @param first
+	 * @param firstOffset
+	 * @param second
+	 * @param secondOffset
+	 */
+	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
+	{
+		this.type = type;
+		firstNode = first;
+		secondNode = second;
+
+		int m_numLinePoints = 2;
+		m_points = new Point[m_numLinePoints];
+		m_line = new GeneralPath(GeneralPath.WIND_NON_ZERO, m_numLinePoints);
+
+		m_arrow = new Polygon();
+
+		firstNodeOffset = firstOffset;
+		secondNodeOffset = secondOffset;
 		calculatePathControlPoints();
 
 		addControlPoint(new Point(100, 100), 1);
@@ -157,10 +189,15 @@ public class Relationship
 			}
 		}
 
-		firstNodeOffset.x = m_points[0].x - firstBounds.x;
-		firstNodeOffset.y = m_points[0].y - firstBounds.y;
-		secondNodeOffset.x = m_points[m_points.length - 1].x - secondBounds.x;
-		secondNodeOffset.y = m_points[m_points.length - 1].y - secondBounds.y;
+		if (firstNodeOffset == null || secondNodeOffset == null)
+		{
+			firstNodeOffset = new Point();
+			secondNodeOffset = new Point();
+			firstNodeOffset.x = m_points[0].x - firstBounds.x;
+			firstNodeOffset.y = m_points[0].y - firstBounds.y;
+			secondNodeOffset.x = m_points[m_points.length - 1].x - secondBounds.x;
+			secondNodeOffset.y = m_points[m_points.length - 1].y - secondBounds.y;
+		}
 	}
 
 	private void recalculateEndPoints()
@@ -270,19 +307,17 @@ public class Relationship
 	}
 
 	/**
-	 * @return a reference to the first node.
+	 * Check if the click point is near to the relationship line or end arrow.
+	 * 
+	 * @param clickPoint
+	 * @return
 	 */
-	public ClassNode getFirstNode()
+	public boolean intersectsEpsilon(Point clickPoint)
 	{
-		return firstNode;
-	}
+		Rectangle2D clickArea = new Rectangle2D.Float(clickPoint.x - clickDelta, clickPoint.y - clickDelta,
+				clickDelta * 2, clickDelta * 2);
 
-	/**
-	 * @return returns a reference to the second node
-	 */
-	public ClassNode getSecondNode()
-	{
-		return secondNode;
+		return m_line.intersects(clickArea) || m_arrow.intersects(clickArea);
 	}
 
 	/**
