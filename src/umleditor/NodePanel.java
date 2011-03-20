@@ -2,7 +2,7 @@ package umleditor;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Point;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -19,7 +19,7 @@ public class NodePanel extends JPanel implements MouseListener
 
 	private static final long serialVersionUID = 912113941232687505L;
 
-	private static int BOTTOM_DRAG_Y_BOUND = 30;
+	private static int LABEL_AND_DRAG_Y_BOUND = 30;
 
 	private ClassNode associatedNode;
 	private ClassDiagram parentDiagram;
@@ -33,18 +33,22 @@ public class NodePanel extends JPanel implements MouseListener
 		associatedNode.attachPanel(this);
 
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setLayout(new MigLayout("wrap 1", "0[fill]0", ""));
+		this.setLayout(new MigLayout("wrap 1, fill", "0[fill]0", ""));
 		this.setBackground(Color.white);
 
 		this.createDisplay();
 
 		this.addMouseListener(this);
-		this.addMouseMotionListener(parentDiagram);
 	}
 
 	public ClassNode getClassNode()
 	{
 		return associatedNode;
+	}
+
+	public ClassDiagram getParentDiagram()
+	{
+		return parentDiagram;
 	}
 
 	public void makeUnselected()
@@ -65,10 +69,15 @@ public class NodePanel extends JPanel implements MouseListener
 		// clear everything in the class diagram
 		this.removeAll();
 
-		// add class name
+		// set up title label / dragging label
 		String className = associatedNode.getName();
-		JLabel titleLabel = new JLabel(className);
-		this.add(titleLabel, "alignx center, gapx 15:push 15:push");
+		JLabel titleDragLabel = new JLabel(className, JLabel.CENTER);
+		Dimension labelSize = titleDragLabel.getMinimumSize();
+		titleDragLabel.setMinimumSize(new Dimension(labelSize.width + 30, LABEL_AND_DRAG_Y_BOUND));
+		NodeDragListener ndl = new NodeDragListener(this);
+		titleDragLabel.addMouseMotionListener(ndl);
+		titleDragLabel.addMouseListener(ndl);
+		this.add(titleDragLabel, "dock north");
 
 		// add separator
 		addSeparator();
@@ -91,6 +100,11 @@ public class NodePanel extends JPanel implements MouseListener
 			JLabel methodLabel = new JLabel(methodName);
 			this.add(methodLabel, "gapx 3 3");
 		}
+
+		// add an empty JLabel, workaround for a bug in MigLayout
+		// where using direction docking causes the last component 
+		// in the container to not have the normal gap after it
+		this.add(new JLabel());
 	}
 
 	/**
@@ -99,12 +113,8 @@ public class NodePanel extends JPanel implements MouseListener
 	private void addSeparator()
 	{
 		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+		separator.setForeground(Color.black);
 		this.add(separator);
-	}
-
-	public boolean isPointInDragArea(Point clickPoint)
-	{
-		return (clickPoint.y < (this.getLocation().y + BOTTOM_DRAG_Y_BOUND));
 	}
 
 	@Override

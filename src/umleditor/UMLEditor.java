@@ -2,6 +2,7 @@ package umleditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,10 +19,7 @@ import javax.swing.JToolBar;
 public class UMLEditor extends JFrame implements ActionListener
 {
 	private static final long serialVersionUID = -9139566399320553797L;
-	
-	public static int MOUSE_X;
-	public static int MOUSE_Y;
-	
+
 	private Color unselectedButtonColor = javax.swing.UIManager.getColor("Button.background");
 	private Color selectedButtonColor = Color.gray;
 
@@ -63,6 +61,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		addNewClassModeEnabled = false;
 		addClassButton.setBackground(unselectedButtonColor);
+		setCursor(Cursor.getDefaultCursor());
 	}
 
 	public void setDeleteButtonState(boolean enabled)
@@ -145,15 +144,18 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		if (arg0.getActionCommand() == "ADD")
 		{
-			// in most cases, we'll get this action event because we're enabling
-			// Add-Class mode, so set background appropriately
-			addClassButton.setBackground(selectedButtonColor);
-			if (addNewClassModeEnabled)
+			if (!addNewClassModeEnabled)
 			{
-				// if Add-Class mode was already selected,
-				// this click unselects it, so reset background
-				// to normal color
+				addClassButton.setBackground(selectedButtonColor);
+				this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+			}
+			else // if Add-Class mode was already selected, this click unselects it
+			{
+
+				// reset background to normal color
 				addClassButton.setBackground(unselectedButtonColor);
+				// reset cursor
+				this.setCursor(Cursor.getDefaultCursor());
 			}
 			// toggle Add-Class state
 			addNewClassModeEnabled = !addNewClassModeEnabled;
