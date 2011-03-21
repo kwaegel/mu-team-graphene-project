@@ -31,9 +31,12 @@ public class Relationship
 
 	private static final int m_clickDelta = 5;
 
-	private static final int m_cpDrawSize = 6;
+	private static final int m_cpDrawSize = 8;
 
-	private static final int m_selectionTolerence = 4;
+	private static final int m_selectionTolerence = 10;
+
+	private static final Color m_nodeColor = new Color(0, 100, 255);
+	private static final Color m_selectedNodeColor = Color.red;
 
 	/**
 	 * The type of relationship.
@@ -419,24 +422,44 @@ public class Relationship
 		int maxX = rect.x + rect.width;
 		int maxY = rect.y + rect.height;
 
-		// Check x coords
-		if (clickPoint.x < rect.x)
+		// Snap one of the coords to the side for points inside the rectangle
+		if (rect.contains(clickPoint))
 		{
-			nearestPoint.x = rect.x;
-		}
-		else if (clickPoint.x > maxX)
-		{
-			nearestPoint.x = maxX;
-		}
+			float centerDeltaX = (float) rect.getCenterX() - clickPoint.x;
+			float centerDeltaY = (float) rect.getCenterY() - clickPoint.y;
 
-		// Check y coords
-		if (clickPoint.y < rect.y)
-		{
-			nearestPoint.y = rect.y;
+			if (Math.abs(centerDeltaX) > Math.abs(centerDeltaY))
+			{
+				// Snap left if the delta is positive, else right.
+				nearestPoint.x = (centerDeltaX > 0) ? rect.x : maxX;
+			}
+			else
+			{
+				// Snap up if the delta is positive, else down.
+				nearestPoint.y = (centerDeltaY > 0) ? rect.y : maxY;
+			}
 		}
-		else if (clickPoint.y > maxY)
+		else
 		{
-			nearestPoint.y = maxY;
+			// Check x coords for points outside the rectangle
+			if (clickPoint.x < rect.x)
+			{
+				nearestPoint.x = rect.x;
+			}
+			else if (clickPoint.x > maxX)
+			{
+				nearestPoint.x = maxX;
+			}
+
+			// Check y coords for points outside the rectangle
+			if (clickPoint.y < rect.y)
+			{
+				nearestPoint.y = rect.y;
+			}
+			else if (clickPoint.y > maxY)
+			{
+				nearestPoint.y = maxY;
+			}
 		}
 
 		return nearestPoint;
@@ -545,7 +568,7 @@ public class Relationship
 			for (int i = 0; i < m_points.length; i++)
 			{
 				boolean isControlPoint = (i == m_selectedControlPointIndex);
-				g2d.setColor(isControlPoint ? Color.red : Color.green);
+				g2d.setColor(isControlPoint ? m_selectedNodeColor : m_nodeColor);
 
 				g2d.fillRect(m_points[i].x - offset, m_points[i].y - offset, m_cpDrawSize, m_cpDrawSize);
 			}
