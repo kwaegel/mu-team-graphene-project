@@ -8,12 +8,14 @@ import java.util.List;
 public class RelationshipDragListener extends MouseAdapter
 {
 	private List<Relationship> m_relationships;
+	private DiagramPanel m_diagramView;
 
 	private Relationship m_lastSelectedRelationship; // Cache the last selected relationship.
 
-	public RelationshipDragListener(List<Relationship> relationships)
+	public RelationshipDragListener(List<Relationship> relationships, DiagramPanel diagramView)
 	{
 		m_relationships = relationships;
+		m_diagramView = diagramView;
 	}
 
 	/**
@@ -61,6 +63,25 @@ public class RelationshipDragListener extends MouseAdapter
 
 			// TODO: repaint the newly selected relationship to show the selection nodes.
 		}
+
+		m_diagramView.repaint();
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		Point clickPoint = e.getPoint();
+
+		m_lastSelectedRelationship = getSelectedRelationship(clickPoint);
+
+		if (m_lastSelectedRelationship != null)
+		{
+			m_lastSelectedRelationship.setSelected(true, clickPoint);
+
+			// TODO: repaint the newly selected relationship to show the selection nodes.
+		}
+
+		m_diagramView.repaint();
 	}
 
 	@Override
@@ -71,6 +92,20 @@ public class RelationshipDragListener extends MouseAdapter
 			// Deselect any selected relationships.
 			m_lastSelectedRelationship.setSelected(false, null);
 		}
+
+		m_diagramView.repaint();
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		// Drag any selected relationships.
+		if (m_lastSelectedRelationship != null)
+		{
+			m_lastSelectedRelationship.mouseDragged(e);
+		}
+
+		m_diagramView.repaint();
 	}
 
 }

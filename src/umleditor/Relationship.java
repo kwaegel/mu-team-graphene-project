@@ -9,6 +9,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -104,7 +105,7 @@ public class Relationship
 	private boolean m_selected = false;
 
 	// Which control node, if any, is selected.
-	private Point m_selectedControlPoint = null;
+	private int m_selectedControlPointIndex = -1;
 
 	private int m_selectionTolerence = 5;
 
@@ -333,12 +334,30 @@ public class Relationship
 		m_points = pointList.toArray(new Point[0]);
 	}
 
+	public void mouseDragged(MouseEvent e)
+	{
+		if (m_selected && m_selectedControlPointIndex >= 0)
+		{
+			Point dragPoint = e.getPoint();
+			m_points[m_selectedControlPointIndex] = dragPoint;
+
+			// Rebuild the path.
+			createPathFromPoints();
+
+			// If we are dragging nodes at the end of the line, also rebuild the arrows.
+			if (m_selectedControlPointIndex <= 1 || m_selectedControlPointIndex >= m_points.length - 2)
+			{
+				createArrowPoints();
+			}
+		}
+	}
+
 	public void setSelected(boolean selected, Point clickPoint)
 	{
 		m_selected = selected;
 		if (m_selected)
 		{
-			m_selectedControlPoint = getSelectedControlPoint(clickPoint);
+			m_selectedControlPointIndex = getSelectedControlIndex(clickPoint);
 		}
 	}
 
@@ -348,18 +367,19 @@ public class Relationship
 	 * @param clickPoint
 	 * @return - the selected control point, or null if none is close to the click point.
 	 */
-	private Point getSelectedControlPoint(Point clickPoint)
+	private int getSelectedControlIndex(Point clickPoint)
 	{
 		int tol = m_selectionTolerence * m_selectionTolerence;
 
-		for (Point checkPoint : m_points)
+		for (int i = 0; i < m_points.length; i++)
 		{
-			if (checkPoint.distanceSq(clickPoint) < tol)
+			if (clickPoint.distanceSq(m_points[i]) < tol)
 			{
-				return checkPoint;
+				return i;
 			}
 		}
-		return null;
+
+		return -1;
 	}
 
 	/**
@@ -432,12 +452,12 @@ public class Relationship
 			Color oldColor = g2d.getColor();
 
 			int offset = m_cpDrawSize / 2;
-			for (Point controlPoint : m_points)
+			for (int i = 0; i < m_points.length; i++)
 			{
-				boolean isControlPoint = (controlPoint == m_selectedControlPoint);
+				boolean isControlPoint = (i == m_selectedControlPointIndex);
 				g2d.setColor(isControlPoint ? Color.red : Color.green);
 
-				g2d.fillRect(controlPoint.x - offset, controlPoint.y - offset, m_cpDrawSize, m_cpDrawSize);
+				g2d.fillRect(m_points[i].x - offset, m_points[i].y - offset, m_cpDrawSize, m_cpDrawSize);
 			}
 
 			g2d.setColor(oldColor);
