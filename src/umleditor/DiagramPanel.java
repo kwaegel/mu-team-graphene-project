@@ -17,10 +17,16 @@ public class DiagramPanel extends JPanel
 
 	private LinkedList<Relationship> m_relationships;
 
+	private RelationshipDragListener m_dragController;
+
 	public DiagramPanel()
 	{
 		super();
 		m_relationships = new LinkedList<Relationship>();
+
+		m_dragController = new RelationshipDragListener(m_relationships);
+		this.addMouseListener(m_dragController);
+		this.addMouseMotionListener(m_dragController);
 	}
 
 	private void setAntialiasing(Graphics g, boolean enable)
