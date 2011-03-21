@@ -54,7 +54,8 @@ public class RelationshipDragListener extends MouseAdapter
 	public void mouseClicked(MouseEvent e)
 	{
 		Point clickPoint = e.getPoint();
-		if (e.getClickCount() == 2 && m_lastSelectedRelationship.intersectsEpsilon(clickPoint))
+		if (m_lastSelectedRelationship != null && e.getClickCount() == 2
+				&& m_lastSelectedRelationship.intersectsEpsilon(clickPoint))
 		{
 			m_lastSelectedRelationship.addControlPoint(clickPoint);
 			m_diagramView.repaint();
