@@ -51,17 +51,26 @@ public class RelationshipDragListener extends MouseAdapter
 	@Override
 	public void mouseClicked(MouseEvent e)
 	{
-		System.out.println("Mouse clicked registered by " + this.getClass().getName());
-
 		Point clickPoint = e.getPoint();
 
 		m_lastSelectedRelationship = getSelectedRelationship(clickPoint);
 
 		if (m_lastSelectedRelationship != null)
 		{
-			System.out.println("Relationship selected!");
-		}
+			m_lastSelectedRelationship.setSelected(true, clickPoint);
 
+			// TODO: repaint the newly selected relationship to show the selection nodes.
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		if (m_lastSelectedRelationship != null)
+		{
+			// Deselect any selected relationships.
+			m_lastSelectedRelationship.setSelected(false, null);
+		}
 	}
 
 }

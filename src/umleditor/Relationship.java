@@ -23,14 +23,16 @@ import java.util.List;
  */
 public class Relationship
 {
-	private static final float arrowHeight = 12.0f;
-	private static final float arrowWidth = 15.0f;
+	/* Static constants. */
+	private static final float m_arrowHeight = 12.0f;
+	private static final float m_arrowWidth = 15.0f;
 
-	private static final int clickDelta = 5;
+	private static final int m_clickDelta = 5;
+
+	private static final int m_cpDrawSize = 6;
 
 	/**
 	 * The type of relationship.
-	 * 
 	 */
 	public enum RelationshipType
 	{
@@ -56,6 +58,8 @@ public class Relationship
 		 */
 		Generalization
 	}
+
+	/* Member variables. */
 
 	private enum FillType
 	{
@@ -91,7 +95,20 @@ public class Relationship
 
 	Point firstNodeOffset, secondNodeOffset;
 
+	/**
+	 * The {@link java.awt.Polygon Polygon} used to draw the end arrow of the relationship.
+	 */
 	Polygon m_arrow;
+
+	// If the relationship is selected or not.
+	private boolean m_selected = false;
+
+	// Which control node, if any, is selected.
+	private Point m_selectedControlPoint = null;
+
+	private int m_selectionTolerence = 5;
+
+	/* Methods */
 
 	/**
 	 * Creates a relationship between two classes without offset information.
@@ -189,6 +206,12 @@ public class Relationship
 			}
 		}
 
+		// Add a center control point for testing.
+		int deltaX = (m_points[m_points.length - 1].x - m_points[0].x) / 2;
+		int deltaY = (m_points[m_points.length - 1].y - m_points[0].y) / 2;
+		Point centerPoint = new Point(m_points[0].x + deltaX, m_points[0].y + deltaY);
+		this.addControlPoint(centerPoint, 1);
+
 		if (firstNodeOffset == null || secondNodeOffset == null)
 		{
 			firstNodeOffset = new Point();
@@ -212,6 +235,9 @@ public class Relationship
 		m_points[m_points.length - 1].y = secondBounds.y + secondNodeOffset.y;
 	}
 
+	/**
+	 * Determine type of arrow fill to use.
+	 */
 	private void setArrowFill()
 	{
 		if (type == RelationshipType.Composition || type == RelationshipType.Dependency)
@@ -228,6 +254,7 @@ public class Relationship
 		}
 	}
 
+	// FIXME: this does not redraw correctly when the class is being dragged.
 	private void createArrowPoints()
 	{
 		m_arrow = new Polygon(); // Create a blank polygon
@@ -246,12 +273,12 @@ public class Relationship
 		dirY /= distence;
 
 		// Create a perpendicular vector
-		double perpX = dirY * arrowWidth / 2.0;
-		double perpY = -dirX * arrowWidth / 2.0;
+		double perpX = dirY * m_arrowWidth / 2.0;
+		double perpY = -dirX * m_arrowWidth / 2.0;
 
 		// get the center point of the diamond (or center base of a triangle)
-		double centerX = end.x - dirX * arrowHeight;
-		double centerY = end.y - dirY * arrowHeight;
+		double centerX = end.x - dirX * m_arrowHeight;
+		double centerY = end.y - dirY * m_arrowHeight;
 
 		// Add tip point.
 		m_arrow.addPoint(end.x, end.y);
@@ -262,13 +289,13 @@ public class Relationship
 		// Add back point if needed.
 		if (type == RelationshipType.Aggregation || type == RelationshipType.Composition)
 		{
-			m_arrow.addPoint((int) (end.x - 2 * dirX * arrowHeight), (int) (end.y - 2 * dirY * arrowHeight));
+			m_arrow.addPoint((int) (end.x - 2 * dirX * m_arrowHeight), (int) (end.y - 2 * dirY * m_arrowHeight));
 		}
 
 		if (type == RelationshipType.Dependency)
 		{
 			// m_arrow.addPoint(end.x, end.y);
-			m_arrow.addPoint((int) (end.x - 0.5 * dirX * arrowHeight), (int) (end.y - 0.5 * dirY * arrowHeight));
+			m_arrow.addPoint((int) (end.x - 0.5 * dirX * m_arrowHeight), (int) (end.y - 0.5 * dirY * m_arrowHeight));
 		}
 
 		// Add right point.
@@ -306,6 +333,35 @@ public class Relationship
 		m_points = pointList.toArray(new Point[0]);
 	}
 
+	public void setSelected(boolean selected, Point clickPoint)
+	{
+		m_selected = selected;
+		if (m_selected)
+		{
+			m_selectedControlPoint = getSelectedControlPoint(clickPoint);
+		}
+	}
+
+	/**
+	 * Check for a selected control point near to a click point.
+	 * 
+	 * @param clickPoint
+	 * @return - the selected control point, or null if none is close to the click point.
+	 */
+	private Point getSelectedControlPoint(Point clickPoint)
+	{
+		int tol = m_selectionTolerence * m_selectionTolerence;
+
+		for (Point checkPoint : m_points)
+		{
+			if (checkPoint.distanceSq(clickPoint) < tol)
+			{
+				return checkPoint;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Check if the click point is near to the relationship line or end arrow.
 	 * 
@@ -314,8 +370,8 @@ public class Relationship
 	 */
 	public boolean intersectsEpsilon(Point clickPoint)
 	{
-		Rectangle2D clickArea = new Rectangle2D.Float(clickPoint.x - clickDelta, clickPoint.y - clickDelta,
-				clickDelta * 2, clickDelta * 2);
+		Rectangle2D clickArea = new Rectangle2D.Float(clickPoint.x - m_clickDelta, clickPoint.y - m_clickDelta,
+				m_clickDelta * 2, m_clickDelta * 2);
 
 		return m_line.intersects(clickArea) || m_arrow.intersects(clickArea);
 	}
@@ -368,6 +424,23 @@ public class Relationship
 				break;
 			case None:// Do not draw an arrow.
 				break;
+		}
+
+		// If the relationship is selected, draw a handle at each control node
+		if (m_selected)
+		{
+			Color oldColor = g2d.getColor();
+
+			int offset = m_cpDrawSize / 2;
+			for (Point controlPoint : m_points)
+			{
+				boolean isControlPoint = (controlPoint == m_selectedControlPoint);
+				g2d.setColor(isControlPoint ? Color.red : Color.green);
+
+				g2d.fillRect(controlPoint.x - offset, controlPoint.y - offset, m_cpDrawSize, m_cpDrawSize);
+			}
+
+			g2d.setColor(oldColor);
 		}
 	}
 
