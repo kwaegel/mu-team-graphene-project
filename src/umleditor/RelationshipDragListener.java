@@ -51,6 +51,17 @@ public class RelationshipDragListener extends MouseAdapter
 	/* Mouse adapter methods */
 
 	@Override
+	public void mouseClicked(MouseEvent e)
+	{
+		Point clickPoint = e.getPoint();
+		if (e.getClickCount() == 2 && m_lastSelectedRelationship.intersectsEpsilon(clickPoint))
+		{
+			m_lastSelectedRelationship.addControlPoint(clickPoint);
+			m_diagramView.repaint();
+		}
+	}
+
+	@Override
 	public void mousePressed(MouseEvent e)
 	{
 		Point clickPoint = e.getPoint();

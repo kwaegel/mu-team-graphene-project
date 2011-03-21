@@ -11,6 +11,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -107,7 +108,7 @@ public class Relationship
 	// Which control node, if any, is selected.
 	private int m_selectedControlPointIndex = -1;
 
-	private int m_selectionTolerence = 5;
+	private int m_selectionTolerence = 4;
 
 	/* Methods */
 
@@ -255,7 +256,9 @@ public class Relationship
 		}
 	}
 
-	// FIXME: this does not redraw correctly when the class is being dragged.
+	/**
+	 * Create arrow points for the end of the relationship line.
+	 */
 	private void createArrowPoints()
 	{
 		m_arrow = new Polygon(); // Create a blank polygon
@@ -321,6 +324,28 @@ public class Relationship
 		{
 			Point p = m_points[i];
 			m_line.lineTo(p.x, p.y);
+		}
+	}
+
+	public void addControlPoint(Point clickPoint)
+	{
+		int halfTol = m_selectionTolerence / 2;
+		Rectangle2D boundingRect = new Rectangle2D.Float(clickPoint.x - halfTol, clickPoint.y - halfTol,
+				m_selectionTolerence, m_selectionTolerence);
+
+		// Find which line segment to add the new control point on
+		for (int i = 0; i < m_points.length - 1; i++)
+		{
+			Point segStart = m_points[i];
+			Point segEnd = m_points[i + 1];
+
+			Line2D seg = new Line2D.Float(segStart, segEnd);
+
+			if (boundingRect.intersectsLine(seg))
+			{
+				this.addControlPoint(clickPoint, i + 1);
+				break;
+			}
 		}
 	}
 
