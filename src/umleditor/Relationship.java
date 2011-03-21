@@ -260,8 +260,8 @@ public class Relationship
 	{
 		m_arrow = new Polygon(); // Create a blank polygon
 
-		// Copy start and end data from line arrays.
-		Point start = m_points[0];
+		// Get start and end points from the last line segment.
+		Point start = m_points[m_points.length - 2];
 		Point end = m_points[m_points.length - 1];
 
 		// Calculate line direction vector.
@@ -303,7 +303,7 @@ public class Relationship
 		m_arrow.addPoint((int) (centerX + perpX), (int) (centerY + perpY));
 
 		// Copy points back to line array
-		m_points[0] = start;
+		m_points[m_points.length - 2] = start;
 		m_points[m_points.length - 1] = end;
 	}
 
@@ -334,6 +334,11 @@ public class Relationship
 		m_points = pointList.toArray(new Point[0]);
 	}
 
+	/**
+	 * Handle dragging the relationship control points.
+	 * 
+	 * @param e
+	 */
 	public void mouseDragged(MouseEvent e)
 	{
 		if (m_selected && m_selectedControlPointIndex >= 0)
