@@ -33,6 +33,8 @@ public class Relationship
 
 	private static final int m_cpDrawSize = 6;
 
+	private static final int m_selectionTolerence = 4;
+
 	/**
 	 * The type of relationship.
 	 */
@@ -88,14 +90,14 @@ public class Relationship
 	/**
 	 * Contains a reference to the first ClassNode (relationship comes ‘from’ this one).
 	 */
-	private ClassNode firstNode;
+	private ClassNode m_firstNode;
 
 	/**
 	 * Contains a reference to the second ClassNode (relationship goes ‘to’ this one).
 	 */
-	private ClassNode secondNode;
+	private ClassNode m_secondNode;
 
-	Point firstNodeOffset, secondNodeOffset;
+	private Point m_firstNodeOffset, m_secondNodeOffset;
 
 	/**
 	 * The {@link java.awt.Polygon Polygon} used to draw the end arrow of the relationship.
@@ -107,8 +109,6 @@ public class Relationship
 
 	// Which control node, if any, is selected.
 	private int m_selectedControlPointIndex = -1;
-
-	private int m_selectionTolerence = 4;
 
 	/* Methods */
 
@@ -122,8 +122,8 @@ public class Relationship
 	public Relationship(ClassNode first, ClassNode second, RelationshipType type)
 	{
 		this.type = type;
-		firstNode = first;
-		secondNode = second;
+		m_firstNode = first;
+		m_secondNode = second;
 
 		int m_numLinePoints = 2;
 		m_points = new Point[m_numLinePoints];
@@ -150,8 +150,8 @@ public class Relationship
 	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
 	{
 		this.type = type;
-		firstNode = first;
-		secondNode = second;
+		m_firstNode = first;
+		m_secondNode = second;
 
 		int m_numLinePoints = 2;
 		m_points = new Point[m_numLinePoints];
@@ -159,8 +159,8 @@ public class Relationship
 
 		m_arrow = new Polygon();
 
-		firstNodeOffset = firstOffset;
-		secondNodeOffset = secondOffset;
+		m_firstNodeOffset = firstOffset;
+		m_secondNodeOffset = secondOffset;
 		calculatePathControlPoints();
 
 		addControlPoint(new Point(100, 100), 1);
@@ -173,8 +173,8 @@ public class Relationship
 
 	private void calculatePathControlPoints()
 	{
-		Rectangle firstBounds = firstNode.getBounds();
-		Rectangle secondBounds = secondNode.getBounds();
+		Rectangle firstBounds = m_firstNode.getBounds();
+		Rectangle secondBounds = m_secondNode.getBounds();
 
 		// Find the center points of each edge for the first node.
 		Point[] startEdges = new Point[4];
@@ -214,27 +214,27 @@ public class Relationship
 		Point centerPoint = new Point(m_points[0].x + deltaX, m_points[0].y + deltaY);
 		this.addControlPoint(centerPoint, 1);
 
-		if (firstNodeOffset == null || secondNodeOffset == null)
+		if (m_firstNodeOffset == null || m_secondNodeOffset == null)
 		{
-			firstNodeOffset = new Point();
-			secondNodeOffset = new Point();
-			firstNodeOffset.x = m_points[0].x - firstBounds.x;
-			firstNodeOffset.y = m_points[0].y - firstBounds.y;
-			secondNodeOffset.x = m_points[m_points.length - 1].x - secondBounds.x;
-			secondNodeOffset.y = m_points[m_points.length - 1].y - secondBounds.y;
+			m_firstNodeOffset = new Point();
+			m_secondNodeOffset = new Point();
+			m_firstNodeOffset.x = m_points[0].x - firstBounds.x;
+			m_firstNodeOffset.y = m_points[0].y - firstBounds.y;
+			m_secondNodeOffset.x = m_points[m_points.length - 1].x - secondBounds.x;
+			m_secondNodeOffset.y = m_points[m_points.length - 1].y - secondBounds.y;
 		}
 	}
 
 	private void recalculateEndPoints()
 	{
-		Rectangle firstBounds = firstNode.getBounds();
-		Rectangle secondBounds = secondNode.getBounds();
+		Rectangle firstBounds = m_firstNode.getBounds();
+		Rectangle secondBounds = m_secondNode.getBounds();
 
-		m_points[0].x = firstBounds.x + firstNodeOffset.x;
-		m_points[0].y = firstBounds.y + firstNodeOffset.y;
+		m_points[0].x = firstBounds.x + m_firstNodeOffset.x;
+		m_points[0].y = firstBounds.y + m_firstNodeOffset.y;
 
-		m_points[m_points.length - 1].x = secondBounds.x + secondNodeOffset.x;
-		m_points[m_points.length - 1].y = secondBounds.y + secondNodeOffset.y;
+		m_points[m_points.length - 1].x = secondBounds.x + m_secondNodeOffset.x;
+		m_points[m_points.length - 1].y = secondBounds.y + m_secondNodeOffset.y;
 	}
 
 	/**
@@ -360,7 +360,8 @@ public class Relationship
 	}
 
 	/**
-	 * Handle dragging the relationship control points.
+	 * Handle dragging the relationship control points. If the first or last control point is being dragged, ensure it
+	 * remains attached to the box.
 	 * 
 	 * @param e
 	 */
@@ -369,7 +370,27 @@ public class Relationship
 		if (m_selected && m_selectedControlPointIndex >= 0)
 		{
 			Point dragPoint = e.getPoint();
-			m_points[m_selectedControlPointIndex] = dragPoint;
+
+			if (m_selectedControlPointIndex == 0)
+			{
+				Rectangle bounds = m_firstNode.getBounds();
+				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
+
+				m_firstNodeOffset.x = m_points[m_selectedControlPointIndex].x - bounds.x;
+				m_firstNodeOffset.y = m_points[m_selectedControlPointIndex].y - bounds.y;
+			}
+			else if (m_selectedControlPointIndex == m_points.length - 1)
+			{
+				Rectangle bounds = m_secondNode.getBounds();
+				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
+
+				m_secondNodeOffset.x = m_points[m_selectedControlPointIndex].x - bounds.x;
+				m_secondNodeOffset.y = m_points[m_selectedControlPointIndex].y - bounds.y;
+			}
+			else
+			{
+				m_points[m_selectedControlPointIndex] = dragPoint;
+			}
 
 			// Rebuild the path.
 			createPathFromPoints();
@@ -380,6 +401,45 @@ public class Relationship
 				createArrowPoints();
 			}
 		}
+	}
+
+	/**
+	 * Return the point on the rectangle that is closest to the click point.
+	 * 
+	 * @param clickPoint
+	 *            - the click point
+	 * @param rect
+	 *            - the {@link java.awt.Rectangle rectangle} to check.
+	 * @return - the point on the rectangle nearest to the click point.
+	 */
+	private Point getClosestPointOnRectangle(Point clickPoint, Rectangle rect)
+	{
+		Point nearestPoint = new Point(clickPoint);
+
+		int maxX = rect.x + rect.width;
+		int maxY = rect.y + rect.height;
+
+		// Check x coords
+		if (clickPoint.x < rect.x)
+		{
+			nearestPoint.x = rect.x;
+		}
+		else if (clickPoint.x > maxX)
+		{
+			nearestPoint.x = maxX;
+		}
+
+		// Check y coords
+		if (clickPoint.y < rect.y)
+		{
+			nearestPoint.y = rect.y;
+		}
+		else if (clickPoint.y > maxY)
+		{
+			nearestPoint.y = maxY;
+		}
+
+		return nearestPoint;
 	}
 
 	public void setSelected(boolean selected, Point clickPoint)
