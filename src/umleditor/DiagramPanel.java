@@ -24,7 +24,7 @@ public class DiagramPanel extends JPanel
 		super();
 		m_relationships = new LinkedList<Relationship>();
 
-		m_dragController = new RelationshipDragListener(m_relationships);
+		m_dragController = new RelationshipDragListener(m_relationships, this);
 		this.addMouseListener(m_dragController);
 		this.addMouseMotionListener(m_dragController);
 	}
