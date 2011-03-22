@@ -81,7 +81,7 @@ public class Relationship
 	/**
 	 * The type of relationship to draw.
 	 */
-	private RelationshipType type;
+	private RelationshipType m_type;
 
 	/**
 	 * Contains a list of class nodes to draw between.
@@ -105,7 +105,7 @@ public class Relationship
 	/**
 	 * The {@link java.awt.Polygon Polygon} used to draw the end arrow of the relationship.
 	 */
-	Polygon m_arrow;
+	private Polygon m_arrow;
 
 	// If the relationship is selected or not.
 	private boolean m_selected = false;
@@ -124,7 +124,7 @@ public class Relationship
 	 */
 	public Relationship(ClassNode first, ClassNode second, RelationshipType type)
 	{
-		this.type = type;
+		this.m_type = type;
 		m_firstNode = first;
 		m_secondNode = second;
 
@@ -152,7 +152,7 @@ public class Relationship
 	 */
 	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
 	{
-		this.type = type;
+		this.m_type = type;
 		m_firstNode = first;
 		m_secondNode = second;
 
@@ -162,9 +162,9 @@ public class Relationship
 
 		m_arrow = new Polygon();
 
+		calculatePathControlPoints();
 		m_firstNodeOffset = firstOffset;
 		m_secondNodeOffset = secondOffset;
-		calculatePathControlPoints();
 
 		addControlPoint(new Point(100, 100), 1);
 
@@ -211,12 +211,6 @@ public class Relationship
 			}
 		}
 
-		// Add a center control point for testing.
-		int deltaX = (m_points[m_points.length - 1].x - m_points[0].x) / 2;
-		int deltaY = (m_points[m_points.length - 1].y - m_points[0].y) / 2;
-		Point centerPoint = new Point(m_points[0].x + deltaX, m_points[0].y + deltaY);
-		this.addControlPoint(centerPoint, 1);
-
 		if (m_firstNodeOffset == null || m_secondNodeOffset == null)
 		{
 			m_firstNodeOffset = new Point();
@@ -245,15 +239,15 @@ public class Relationship
 	 */
 	private void setArrowFill()
 	{
-		if (type == RelationshipType.Composition || type == RelationshipType.Dependency)
+		if (m_type == RelationshipType.Composition || m_type == RelationshipType.Dependency)
 		{
 			m_endFill = FillType.Solid;
 		}
-		else if (type == RelationshipType.Generalization || type == RelationshipType.Aggregation)
+		else if (m_type == RelationshipType.Generalization || m_type == RelationshipType.Aggregation)
 		{
 			m_endFill = FillType.Outline;
 		}
-		else if (type == RelationshipType.Association)
+		else if (m_type == RelationshipType.Association)
 		{
 			m_endFill = FillType.None;
 		}
@@ -294,12 +288,12 @@ public class Relationship
 		m_arrow.addPoint((int) (centerX - perpX), (int) (centerY - perpY));
 
 		// Add back point if needed.
-		if (type == RelationshipType.Aggregation || type == RelationshipType.Composition)
+		if (m_type == RelationshipType.Aggregation || m_type == RelationshipType.Composition)
 		{
 			m_arrow.addPoint((int) (end.x - 2 * dirX * m_arrowHeight), (int) (end.y - 2 * dirY * m_arrowHeight));
 		}
 
-		if (type == RelationshipType.Dependency)
+		if (m_type == RelationshipType.Dependency)
 		{
 			// m_arrow.addPoint(end.x, end.y);
 			m_arrow.addPoint((int) (end.x - 0.5 * dirX * m_arrowHeight), (int) (end.y - 0.5 * dirY * m_arrowHeight));
@@ -360,6 +354,23 @@ public class Relationship
 		pointList.add(indexOfPointAfterNewPoint, newControlPoint);
 
 		m_points = pointList.toArray(new Point[0]);
+	}
+
+	public void removeSelectedControlPoint()
+	{
+		// Don't remove the end points.
+		if (m_selectedControlPointIndex > 0 && m_selectedControlPointIndex < m_points.length - 1)
+		{
+			// TODO: convert m_points to a linked list to avoid the conversion.
+			List<Point> pointList = new LinkedList<Point>(Arrays.asList(m_points));
+
+			pointList.remove(m_selectedControlPointIndex);
+
+			m_points = pointList.toArray(new Point[0]);
+
+			this.createPathFromPoints();
+			this.createArrowPoints();
+		}
 	}
 
 	/**
@@ -524,7 +535,7 @@ public class Relationship
 		Stroke oldStroke = g2d.getStroke();
 
 		// Dependencies need to be drawn with a dashed line.
-		if (type == RelationshipType.Dependency)
+		if (m_type == RelationshipType.Dependency)
 		{
 			g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[] { 8.0f,
 					8.0f }, 5.0f));
@@ -536,7 +547,6 @@ public class Relationship
 		createArrowPoints();
 
 		// Draw a line through all the line points.
-		// g2d.drawPolyline(m_xLinePoints, m_yLinePoints, m_numLinePoints);
 		g2d.draw(m_line);
 
 		// Restore the previous stroke pattern
