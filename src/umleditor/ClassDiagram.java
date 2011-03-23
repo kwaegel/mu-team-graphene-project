@@ -76,11 +76,6 @@ public class ClassDiagram implements MouseListener, KeyListener
 		// node.makeSelected here?
 	}
 
-	public ClassNode getSelectedNode()
-	{
-		return (selectedNode);
-	}
-
 	public void deleteSelectedNode()
 	{
 		NodePanel panelToRemove = selectedNode.getNodePanel();
@@ -138,10 +133,6 @@ public class ClassDiagram implements MouseListener, KeyListener
 		}
 	}
 
-	public DiagramPanel getView()
-	{
-		return (view);
-	}
 
 	@Override
 	public void mouseClicked(MouseEvent e)
