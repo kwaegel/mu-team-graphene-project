@@ -176,8 +176,8 @@ public class Relationship
 
 	private void calculatePathControlPoints()
 	{
-		Rectangle firstBounds = m_firstNode.getBounds();
-		Rectangle secondBounds = m_secondNode.getBounds();
+		Rectangle firstBounds = m_firstNode.getNodePanelBounds();
+		Rectangle secondBounds = m_secondNode.getNodePanelBounds();
 
 		// Find the center points of each edge for the first node.
 		Point[] startEdges = new Point[4];
@@ -224,8 +224,8 @@ public class Relationship
 
 	private void recalculateEndPoints()
 	{
-		Rectangle firstBounds = m_firstNode.getBounds();
-		Rectangle secondBounds = m_secondNode.getBounds();
+		Rectangle firstBounds = m_firstNode.getNodePanelBounds();
+		Rectangle secondBounds = m_secondNode.getNodePanelBounds();
 
 		m_points[0].x = firstBounds.x + m_firstNodeOffset.x;
 		m_points[0].y = firstBounds.y + m_firstNodeOffset.y;
@@ -387,7 +387,7 @@ public class Relationship
 
 			if (m_selectedControlPointIndex == 0)
 			{
-				Rectangle bounds = m_firstNode.getBounds();
+				Rectangle bounds = m_firstNode.getNodePanelBounds();
 				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
 
 				m_firstNodeOffset.x = m_points[m_selectedControlPointIndex].x - bounds.x;
@@ -395,7 +395,7 @@ public class Relationship
 			}
 			else if (m_selectedControlPointIndex == m_points.length - 1)
 			{
-				Rectangle bounds = m_secondNode.getBounds();
+				Rectangle bounds = m_secondNode.getNodePanelBounds();
 				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
 
 				m_secondNodeOffset.x = m_points[m_selectedControlPointIndex].x - bounds.x;
