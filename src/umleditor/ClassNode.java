@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ClassNode
 {
-
+    
 	private static int nodesCreated = 0;
 
 	private NodePanel nodePanel;
@@ -46,6 +46,10 @@ public class ClassNode
 		this.nodePanel = otherNode.nodePanel;
 	}*/
 
+	/**
+	 * Attaches the given node panel to this node.
+	 * Called in NodePanel's constructor.
+	 */
 	public void attachPanel(NodePanel panel)
 	{
 		nodePanel = panel;
@@ -55,14 +59,6 @@ public class ClassNode
 	public String getName()
 	{
 		return className;
-	}
-
-	/**
-	 * @return - the bounds of this node.
-	 */
-	public Rectangle getBounds()
-	{
-		return nodePanel.getBounds();
 	}
 
 	// Sets the name of the Class Node
@@ -104,6 +100,10 @@ public class ClassNode
 		nodePanel.revalidate();
 	}
 
+	/**
+	 * Get the number of attributes in this class node
+	 * @return - number of attributes
+	 */
 	public int getNumAttributes()
 	{
 		return (listOfAttributes.size());
@@ -140,11 +140,19 @@ public class ClassNode
 		nodePanel.revalidate();
 	}
 
+	/**
+	 * Get the number of methods this class node has
+	 * @return - the number of methods
+	 */
 	public int getNumMethods()
 	{
 		return (listOfMethods.size());
 	}
 
+	/**
+	 * Attached the given relationship to this node
+	 * @param relationship - the relationship to attach
+	 */
 	public void addRelationship(Relationship relationship)
 	{
 		relationships.add(relationship);
@@ -157,16 +165,29 @@ public class ClassNode
 		relationships.remove(relationship);
 	}
 
+	/**
+	 * Get all of the relationships which end on or start from this node
+	 * @return - list of relationships
+	 */
 	public List<Relationship> getRelationships()
 	{
 		return relationships;
 	}
 
-	// Returns this ClassNode's NodePanel
+	/**
+	 * Returns the NodePanel associated with this class node
+	 * @return
+	 */
 	public NodePanel getNodePanel()
 	{
 		return nodePanel;
-
 	}
-
+	
+	/**
+	 * @return - the bounds of this node's panel
+	 */
+	public Rectangle getNodePanelBounds()
+	{
+		return nodePanel.getBounds();
+	}
 }
