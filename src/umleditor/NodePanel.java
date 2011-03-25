@@ -14,14 +14,39 @@ import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * This is the visible representation of a class that appears in the UML Editor. Contains no information about the class
+ * itself, but has a link to the ClassNode that does. Displays the information in this ClassNode in the appropriate
+ * format. Handles interactions between the user and the class.
+ * 
+ */
 public class NodePanel extends JPanel implements MouseListener
 {
-
+	/**
+	 * Generated id, recommended for all GUI components
+	 */
 	private static final long serialVersionUID = 912113941232687505L;
 
+	/**
+	 * Height of top label, which displays the class name and also serves as a drag area for the NodePanel.
+	 */
 	private static int LABEL_AND_DRAG_Y_BOUND = 30;
+	/**
+	 * Height of a default (method or attribute) field. Used to ensure empty fields (which may be present during
+	 * editing), or classes that have no attributes and/or methods, display correctly. This is the height that a JLabel
+	 * with some title in the default font will have automatically.
+	 */
+	private static int DEFAULT_FIELD_HEIGHT = 16;
 
+	/**
+	 * ClassNode associated with this NodePanel. The NodePanel will display this ClassNode's name, methods and
+	 * attributes.
+	 */
 	private ClassNode associatedNode;
+
+	/**
+	 * 
+	 */
 	private ClassDiagram parentDiagram;
 
 	public NodePanel(ClassDiagram parent, ClassNode node)
@@ -87,8 +112,18 @@ public class NodePanel extends JPanel implements MouseListener
 		{
 			String attributeName = associatedNode.getAttribute(i);
 			JLabel attributeLabel = new JLabel(attributeName);
+			// ensure that blank fields don't make node panel smaller
+			// will never have a blank attribute except while editing,
+			// but while editing, don't want strange effects where making
+			// a field empty causes node lenght to shrink
+			if (attributeName.isEmpty())
+				attributeLabel.setMinimumSize(new Dimension(0, 16));
 			this.add(attributeLabel, "gapx 3 3");
 		}
+
+		// add space if there are no attributes so displays properly
+		if (associatedNode.getNumAttributes() == 0)
+			addSpacer();
 
 		// add separator
 		addSeparator();
@@ -98,11 +133,21 @@ public class NodePanel extends JPanel implements MouseListener
 		{
 			String methodName = associatedNode.getMethod(i);
 			JLabel methodLabel = new JLabel(methodName);
+			// ensure that blank fields don't make node panel smaller
+			// will never have a blank attribute except while editing,
+			// but while editing, don't want strange effects where making
+			// a field empty causes node lenght to shrink
+			if (methodName.isEmpty())
+				methodLabel.setMinimumSize(new Dimension(0, DEFAULT_FIELD_HEIGHT));
 			this.add(methodLabel, "gapx 3 3");
 		}
 
+		// add space if there are no attributes so displays properly
+		if (associatedNode.getNumMethods() == 0)
+			addSpacer();
+
 		// add an empty JLabel, workaround for a bug in MigLayout
-		// where using direction docking causes the last component 
+		// where using direction docking causes the last component
 		// in the container to not have the normal gap after it
 		this.add(new JLabel());
 	}
@@ -115,6 +160,16 @@ public class NodePanel extends JPanel implements MouseListener
 		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
 		separator.setForeground(Color.black);
 		this.add(separator);
+	}
+
+	/**
+	 * Adds a spacer the height of an empty field
+	 */
+	private void addSpacer()
+	{
+		JLabel spacer = new JLabel();
+		spacer.setMinimumSize(new Dimension(0, DEFAULT_FIELD_HEIGHT));
+		this.add(spacer);
 	}
 
 	@Override

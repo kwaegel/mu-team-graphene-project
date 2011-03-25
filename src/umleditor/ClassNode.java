@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ClassNode
 {
-    
+
 	private static int nodesCreated = 0;
 
 	private NodePanel nodePanel;
@@ -32,27 +32,41 @@ public class ClassNode
 		listOfMethods.add("method 1");
 		relationships = new ArrayList<Relationship>();
 	}
-	
-	/**
-	 * 
-	 * @param otherNode
-	 */
-	/*public ClassNode(ClassNode otherNode)
-	{
-		this.className = otherNode.className;
-		this.listOfAttributes = new ArrayList<String>(otherNode.listOfAttributes);
-		this.listOfMethods = new ArrayList<String>(otherNode.listOfMethods);
-		this.relationships = new ArrayList<Relationship>(otherNode.relationships);
-		this.nodePanel = otherNode.nodePanel;
-	}*/
 
 	/**
-	 * Attaches the given node panel to this node.
-	 * Called in NodePanel's constructor.
+	 * Constructs a copy of otherNode which has identical name, attributes, and methods NodePanel will initially be
+	 * null. Relationships will not be copied
+	 * 
+	 * @param otherNode
+	 *            - node from which we get name, attributes and methods
+	 */
+	// TODO: should be able to write some good JUnit tests with this
+	public ClassNode(ClassNode otherNode)
+	{
+		this.setPropertiesTo(otherNode);
+		this.relationships = new ArrayList<Relationship>();
+		this.nodePanel = otherNode.nodePanel;
+	}
+
+	/**
+	 * Attaches the given node panel to this node. Called in NodePanel's constructor.
 	 */
 	public void attachPanel(NodePanel panel)
 	{
 		nodePanel = panel;
+	}
+
+	/**
+	 * Sets the core properties of the node (name, attributes, methods) to those of otherNode. Used in the EditPanel to
+	 * easily revert the node's properties without modifying unrelated values such as nodePanel or relationships
+	 * 
+	 * @param otherNode - node from which to get name, attributes and methods
+	 */
+	public void setPropertiesTo(ClassNode otherNode)
+	{
+		this.className = otherNode.className;
+		this.listOfAttributes = new ArrayList<String>(otherNode.listOfAttributes);
+		this.listOfMethods = new ArrayList<String>(otherNode.listOfMethods);
 	}
 
 	// Returns the name of the Class Node
@@ -65,16 +79,14 @@ public class ClassNode
 	public void setName(String name)
 	{
 		className = name;
-		nodePanel.createDisplay();
-		nodePanel.revalidate();
+		updateNodePanel();
 	}
 
 	// Add String attribute to listofAttributes
 	public void addAttribute(String attribute)
 	{
 		listOfAttributes.add(attribute);
-		nodePanel.createDisplay();
-		nodePanel.revalidate();
+		updateNodePanel();
 	}
 
 	// Returns the name of the Attribute at the index in listofAttributes
@@ -88,20 +100,19 @@ public class ClassNode
 	public void setAttribute(int index, String attribute)
 	{
 		listOfAttributes.set(index, attribute);
-		nodePanel.createDisplay();
-		nodePanel.revalidate();
+		updateNodePanel();
 	}
 
 	// Removes the attribute in listofAttributes at the index
 	public void removeAttribute(int index)
 	{
 		listOfAttributes.remove(index);
-		nodePanel.createDisplay();
-		nodePanel.revalidate();
+		updateNodePanel();
 	}
 
 	/**
 	 * Get the number of attributes in this class node
+	 * 
 	 * @return - number of attributes
 	 */
 	public int getNumAttributes()
@@ -113,8 +124,7 @@ public class ClassNode
 	public void addMethod(String method)
 	{
 		listOfMethods.add(method);
-		nodePanel.createDisplay();
-		nodePanel.revalidate();
+		updateNodePanel();
 	}
 
 	// Returns the String at the index in listofMethods
@@ -128,20 +138,19 @@ public class ClassNode
 	public void setMethod(int index, String method)
 	{
 		listOfMethods.set(index, method);
-		nodePanel.createDisplay();
-		nodePanel.revalidate();
+		updateNodePanel();
 	}
 
 	// Removes the method in listofMethods at the index
 	public void removeMethod(int index)
 	{
 		listOfMethods.remove(index);
-		nodePanel.createDisplay();
-		nodePanel.revalidate();
+		updateNodePanel();
 	}
 
 	/**
 	 * Get the number of methods this class node has
+	 * 
 	 * @return - the number of methods
 	 */
 	public int getNumMethods()
@@ -151,7 +160,9 @@ public class ClassNode
 
 	/**
 	 * Attached the given relationship to this node
-	 * @param relationship - the relationship to attach
+	 * 
+	 * @param relationship
+	 *            - the relationship to attach
 	 */
 	public void addRelationship(Relationship relationship)
 	{
@@ -167,6 +178,7 @@ public class ClassNode
 
 	/**
 	 * Get all of the relationships which end on or start from this node
+	 * 
 	 * @return - list of relationships
 	 */
 	public List<Relationship> getRelationships()
@@ -176,18 +188,29 @@ public class ClassNode
 
 	/**
 	 * Returns the NodePanel associated with this class node
+	 * 
 	 * @return
 	 */
 	public NodePanel getNodePanel()
 	{
 		return nodePanel;
 	}
-	
+
 	/**
 	 * @return - the bounds of this node's panel
 	 */
 	public Rectangle getNodePanelBounds()
 	{
 		return nodePanel.getBounds();
+	}
+	
+	/**
+	 * Ensures the NodePanel will reflect changes in the ClassNode
+	 * Called whenever the class node changes.
+	 */
+	public void updateNodePanel()
+	{
+		nodePanel.createDisplay();
+		nodePanel.revalidate();
 	}
 }

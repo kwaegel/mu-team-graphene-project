@@ -31,7 +31,7 @@ public class NodeDragListener extends MouseInputAdapter
 	@Override
 	public void mouseExited(MouseEvent e)
 	{
-		// don't reset the cursor unless we're dragging it -- do we want this?
+		// don't reset the cursor if we're also dragging it -- do we want this?
 		// if (!MouseEvent.getModifiersExText(e.getModifiersEx()).contains("Button1"))
 		panel.setCursor(Cursor.getDefaultCursor());
 	}
@@ -56,7 +56,6 @@ public class NodeDragListener extends MouseInputAdapter
 		ClassDiagram containingDiagram = panel.getParentDiagram();
 		Point delta = new Point(e.getX() - previousMouseLoc.x, e.getY() - previousMouseLoc.y);
 		containingDiagram.movePanel(panel, delta);
-
 	}
 
 	@Override
