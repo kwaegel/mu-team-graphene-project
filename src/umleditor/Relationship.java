@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -247,6 +248,9 @@ public class Relationship extends JComponent
 		newBounds.width += 2;
 
 		this.setBounds(newBounds);
+		this.setMinimumSize(newBounds.getSize());
+		this.setMaximumSize(newBounds.getSize());
+		this.setPreferredSize(newBounds.getSize());
 	}
 
 	/**
@@ -556,6 +560,7 @@ public class Relationship extends JComponent
 		super.paintComponent(g);
 
 		Graphics2D g2d = (Graphics2D) g;
+		AffineTransform oldTransform = g2d.getTransform();
 
 		// Convert from local coordinates to parent coordinates.
 		Point loc = this.getLocation();
@@ -618,6 +623,10 @@ public class Relationship extends JComponent
 
 			g2d.setColor(oldColor);
 		}
+
+		// Set the old transfrom back
+		g2d.translate(loc.x, loc.y);
+		// g2d.setTransform(oldTransform);
 	}
 
 }
