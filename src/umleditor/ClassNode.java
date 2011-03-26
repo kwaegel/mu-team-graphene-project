@@ -199,7 +199,7 @@ public class ClassNode
 	/**
 	 * @return - the bounds of this node's panel
 	 */
-	public Rectangle getNodePanelBounds()
+	public Rectangle getBounds()
 	{
 		return nodePanel.getBounds();
 	}
