@@ -121,7 +121,22 @@ public class Relationship extends JComponent
 	// Which control node, if any, is selected.
 	private int m_selectedControlPointIndex = -1;
 
-	/* Methods */
+	/***** Constructors *****/
+
+	/**
+	 * Creates a relationship between two classes using offset information.
+	 * 
+	 * @param first
+	 * @param firstOffset
+	 * @param second
+	 * @param secondOffset
+	 */
+	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
+	{
+		this(first, second, type);
+		m_firstNodeOffset = firstOffset;
+		m_secondNodeOffset = secondOffset;
+	}
 
 	/**
 	 * Creates a relationship between two classes without offset information.
@@ -144,6 +159,9 @@ public class Relationship extends JComponent
 
 		calculatePathControlPoints();
 
+		m_firstNodeOffset = calculateOffset(m_points[0], m_firstNode.getBounds());
+		m_secondNodeOffset = calculateOffset(m_points[m_points.length - 1], m_secondNode.getBounds());
+
 		createPathFromPoints();
 
 		createArrowPoints();
@@ -155,43 +173,17 @@ public class Relationship extends JComponent
 		this.setOpaque(false);
 	}
 
-	/**
-	 * Creates a relationship between two classes using offset information.
-	 * 
-	 * @param first
-	 * @param firstOffset
-	 * @param second
-	 * @param secondOffset
-	 */
-	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
+	/***** Methods *****/
+
+	private static Point calculateOffset(Point p, Rectangle r)
 	{
-		this.m_type = type;
-		m_firstNode = first;
-		m_secondNode = second;
-
-		int m_numLinePoints = 2;
-		m_points = new Point[m_numLinePoints];
-		m_line = new GeneralPath(GeneralPath.WIND_NON_ZERO, m_numLinePoints);
-
-		m_arrow = new Polygon();
-
-		calculatePathControlPoints();
-		m_firstNodeOffset = firstOffset;
-		m_secondNodeOffset = secondOffset;
-
-		createPathFromPoints();
-
-		createArrowPoints();
-		setArrowFill();
-
-		recalculateBounds();
-		this.setOpaque(false);
+		return new Point(p.x - r.x, p.y - r.y);
 	}
 
 	private void calculatePathControlPoints()
 	{
-		Rectangle firstBounds = m_firstNode.getNodePanelBounds();
-		Rectangle secondBounds = m_secondNode.getNodePanelBounds();
+		Rectangle firstBounds = m_firstNode.getBounds();
+		Rectangle secondBounds = m_secondNode.getBounds();
 
 		// Find the center points of each edge for the first node.
 		Point[] startEdges = new Point[4];
@@ -224,22 +216,12 @@ public class Relationship extends JComponent
 				}
 			}
 		}
-
-		if (m_firstNodeOffset == null || m_secondNodeOffset == null)
-		{
-			m_firstNodeOffset = new Point();
-			m_secondNodeOffset = new Point();
-			m_firstNodeOffset.x = m_points[0].x - firstBounds.x;
-			m_firstNodeOffset.y = m_points[0].y - firstBounds.y;
-			m_secondNodeOffset.x = m_points[m_points.length - 1].x - secondBounds.x;
-			m_secondNodeOffset.y = m_points[m_points.length - 1].y - secondBounds.y;
-		}
 	}
 
 	private void recalculateEndPoints()
 	{
-		Rectangle firstBounds = m_firstNode.getNodePanelBounds();
-		Rectangle secondBounds = m_secondNode.getNodePanelBounds();
+		Rectangle firstBounds = m_firstNode.getBounds();
+		Rectangle secondBounds = m_secondNode.getBounds();
 
 		m_points[0].x = firstBounds.x + m_firstNodeOffset.x;
 		m_points[0].y = firstBounds.y + m_firstNodeOffset.y;
@@ -417,7 +399,7 @@ public class Relationship extends JComponent
 
 			if (m_selectedControlPointIndex == 0)
 			{
-				Rectangle bounds = m_firstNode.getNodePanelBounds();
+				Rectangle bounds = m_firstNode.getBounds();
 				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
 
 				m_firstNodeOffset.x = m_points[0].x - bounds.x;
@@ -425,7 +407,7 @@ public class Relationship extends JComponent
 			}
 			else if (m_selectedControlPointIndex == m_points.length - 1)
 			{
-				Rectangle bounds = m_secondNode.getNodePanelBounds();
+				Rectangle bounds = m_secondNode.getBounds();
 				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
 
 				int lastPointIndex = m_points.length - 1;
