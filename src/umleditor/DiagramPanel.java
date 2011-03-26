@@ -22,7 +22,7 @@ public class DiagramPanel extends JPanel
 		super();
 		m_relationships = new LinkedList<Relationship>();
 
-		RelationshipDragListener dragController = new RelationshipDragListener(m_relationships, this);
+		RelationshipDragListener dragController = new RelationshipDragListener(m_relationships);
 		this.addMouseListener(dragController);
 		this.addMouseMotionListener(dragController);
 	}
@@ -48,11 +48,13 @@ public class DiagramPanel extends JPanel
 	public void addRelationship(Relationship r)
 	{
 		m_relationships.add(r);
+		this.add(r);
 	}
 
 	public void removeRelationship(Relationship r)
 	{
 		m_relationships.remove(r);
+		this.remove(r);
 	}
 
 	public void removeRelationships(List<Relationship> relationshipList)
@@ -61,15 +63,15 @@ public class DiagramPanel extends JPanel
 	}
 
 	@Override
-	public void paint(Graphics g)
+	protected void paintComponent(Graphics g)
 	{
 		setAntialiasing(g, true);
 
-		super.paint(g);
-		for (Relationship rel : m_relationships)
-		{
-			rel.draw(g);
-		}
+		super.paintComponent(g);
+		// for (Relationship rel : m_relationships)
+		// {
+		// rel.repaint();
+		// }
 	}
 
 }

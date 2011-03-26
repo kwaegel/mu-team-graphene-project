@@ -18,13 +18,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+
 /**
  * Relationship defines a connection between two ClassNodes. Relationships will be maintained by the individual classes
  * they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics, and will
  * do so when there are changes to the view panel.
  */
-public class Relationship
+public class Relationship extends JComponent
 {
+	/**
+	 * Generated UID for Relationship.
+	 */
+	private static final long serialVersionUID = -1173663450541981195L;
+
 	/* Static constants. */
 	private static final float m_arrowHeight = 12.0f;
 	private static final float m_arrowWidth = 15.0f;
@@ -140,6 +148,11 @@ public class Relationship
 
 		createArrowPoints();
 		setArrowFill();
+
+		recalculateBounds();
+
+		this.setBorder(BorderFactory.createLineBorder(Color.blue));
+		this.setOpaque(false);
 	}
 
 	/**
@@ -166,12 +179,13 @@ public class Relationship
 		m_firstNodeOffset = firstOffset;
 		m_secondNodeOffset = secondOffset;
 
-		addControlPoint(new Point(100, 100), 1);
-
 		createPathFromPoints();
 
 		createArrowPoints();
 		setArrowFill();
+
+		recalculateBounds();
+		this.setOpaque(false);
 	}
 
 	private void calculatePathControlPoints()
@@ -232,6 +246,25 @@ public class Relationship
 
 		m_points[m_points.length - 1].x = secondBounds.x + m_secondNodeOffset.x;
 		m_points[m_points.length - 1].y = secondBounds.y + m_secondNodeOffset.y;
+	}
+
+	/**
+	 * Calculate the bounding box that can contain this Relationship.
+	 */
+	private void recalculateBounds()
+	{
+		Rectangle newBounds = new Rectangle(m_points[0]);
+		for (Point p : m_points)
+		{
+			newBounds.add(p);
+		}
+		newBounds.add(m_arrow.getBounds());
+
+		newBounds.translate(-1, -1);
+		newBounds.height += 2;
+		newBounds.width += 2;
+
+		this.setBounds(newBounds);
 	}
 
 	/**
@@ -301,10 +334,6 @@ public class Relationship
 
 		// Add right point.
 		m_arrow.addPoint((int) (centerX + perpX), (int) (centerY + perpY));
-
-		// Copy points back to line array
-		m_points[m_points.length - 2] = start;
-		m_points[m_points.length - 1] = end;
 	}
 
 	/**
@@ -314,6 +343,7 @@ public class Relationship
 	 */
 	private void createPathFromPoints()
 	{
+		// Reset the path.
 		m_line.reset();
 		m_line.moveTo(m_points[0].x, m_points[0].y);
 
@@ -390,16 +420,17 @@ public class Relationship
 				Rectangle bounds = m_firstNode.getNodePanelBounds();
 				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
 
-				m_firstNodeOffset.x = m_points[m_selectedControlPointIndex].x - bounds.x;
-				m_firstNodeOffset.y = m_points[m_selectedControlPointIndex].y - bounds.y;
+				m_firstNodeOffset.x = m_points[0].x - bounds.x;
+				m_firstNodeOffset.y = m_points[0].y - bounds.y;
 			}
 			else if (m_selectedControlPointIndex == m_points.length - 1)
 			{
 				Rectangle bounds = m_secondNode.getNodePanelBounds();
 				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
 
-				m_secondNodeOffset.x = m_points[m_selectedControlPointIndex].x - bounds.x;
-				m_secondNodeOffset.y = m_points[m_selectedControlPointIndex].y - bounds.y;
+				int lastPointIndex = m_points.length - 1;
+				m_secondNodeOffset.x = m_points[lastPointIndex].x - bounds.x;
+				m_secondNodeOffset.y = m_points[lastPointIndex].y - bounds.y;
 			}
 			else
 			{
@@ -414,6 +445,12 @@ public class Relationship
 			{
 				createArrowPoints();
 			}
+
+			// Recalculate the bounding box.
+			recalculateBounds();
+
+			// Repaint the relationship.
+			repaint();
 		}
 	}
 
@@ -507,26 +544,40 @@ public class Relationship
 	}
 
 	/**
-	 * Check if the click point is near to the relationship line or end arrow.
+	 * This tests if the mouse has been clicked on a relationship line or arrow.
 	 * 
-	 * @param clickPoint
-	 * @return
+	 * {@inheritDoc}
 	 */
-	public boolean intersectsEpsilon(Point clickPoint)
+	@Override
+	public boolean contains(int x, int y)
 	{
-		Rectangle2D clickArea = new Rectangle2D.Float(clickPoint.x - m_clickDelta, clickPoint.y - m_clickDelta,
-				m_clickDelta * 2, m_clickDelta * 2);
+		Rectangle2D clickArea = new Rectangle2D.Float(x - m_clickDelta, y - m_clickDelta, m_clickDelta * 2,
+				m_clickDelta * 2);
+
+		// this.paintComponent(new Graphics());
 
 		return m_line.intersects(clickArea) || m_arrow.intersects(clickArea);
 	}
 
 	/**
-	 * draw a line representing the relationship in the ClassDiagram view panel. Nature of line drawn depends on
-	 * relationship type. Placement of line determined by location of NodePanels associated with first and second nodes
+	 * Draw a line representing the relationship in the ClassDiagram view panel. Nature of line drawn depends on
+	 * relationship type. Placement of line determined by location of NodePanels associated with first and second nodes.
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @param g
+	 *            {@inheritDoc}
 	 */
-	public void draw(Graphics viewGraphics)
+	@Override
+	protected void paintComponent(Graphics g)
 	{
-		Graphics2D g2d = (Graphics2D) viewGraphics;
+		super.paintComponent(g);
+
+		Graphics2D g2d = (Graphics2D) g;
+
+		// Convert from local coordinates to parent coordinates.
+		Point loc = this.getLocation();
+		g2d.translate(-loc.x, -loc.y);
 
 		// Enable anti-aliasing mode.
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

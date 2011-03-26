@@ -129,10 +129,9 @@ public class ClassDiagram implements MouseListener, KeyListener
 			secondNode.addRelationship(rel);
 			view.addRelationship(rel);
 
-			rel.draw(view.getGraphics());
+			rel.repaint();
 		}
 	}
-
 
 	@Override
 	public void mouseClicked(MouseEvent e)
@@ -189,7 +188,9 @@ public class ClassDiagram implements MouseListener, KeyListener
 		{
 			Point mouseLocation = arg0.getComponent().getMousePosition();
 			if (mouseLocation != null)
+			{
 				this.createNode(mouseLocation);
+			}
 		}
 	}
 

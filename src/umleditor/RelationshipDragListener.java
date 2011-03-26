@@ -8,14 +8,12 @@ import java.util.List;
 public class RelationshipDragListener extends MouseAdapter
 {
 	private List<Relationship> m_relationships;
-	private DiagramPanel m_diagramView;
 
 	private Relationship m_lastSelectedRelationship; // Cache the last selected relationship.
 
-	public RelationshipDragListener(List<Relationship> relationships, DiagramPanel diagramView)
+	public RelationshipDragListener(List<Relationship> relationships)
 	{
 		m_relationships = relationships;
-		m_diagramView = diagramView;
 	}
 
 	/**
@@ -28,7 +26,7 @@ public class RelationshipDragListener extends MouseAdapter
 	private Relationship getSelectedRelationship(Point clickPoint)
 	{
 		// Short circuit test for fast repeated testing (such as during dragging).
-		if (m_lastSelectedRelationship != null && m_lastSelectedRelationship.intersectsEpsilon(clickPoint))
+		if (m_lastSelectedRelationship != null && m_lastSelectedRelationship.contains(clickPoint))
 		{
 			return m_lastSelectedRelationship;
 		}
@@ -36,7 +34,7 @@ public class RelationshipDragListener extends MouseAdapter
 		Relationship selectedReleationship = null;
 		for (Relationship r : m_relationships)
 		{
-			boolean isSelected = r.intersectsEpsilon(clickPoint);
+			boolean isSelected = r.contains(clickPoint);
 
 			if (isSelected)
 			{
@@ -55,10 +53,10 @@ public class RelationshipDragListener extends MouseAdapter
 	{
 		Point clickPoint = e.getPoint();
 		if (m_lastSelectedRelationship != null && e.getClickCount() == 2
-				&& m_lastSelectedRelationship.intersectsEpsilon(clickPoint))
+				&& m_lastSelectedRelationship.contains(clickPoint))
 		{
 			m_lastSelectedRelationship.addControlPoint(clickPoint);
-			m_diagramView.repaint();
+			m_lastSelectedRelationship.repaint();
 		}
 	}
 
@@ -77,12 +75,11 @@ public class RelationshipDragListener extends MouseAdapter
 		if (selected != null)
 		{
 			selected.setSelected(true, clickPoint);
+			selected.repaint();
 		}
 
 		// Store the selected relationship
 		m_lastSelectedRelationship = selected;
-
-		m_diagramView.repaint();
 	}
 
 	@Override
@@ -92,9 +89,8 @@ public class RelationshipDragListener extends MouseAdapter
 		if (m_lastSelectedRelationship != null)
 		{
 			m_lastSelectedRelationship.mouseDragged(e);
+			// m_lastSelectedRelationship.repaint();
 		}
-
-		m_diagramView.repaint();
 	}
 
 }
