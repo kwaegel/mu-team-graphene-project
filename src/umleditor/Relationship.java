@@ -10,16 +10,15 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
 /**
@@ -27,7 +26,7 @@ import javax.swing.JComponent;
  * they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics, and will
  * do so when there are changes to the view panel.
  */
-public class Relationship extends JComponent
+public class Relationship extends JComponent implements MouseMotionListener
 {
 	/**
 	 * Generated UID for Relationship.
@@ -97,7 +96,7 @@ public class Relationship extends JComponent
 	 */
 	private Point[] m_points;
 
-	private GeneralPath m_line;
+	private Path2D.Float m_line;
 
 	/**
 	 * Contains a reference to the first ClassNode (relationship comes ‘from’ this one).
@@ -152,11 +151,9 @@ public class Relationship extends JComponent
 		m_firstNode = first;
 		m_secondNode = second;
 
-		int m_numLinePoints = 2;
-		m_points = new Point[m_numLinePoints];
-		m_line = new GeneralPath(GeneralPath.WIND_NON_ZERO, m_numLinePoints);
-
-		m_arrow = new Polygon();
+		int initialNumPoints = 2;
+		m_points = new Point[initialNumPoints];
+		m_line = new Path2D.Float(Path2D.WIND_NON_ZERO, initialNumPoints);
 
 		calculatePathControlPoints();
 
@@ -165,12 +162,12 @@ public class Relationship extends JComponent
 
 		createPathFromPoints();
 
+		m_arrow = new Polygon();
 		createArrowPoints();
 		setArrowFill();
 
 		recalculateBounds();
 
-		this.setBorder(BorderFactory.createLineBorder(Color.blue));
 		this.setOpaque(false);
 	}
 
@@ -237,20 +234,19 @@ public class Relationship extends JComponent
 	private void recalculateBounds()
 	{
 		Rectangle newBounds = new Rectangle(m_points[0]);
+		int offset = m_cpDrawSize / 2;
 		for (Point p : m_points)
 		{
-			newBounds.add(p);
+			// Add rectangles instead of points to ensure the control nodes draw correctly.
+			newBounds.add(new Rectangle(p.x - offset, p.y - offset, m_cpDrawSize, m_cpDrawSize));
 		}
 		newBounds.add(m_arrow.getBounds());
 
-		newBounds.translate(-1, -1);
-		newBounds.height += 2;
-		newBounds.width += 2;
+		// Increase the width and height to ensure the bottom and right of the arrows are included.
+		newBounds.height += 1;
+		newBounds.width += 1;
 
 		this.setBounds(newBounds);
-		this.setMinimumSize(newBounds.getSize());
-		this.setMaximumSize(newBounds.getSize());
-		this.setPreferredSize(newBounds.getSize());
 	}
 
 	/**
@@ -277,7 +273,7 @@ public class Relationship extends JComponent
 	 */
 	private void createArrowPoints()
 	{
-		m_arrow = new Polygon(); // Create a blank polygon
+		m_arrow.reset();
 
 		// Get start and end points from the last line segment.
 		Point start = m_points[m_points.length - 2];
@@ -395,6 +391,7 @@ public class Relationship extends JComponent
 	 * 
 	 * @param e
 	 */
+	@Override
 	public void mouseDragged(MouseEvent e)
 	{
 		if (m_selected && m_selectedControlPointIndex >= 0)
@@ -438,6 +435,12 @@ public class Relationship extends JComponent
 			// Repaint the relationship.
 			repaint();
 		}
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		// Do nothing.
 	}
 
 	/**
@@ -560,7 +563,6 @@ public class Relationship extends JComponent
 		super.paintComponent(g);
 
 		Graphics2D g2d = (Graphics2D) g;
-		AffineTransform oldTransform = g2d.getTransform();
 
 		// Convert from local coordinates to parent coordinates.
 		Point loc = this.getLocation();
@@ -580,9 +582,11 @@ public class Relationship extends JComponent
 		}
 
 		// these two lines copy-pasted to make relationships redraw
+		// These should be moved to the mouseDraged methods for better drawing performance.
 		recalculateEndPoints();
 		createPathFromPoints();
 		createArrowPoints();
+		recalculateBounds();
 
 		// Draw a line through all the line points.
 		g2d.draw(m_line);
@@ -624,9 +628,8 @@ public class Relationship extends JComponent
 			g2d.setColor(oldColor);
 		}
 
-		// Set the old transfrom back
+		// Set the old transform back
 		g2d.translate(loc.x, loc.y);
-		// g2d.setTransform(oldTransform);
 	}
 
 }
