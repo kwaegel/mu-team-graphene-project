@@ -262,7 +262,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if(arg0.getActionCommand() == "INSTRUCT")
 		{
 			
-			//CURRENTLY NOT WORKING
+			//Currently cannot find file
 			
 			
 			
@@ -270,12 +270,12 @@ public class UMLEditor extends JFrame implements ActionListener
 			JFrame frame = new JFrame();
 			frame.setTitle("Instructions");
 			String instructions = " ";
-			InputStream in = UMLEditor.class.getResourceAsStream("/umleditor/Instructions.txt");
+			File file = new File("Instructions.txt");
 			StringBuffer contents = new StringBuffer();
 			BufferedReader reader = null;
 
 			try {
-				reader = new BufferedReader(new FileReader("in"));
+				reader = new BufferedReader(new FileReader(file));
 				String text = null;
 
 				while ((text = reader.readLine()) != null) {
