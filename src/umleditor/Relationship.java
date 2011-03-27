@@ -10,7 +10,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -26,7 +25,7 @@ import javax.swing.JComponent;
  * they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics, and will
  * do so when there are changes to the view panel.
  */
-public class Relationship extends JComponent implements MouseMotionListener
+public class Relationship extends JComponent
 {
 	/**
 	 * Generated UID for Relationship.
@@ -155,7 +154,7 @@ public class Relationship extends JComponent implements MouseMotionListener
 		m_points = new Point[initialNumPoints];
 		m_line = new Path2D.Float(Path2D.WIND_NON_ZERO, initialNumPoints);
 
-		calculatePathControlPoints();
+		calculateDefaultPathControlPoints();
 
 		m_firstNodeOffset = calculateOffset(m_points[0], m_firstNode.getBounds());
 		m_secondNodeOffset = calculateOffset(m_points[m_points.length - 1], m_secondNode.getBounds());
@@ -163,22 +162,22 @@ public class Relationship extends JComponent implements MouseMotionListener
 		createPathFromPoints();
 
 		m_arrow = new Polygon();
-		createArrowPoints();
+		createArrow();
 		setArrowFill();
 
 		recalculateBounds();
 
-		this.setOpaque(false);
+		// Test mouse methods
+		this.enableEvents(-1L);
 	}
 
 	/***** Methods *****/
 
-	private static Point calculateOffset(Point p, Rectangle r)
-	{
-		return new Point(p.x - r.x, p.y - r.y);
-	}
-
-	private void calculatePathControlPoints()
+	/**
+	 * Calculate some default path control points. The points chosen are the centers of the nearest two sides of the
+	 * {@link ClassNode ClassNodes}.
+	 */
+	private void calculateDefaultPathControlPoints()
 	{
 		Rectangle firstBounds = m_firstNode.getBounds();
 		Rectangle secondBounds = m_secondNode.getBounds();
@@ -216,6 +215,10 @@ public class Relationship extends JComponent implements MouseMotionListener
 		}
 	}
 
+	/**
+	 * Recalculate the end points of the relationship path, based on the previously stored offsets. This allows the
+	 * relationship ends to maintain the same relative position to the classNodes as they are moved.
+	 */
 	private void recalculateEndPoints()
 	{
 		Rectangle firstBounds = m_firstNode.getBounds();
@@ -271,7 +274,7 @@ public class Relationship extends JComponent implements MouseMotionListener
 	/**
 	 * Create arrow points for the end of the relationship line.
 	 */
-	private void createArrowPoints()
+	private void createArrow()
 	{
 		m_arrow.reset();
 
@@ -336,6 +339,11 @@ public class Relationship extends JComponent implements MouseMotionListener
 		}
 	}
 
+	/**
+	 * Add a control point at the given click point.
+	 * 
+	 * @param clickPoint
+	 */
 	public void addControlPoint(Point clickPoint)
 	{
 		int halfTol = m_selectionTolerence / 2;
@@ -358,6 +366,14 @@ public class Relationship extends JComponent implements MouseMotionListener
 		}
 	}
 
+	/**
+	 * Add a control point before the specified index.
+	 * 
+	 * @param newControlPoint
+	 *            - the new control point to add.
+	 * @param indexOfPointAfterNewPoint
+	 *            - the index that will be after the new control point.
+	 */
 	private void addControlPoint(Point newControlPoint, int indexOfPointAfterNewPoint)
 	{
 		// TODO: convert m_points to a linked list to avoid the conversion.
@@ -368,6 +384,9 @@ public class Relationship extends JComponent implements MouseMotionListener
 		m_points = pointList.toArray(new Point[0]);
 	}
 
+	/**
+	 * Remove the currently selected control point.
+	 */
 	public void removeSelectedControlPoint()
 	{
 		// Don't remove the end points.
@@ -381,7 +400,7 @@ public class Relationship extends JComponent implements MouseMotionListener
 			m_points = pointList.toArray(new Point[0]);
 
 			this.createPathFromPoints();
-			this.createArrowPoints();
+			this.createArrow();
 		}
 	}
 
@@ -391,7 +410,6 @@ public class Relationship extends JComponent implements MouseMotionListener
 	 * 
 	 * @param e
 	 */
-	@Override
 	public void mouseDragged(MouseEvent e)
 	{
 		if (m_selected && m_selectedControlPointIndex >= 0)
@@ -426,7 +444,7 @@ public class Relationship extends JComponent implements MouseMotionListener
 			// If we are dragging nodes at the end of the line, also rebuild the arrows.
 			if (m_selectedControlPointIndex <= 1 || m_selectedControlPointIndex >= m_points.length - 2)
 			{
-				createArrowPoints();
+				createArrow();
 			}
 
 			// Recalculate the bounding box.
@@ -435,12 +453,6 @@ public class Relationship extends JComponent implements MouseMotionListener
 			// Repaint the relationship.
 			repaint();
 		}
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e)
-	{
-		// Do nothing.
 	}
 
 	/**
@@ -452,7 +464,7 @@ public class Relationship extends JComponent implements MouseMotionListener
 	 *            - the {@link java.awt.Rectangle rectangle} to check.
 	 * @return - the point on the rectangle nearest to the click point.
 	 */
-	private Point getClosestPointOnRectangle(Point clickPoint, Rectangle rect)
+	private static Point getClosestPointOnRectangle(Point clickPoint, Rectangle rect)
 	{
 		Point nearestPoint = new Point(clickPoint);
 
@@ -502,6 +514,13 @@ public class Relationship extends JComponent implements MouseMotionListener
 		return nearestPoint;
 	}
 
+	/**
+	 * Mark this relationship as selected. When selected, control nodes will be drawn to allow manipulation of the
+	 * relationship path.
+	 * 
+	 * @param selected
+	 * @param clickPoint
+	 */
 	public void setSelected(boolean selected, Point clickPoint)
 	{
 		m_selected = selected;
@@ -543,9 +562,7 @@ public class Relationship extends JComponent implements MouseMotionListener
 		Rectangle2D clickArea = new Rectangle2D.Float(x - m_clickDelta, y - m_clickDelta, m_clickDelta * 2,
 				m_clickDelta * 2);
 
-		// this.paintComponent(new Graphics());
-
-		return m_line.intersects(clickArea) || m_arrow.intersects(clickArea);
+		return getBounds().contains(x, y) && (m_line.intersects(clickArea) || m_arrow.intersects(clickArea));
 	}
 
 	/**
@@ -585,7 +602,7 @@ public class Relationship extends JComponent implements MouseMotionListener
 		// These should be moved to the mouseDraged methods for better drawing performance.
 		recalculateEndPoints();
 		createPathFromPoints();
-		createArrowPoints();
+		createArrow();
 		recalculateBounds();
 
 		// Draw a line through all the line points.
@@ -632,4 +649,15 @@ public class Relationship extends JComponent implements MouseMotionListener
 		g2d.translate(loc.x, loc.y);
 	}
 
+	/**
+	 * Calculate the offset between the given point and the origin of the given rectangle.
+	 * 
+	 * @param p
+	 * @param r
+	 * @return
+	 */
+	private static Point calculateOffset(Point p, Rectangle r)
+	{
+		return new Point(p.x - r.x, p.y - r.y);
+	}
 }
