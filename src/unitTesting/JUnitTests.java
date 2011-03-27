@@ -1,5 +1,7 @@
 package unitTesting;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import umleditor.ClassDiagram;
@@ -8,7 +10,6 @@ import umleditor.NodePanel;
 import umleditor.NumberedTextField;
 import umleditor.NumberedTextField.FieldType;
 import umleditor.UMLEditor;
-import static org.junit.Assert.*;
 
 public class JUnitTests extends UMLEditor
 {
