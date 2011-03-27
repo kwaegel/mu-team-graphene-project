@@ -6,6 +6,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 
 public class UMLEditor extends JFrame implements ActionListener
 {
@@ -22,6 +25,8 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private Color unselectedButtonColor = javax.swing.UIManager.getColor("Button.background");
 	private Color selectedButtonColor = Color.gray;
+	
+	private HelpPanel helpPanel;
 
 	private JMenuBar menuBar;
 	private JToolBar toolBar;
@@ -49,6 +54,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		setUpToolBar();
 		setUpScrollPane();
 		setUpClassDiagram();
+		setUpHelpPanel();
 
 		this.pack();
 		this.setVisible(true);
@@ -122,7 +128,21 @@ public class UMLEditor extends JFrame implements ActionListener
 		menuBar.add(fileMenu);
 
 		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setActionCommand("HELP");
+		helpMenu.addActionListener(this);
 		menuBar.add(helpMenu);
+		
+		JMenuItem helpOption = new JMenuItem("Help Contents  ");
+		helpOption.setActionCommand("HELP");
+		helpOption.addActionListener(this);
+		helpOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+		helpMenu.add(helpOption);
+		helpMenu.addSeparator();
+
+		JMenuItem aboutOption = new JMenuItem("About");
+		aboutOption.setActionCommand("ABOUT");
+		aboutOption.addActionListener(this);
+		helpMenu.add(aboutOption);
 
 		this.add(menuBar, BorderLayout.NORTH);
 
@@ -158,6 +178,12 @@ public class UMLEditor extends JFrame implements ActionListener
 	private void setUpClassDiagram()
 	{
 		classDiagram = new ClassDiagram(this);
+	}
+	
+	private void setUpHelpPanel ()
+	{
+		helpPanel = new HelpPanel();
+		helpPanel.setVisible(false);
 	}
 
 	@Override
@@ -199,6 +225,16 @@ public class UMLEditor extends JFrame implements ActionListener
 			{
 
 			}
+		}
+		else if (arg0.getActionCommand() == "HELP")
+		{
+			helpPanel.setToContentsTab();
+			helpPanel.setVisible(true);
+		}
+		else if (arg0.getActionCommand() == "ABOUT")
+		{
+			helpPanel.setToAboutTab();
+			helpPanel.setVisible(true);
 		}
 	}
 
