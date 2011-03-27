@@ -6,6 +6,12 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -143,6 +149,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		menuBar.add(fileMenu);
 
 		JMenu helpMenu = new JMenu("Help");
+		
+		JMenuItem instructOption = new JMenuItem("Instructions");
+		instructOption.setActionCommand("INSTRUCT");
+		instructOption.addActionListener(this);
+		helpMenu.add(instructOption);
+		
 		menuBar.add(helpMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);
@@ -247,7 +259,51 @@ public class UMLEditor extends JFrame implements ActionListener
 
 			}
 		}
-	}
+		else if(arg0.getActionCommand() == "INSTRUCT")
+		{
+			
+			//CURRENTLY NOT WORKING
+			
+			
+			
+			
+			JFrame frame = new JFrame();
+			frame.setTitle("Instructions");
+			String instructions = " ";
+			InputStream in = UMLEditor.class.getResourceAsStream("/umleditor/Instructions.txt");
+			StringBuffer contents = new StringBuffer();
+			BufferedReader reader = null;
+
+			try {
+				reader = new BufferedReader(new FileReader("in"));
+				String text = null;
+
+				while ((text = reader.readLine()) != null) {
+					contents.append(text).append(
+							System.getProperty("line.separator"));
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (reader != null) {
+						reader.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			instructions = contents.toString();
+			
+
+			
+			
+			JOptionPane.showMessageDialog(frame, instructions);
+		}
+			
+		}
 
 	/**
 	 * Used when New is selected in the File menu. Deletes everything in the diagram
