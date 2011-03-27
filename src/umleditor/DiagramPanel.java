@@ -28,7 +28,8 @@ public class DiagramPanel extends JPanel
 	public void addRelationship(Relationship r)
 	{
 		m_relationships.add(r);
-		// "external" constraint prevents MigLayout from changing the bounds of the relationship.
+
+		// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
 		this.add(r, "external");
 	}
 
@@ -41,5 +42,9 @@ public class DiagramPanel extends JPanel
 	public void removeRelationships(List<Relationship> relationshipList)
 	{
 		m_relationships.removeAll(relationshipList);
+		for (Relationship r : relationshipList)
+		{
+			this.remove(r);
+		}
 	}
 }

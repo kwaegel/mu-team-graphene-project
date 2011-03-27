@@ -89,7 +89,6 @@ public class RelationshipDragListener extends MouseAdapter
 		if (m_lastSelectedRelationship != null)
 		{
 			m_lastSelectedRelationship.mouseDragged(e);
-			// m_lastSelectedRelationship.repaint();
 		}
 	}
 
