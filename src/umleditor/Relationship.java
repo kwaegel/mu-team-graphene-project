@@ -25,7 +25,7 @@ import javax.swing.JComponent;
  * they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics, and will
  * do so when there are changes to the view panel.
  */
-public class Relationship extends JComponent
+public class Relationship extends JComponent implements ISelectable
 {
 	/**
 	 * Generated UID for Relationship.
