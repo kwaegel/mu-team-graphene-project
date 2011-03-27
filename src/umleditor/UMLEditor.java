@@ -33,6 +33,8 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private ClassDiagram classDiagram;
 
+	private ClassNode copyNode;
+
 	private boolean addNewClassModeEnabled;
 
 	public UMLEditor()
@@ -52,11 +54,30 @@ public class UMLEditor extends JFrame implements ActionListener
 		this.setVisible(true);
 	}
 
+	/**
+	 * Returns whether or not Add-Class mode is enabled. ClassDiagram checks this on mouse released and if it is
+	 * enabled, adds a new node to the diagram.
+	 * 
+	 * @return - <code>true</code> if Add-Class mode is enabled, <code>false</code> if it is not.
+	 */
 	public boolean isAddNewClassModeEnabled()
 	{
 		return (addNewClassModeEnabled);
 	}
 
+	/**
+	 * Enables Add-Class mode. Changes "Add Class" button color to indicate that it is selected and sets cursor.
+	 */
+	public void enableAddNewClassMode()
+	{
+		addNewClassModeEnabled = true;
+		addClassButton.setBackground(selectedButtonColor);
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+	}
+
+	/**
+	 * Disables Add-Class mode. Changes button background back to normal color and restores default cursor.
+	 */
 	public void disableAddNewClassMode()
 	{
 		addNewClassModeEnabled = false;
@@ -146,19 +167,14 @@ public class UMLEditor extends JFrame implements ActionListener
 		{
 			if (!addNewClassModeEnabled)
 			{
-				addClassButton.setBackground(selectedButtonColor);
-				this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+				// Add-Class mode was not enabled, so enable it
+				enableAddNewClassMode();
 			}
-			else // if Add-Class mode was already selected, this click unselects it
+			else
 			{
-
-				// reset background to normal color
-				addClassButton.setBackground(unselectedButtonColor);
-				// reset cursor
-				this.setCursor(Cursor.getDefaultCursor());
+				// Add-Class mode was already selected, this click disables it
+				disableAddNewClassMode();
 			}
-			// toggle Add-Class state
-			addNewClassModeEnabled = !addNewClassModeEnabled;
 		}
 		else if (arg0.getActionCommand() == "DELETE")
 		{
@@ -199,6 +215,16 @@ public class UMLEditor extends JFrame implements ActionListener
 	public JScrollPane getScrollPane()
 	{
 		return (scrollPane);
+	}
+
+	public ClassNode getCopyNode()
+	{
+		return (copyNode);
+	}
+
+	public void setCopyNode(ClassNode coppiedNode)
+	{
+		copyNode = coppiedNode;
 	}
 
 	/**

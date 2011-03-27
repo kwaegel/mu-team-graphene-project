@@ -41,13 +41,21 @@ public class ClassDiagram implements MouseListener, KeyListener
 	}
 
 	/**
-	 * Create a new node and add it to the list of nodes. Also add it's {@link NodePanel} to the view.
-	 * 
-	 * @return the newly created node.
+	 * Create a new node and initializes it. 
 	 */
 	private void createNode(Point addLocation)
 	{
 		ClassNode newClassNode = new ClassNode();
+		initNode(addLocation, newClassNode);
+	}
+	
+	/**
+	 * Adds new node to the list of nodes. Also add it's {@link NodePanel} to the view.
+	 * @param addLocation - location to add node
+	 * @param newClassNode - node to add
+	 */
+	private void initNode(Point addLocation, ClassNode newClassNode)
+	{
 		NodePanel newNodePanel = new NodePanel(this, newClassNode);
 
 		listOfNodes.add(newClassNode);
@@ -191,6 +199,30 @@ public class ClassDiagram implements MouseListener, KeyListener
 			if (mouseLocation != null)
 				this.createNode(mouseLocation);
 		}
+		else if (arg0.getKeyCode() == KeyEvent.VK_C && arg0.isControlDown() && selectedNode != null)
+		{
+			parentEditor.setCopyNode(new ClassNode(selectedNode));
+		}
+		else if (arg0.getKeyCode() == KeyEvent.VK_V && arg0.isControlDown())
+		{
+			ClassNode copy = parentEditor.getCopyNode();
+			Point mouseLocation = arg0.getComponent().getMousePosition();
+			if(copy != null && mouseLocation != null)
+			{
+				ClassNode nodeCopy = new ClassNode(copy);
+				initNode(mouseLocation, nodeCopy);
+			}
+		}
+		else if (arg0.getKeyCode() == KeyEvent.VK_X && arg0.isControlDown() && selectedNode != null)
+		{
+			parentEditor.setCopyNode(new ClassNode(selectedNode));
+			this.deleteSelectedNode();
+		}
+		else if (arg0.getKeyCode() == KeyEvent.VK_E && selectedNode != null)
+		{
+			selectedNode.getNodePanel().displayEditPanel();
+		}
+			
 	}
 
 	@Override
