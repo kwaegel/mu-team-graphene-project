@@ -85,6 +85,12 @@ public class NodePanel extends JPanel implements MouseListener
 	{
 		this.setBackground(Color.pink);
 	}
+	
+	public void displayEditPanel()
+	{
+		EditPanel editPanel = new EditPanel(this.associatedNode);
+		editPanel.setVisible(true);
+	}
 
 	/**
 	 * recreated display from values in classNode
@@ -178,8 +184,7 @@ public class NodePanel extends JPanel implements MouseListener
 		int clickCount = e.getClickCount();
 		if (clickCount > 1)
 		{
-			EditPanel editPanel = new EditPanel(this.associatedNode);
-			editPanel.setVisible(true);
+			displayEditPanel();
 		}
 		else
 		{

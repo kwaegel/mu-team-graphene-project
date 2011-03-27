@@ -6,6 +6,12 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,6 +39,8 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private ClassDiagram classDiagram;
 
+	private ClassNode copyNode;
+
 	private boolean addNewClassModeEnabled;
 
 	public UMLEditor()
@@ -52,23 +60,47 @@ public class UMLEditor extends JFrame implements ActionListener
 		this.setVisible(true);
 	}
 
+	/**
+	 * Returns whether or not Add-Class mode is enabled. ClassDiagram checks this on mouse released and if it is
+	 * enabled, adds a new node to the diagram.
+	 * 
+	 * @return - <code>true</code> if Add-Class mode is enabled, <code>false</code> if it is not.
+	 */
 	public boolean isAddNewClassModeEnabled()
 	{
 		return (addNewClassModeEnabled);
 	}
 
+	/**
+	 * Enables Add-Class mode. Changes "Add Class" button color to indicate that it is selected and sets cursor.
+	 */
+	public void enableAddNewClassMode()
+	{
+		addNewClassModeEnabled = true;
+		addClassButton.setBackground(selectedButtonColor);
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+	}
+
+	/**
+	 * Disables Add-Class mode. Changes button background back to normal color and restores default cursor.
+	 */
 	public void disableAddNewClassMode()
 	{
 		addNewClassModeEnabled = false;
 		addClassButton.setBackground(unselectedButtonColor);
 		setCursor(Cursor.getDefaultCursor());
 	}
-
+	/**
+	 * Enables Delete Button. The delete button becomes clickable.
+	 */
 	public void setDeleteButtonState(boolean enabled)
 	{
 		deleteButton.setEnabled(enabled);
 	}
-
+	/**
+	 * Sets up the File and Help menu bars
+	 * File menu contains New, Load, Close, Save, Save As, and Exit
+	 */
 	private void setUpMenuBar()
 	{
 		menuBar = new JMenuBar();
@@ -81,10 +113,26 @@ public class UMLEditor extends JFrame implements ActionListener
 		fileMenu.add(newOption);
 
 		JMenuItem loadOption = new JMenuItem("Load...");
+		loadOption.setActionCommand("LOAD");
+		loadOption.addActionListener(this);
 		fileMenu.add(loadOption);
+		
+		JMenuItem closeOption = new JMenuItem("Close");
+		closeOption.setActionCommand("CLOSE");
+		closeOption.addActionListener(this);
+		fileMenu.add(closeOption);
+		
+		fileMenu.addSeparator();
 
 		JMenuItem saveOption = new JMenuItem("Save");
+		saveOption.setActionCommand("SAVE");
+		saveOption.addActionListener(this);
 		fileMenu.add(saveOption);
+		
+		JMenuItem saveAsOption = new JMenuItem("Save As...");
+		saveAsOption.setActionCommand("SAVEAS");
+		saveAsOption.addActionListener(this);
+		fileMenu.add(saveAsOption);
 		//
 		// fileMenu.addSeparator();
 		//
@@ -101,12 +149,21 @@ public class UMLEditor extends JFrame implements ActionListener
 		menuBar.add(fileMenu);
 
 		JMenu helpMenu = new JMenu("Help");
+		
+		JMenuItem instructOption = new JMenuItem("Instructions");
+		instructOption.setActionCommand("INSTRUCT");
+		instructOption.addActionListener(this);
+		helpMenu.add(instructOption);
+		
 		menuBar.add(helpMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);
 
 	}
 
+	/**
+	 * Sets up the tool bar. The tool bar contains the buttons Add Class and Delete
+	 */
 	private void setUpToolBar()
 	{
 		toolBar = new JToolBar();
@@ -127,38 +184,40 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
-
+	/**
+	 * Sets up a scroll pane.
+	 */
 	private void setUpScrollPane()
 	{
 		scrollPane = new JScrollPane();
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
-
+	/**
+	 * Initializes a new ClassDiagram.
+	 */
 	private void setUpClassDiagram()
 	{
 		classDiagram = new ClassDiagram(this);
 	}
 
-	@Override
+	/**
+	 * Performs actions based on what the user has selected in the 
+	 * File or Help menus or Tool bar
+	 */
 	public void actionPerformed(ActionEvent arg0)
 	{
 		if (arg0.getActionCommand() == "ADD")
 		{
 			if (!addNewClassModeEnabled)
 			{
-				addClassButton.setBackground(selectedButtonColor);
-				this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+				// Add-Class mode was not enabled, so enable it
+				enableAddNewClassMode();
 			}
-			else // if Add-Class mode was already selected, this click unselects it
+			else
 			{
-
-				// reset background to normal color
-				addClassButton.setBackground(unselectedButtonColor);
-				// reset cursor
-				this.setCursor(Cursor.getDefaultCursor());
+				// Add-Class mode was already selected, this click disables it
+				disableAddNewClassMode();
 			}
-			// toggle Add-Class state
-			addNewClassModeEnabled = !addNewClassModeEnabled;
 		}
 		else if (arg0.getActionCommand() == "DELETE")
 		{
@@ -167,6 +226,22 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "NEW")
 		{
 			clearDiagram();
+		}
+		else if (arg0.getActionCommand() == "SAVE")
+		{
+			//Save function to be implemented
+		}
+		else if (arg0.getActionCommand() == "SAVEAS")
+		{
+			//Save As function to be implemented
+		}
+		else if (arg0.getActionCommand() == "LOAD")
+		{
+			//Load function to be implemented
+		}
+		else if (arg0.getActionCommand() == "CLOSE")
+		{
+			//Close function to be implemented
 		}
 		else if (arg0.getActionCommand() == "EXIT")
 		{
@@ -184,7 +259,51 @@ public class UMLEditor extends JFrame implements ActionListener
 
 			}
 		}
-	}
+		else if(arg0.getActionCommand() == "INSTRUCT")
+		{
+			
+			//Currently cannot find file
+			
+			
+			
+			
+			JFrame frame = new JFrame();
+			frame.setTitle("Instructions");
+			String instructions = " ";
+			File file = new File("Instructions.txt");
+			StringBuffer contents = new StringBuffer();
+			BufferedReader reader = null;
+
+			try {
+				reader = new BufferedReader(new FileReader(file));
+				String text = null;
+
+				while ((text = reader.readLine()) != null) {
+					contents.append(text).append(
+							System.getProperty("line.separator"));
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (reader != null) {
+						reader.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			instructions = contents.toString();
+			
+
+			
+			
+			JOptionPane.showMessageDialog(frame, instructions);
+		}
+			
+		}
 
 	/**
 	 * Used when New is selected in the File menu. Deletes everything in the diagram
@@ -199,6 +318,16 @@ public class UMLEditor extends JFrame implements ActionListener
 	public JScrollPane getScrollPane()
 	{
 		return (scrollPane);
+	}
+
+	public ClassNode getCopyNode()
+	{
+		return (copyNode);
+	}
+
+	public void setCopyNode(ClassNode coppiedNode)
+	{
+		copyNode = coppiedNode;
 	}
 
 	/**
