@@ -84,12 +84,17 @@ public class UMLEditor extends JFrame implements ActionListener
 		addClassButton.setBackground(unselectedButtonColor);
 		setCursor(Cursor.getDefaultCursor());
 	}
-
+	/**
+	 * Enables Delete Button. The delete button becomes clickable.
+	 */
 	public void setDeleteButtonState(boolean enabled)
 	{
 		deleteButton.setEnabled(enabled);
 	}
-
+	/**
+	 * Sets up the File and Help menu bars
+	 * File menu contains New, Load, Close, Save, Save As, and Exit
+	 */
 	private void setUpMenuBar()
 	{
 		menuBar = new JMenuBar();
@@ -102,10 +107,26 @@ public class UMLEditor extends JFrame implements ActionListener
 		fileMenu.add(newOption);
 
 		JMenuItem loadOption = new JMenuItem("Load...");
+		loadOption.setActionCommand("LOAD");
+		loadOption.addActionListener(this);
 		fileMenu.add(loadOption);
+		
+		JMenuItem closeOption = new JMenuItem("Close");
+		closeOption.setActionCommand("CLOSE");
+		closeOption.addActionListener(this);
+		fileMenu.add(closeOption);
+		
+		fileMenu.addSeparator();
 
 		JMenuItem saveOption = new JMenuItem("Save");
+		saveOption.setActionCommand("SAVE");
+		saveOption.addActionListener(this);
 		fileMenu.add(saveOption);
+		
+		JMenuItem saveAsOption = new JMenuItem("Save As...");
+		saveAsOption.setActionCommand("SAVEAS");
+		saveAsOption.addActionListener(this);
+		fileMenu.add(saveAsOption);
 		//
 		// fileMenu.addSeparator();
 		//
@@ -128,6 +149,9 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	}
 
+	/**
+	 * Sets up the tool bar. The tool bar contains the buttons Add Class and Delete
+	 */
 	private void setUpToolBar()
 	{
 		toolBar = new JToolBar();
@@ -148,19 +172,26 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
-
+	/**
+	 * Sets up a scroll pane.
+	 */
 	private void setUpScrollPane()
 	{
 		scrollPane = new JScrollPane();
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
-
+	/**
+	 * Initializes a new ClassDiagram.
+	 */
 	private void setUpClassDiagram()
 	{
 		classDiagram = new ClassDiagram(this);
 	}
 
-	@Override
+	/**
+	 * Performs actions based on what the user has selected in the 
+	 * File or Help menus or Tool bar
+	 */
 	public void actionPerformed(ActionEvent arg0)
 	{
 		if (arg0.getActionCommand() == "ADD")
@@ -183,6 +214,22 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "NEW")
 		{
 			clearDiagram();
+		}
+		else if (arg0.getActionCommand() == "SAVE")
+		{
+			//Save function to be implemented
+		}
+		else if (arg0.getActionCommand() == "SAVEAS")
+		{
+			//Save As function to be implemented
+		}
+		else if (arg0.getActionCommand() == "LOAD")
+		{
+			//Load function to be implemented
+		}
+		else if (arg0.getActionCommand() == "CLOSE")
+		{
+			//Close function to be implemented
 		}
 		else if (arg0.getActionCommand() == "EXIT")
 		{
