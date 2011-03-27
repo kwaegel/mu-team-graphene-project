@@ -6,9 +6,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.miginfocom.swing.MigLayout;
@@ -16,17 +19,24 @@ import umleditor.Relationship.RelationshipType;
 
 public class ClassDiagram implements MouseListener, KeyListener
 {
-	private LinkedList<ClassNode> listOfNodes;
+	// Lists of objects in the diagram
+	private List<ClassNode> listOfNodes;
+	private List<Relationship> m_relationships;
+
+	// Listeners for mouse events on the diagram
+	private RelationshipDragListener m_relationshipDragController;
+
+	private ISelectable selectedObject;
 
 	private ClassNode selectedNode;
 	private UMLEditor parentEditor;
-	private DiagramPanel view;
+	private JPanel view;
 
 	public ClassDiagram(UMLEditor parent)
 	{
 		parentEditor = parent;
 
-		view = new DiagramPanel();
+		view = new JPanel();
 		view.addMouseListener(this);
 		view.setFocusable(true);
 		view.requestFocus();
@@ -37,22 +47,32 @@ public class ClassDiagram implements MouseListener, KeyListener
 		JScrollPane scrollPane = parent.getScrollPane();
 		scrollPane.setViewportView(view);
 
+		// Create lists.
 		listOfNodes = new LinkedList<ClassNode>();
+		m_relationships = new LinkedList<Relationship>();
+
+		// Create listeners on the view.
+		m_relationshipDragController = new RelationshipDragListener(m_relationships);
+		view.addMouseListener(m_relationshipDragController);
+		view.addMouseMotionListener(m_relationshipDragController);
 	}
 
 	/**
-	 * Create a new node and initializes it. 
+	 * Create a new node and initializes it.
 	 */
 	private void createNode(Point addLocation)
 	{
 		ClassNode newClassNode = new ClassNode();
 		initNode(addLocation, newClassNode);
 	}
-	
+
 	/**
 	 * Adds new node to the list of nodes. Also add it's {@link NodePanel} to the view.
-	 * @param addLocation - location to add node
-	 * @param newClassNode - node to add
+	 * 
+	 * @param addLocation
+	 *            - location to add node
+	 * @param newClassNode
+	 *            - node to add
 	 */
 	private void initNode(Point addLocation, ClassNode newClassNode)
 	{
@@ -87,7 +107,8 @@ public class ClassDiagram implements MouseListener, KeyListener
 	public void deleteSelectedNode()
 	{
 		NodePanel panelToRemove = selectedNode.getNodePanel();
-		view.removeRelationships(selectedNode.getRelationships());
+		// view.remove(selectedNode.getRelationships());
+		removeRelationships(selectedNode.getRelationships());
 		view.remove(panelToRemove);
 		// need this call so deleting nodes not at edges of screen works properly
 		view.repaint();
@@ -115,29 +136,42 @@ public class ClassDiagram implements MouseListener, KeyListener
 
 	private void addRelationship(ClassNode firstNode, ClassNode secondNode)
 	{
-		// Do not add relationships between idential classes.
-		if (firstNode == secondNode)
+		// Do not add relationships between identical classes.
+		if (firstNode != secondNode)
 		{
-			return;
+			RelationshipType[] possibleValues = RelationshipType.values();
+
+			int selection = JOptionPane.showOptionDialog(parentEditor, "Choose a type of relationship",
+					"Relationship Chooser", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					possibleValues, RelationshipType.Aggregation);
+
+			if (selection >= 0)
+			{
+				RelationshipType selectedType = possibleValues[selection];
+
+				Relationship rel = new Relationship(firstNode, secondNode, selectedType);
+
+				firstNode.addRelationship(rel);
+				secondNode.addRelationship(rel);
+
+				// Add the relationship to the model list
+				m_relationships.add(rel);
+
+				// Add the relationship to the view.
+				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
+				view.add(rel, "external");
+
+				rel.repaint();
+			}
 		}
+	}
 
-		RelationshipType[] possibleValues = RelationshipType.values();
-
-		int selection = JOptionPane.showOptionDialog(parentEditor, "Choose a type of relationship",
-				"Relationship Chooser", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, possibleValues,
-				RelationshipType.Aggregation);
-
-		if (selection >= 0)
+	private void removeRelationships(Collection<Relationship> relationshipList)
+	{
+		m_relationships.removeAll(relationshipList);
+		for (Relationship r : relationshipList)
 		{
-			RelationshipType selectedType = possibleValues[selection];
-
-			Relationship rel = new Relationship(firstNode, secondNode, selectedType);
-
-			firstNode.addRelationship(rel);
-			secondNode.addRelationship(rel);
-			view.addRelationship(rel);
-
-			rel.repaint();
+			view.remove(r);
 		}
 	}
 
@@ -208,7 +242,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		{
 			ClassNode copy = parentEditor.getCopyNode();
 			Point mouseLocation = arg0.getComponent().getMousePosition();
-			if(copy != null && mouseLocation != null)
+			if (copy != null && mouseLocation != null)
 			{
 				ClassNode nodeCopy = new ClassNode(copy);
 				initNode(mouseLocation, nodeCopy);
@@ -223,7 +257,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		{
 			selectedNode.getNodePanel().displayEditPanel();
 		}
-			
+
 	}
 
 	@Override
@@ -250,7 +284,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		String newPositionSpecs = "pos " + newPosX + " " + newPosY;
 		view.add(nodePanelToMove, newPositionSpecs);
 
-		// call to revalidate makes node redraw
+		// call to revalidate makes node redraw.
 		view.revalidate();
 
 		// call to repaint makes relationships redraw
