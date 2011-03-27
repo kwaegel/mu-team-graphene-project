@@ -95,7 +95,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	{
 		super.setTitle("Edit Class");
 		super.setModalityType(ModalityType.APPLICATION_MODAL);
-		super.setLocation(200, 200);
+		super.setLocation(500, 100);
 		super.setMinimumSize(new Dimension(400, 450));
 		super.setResizable(false);
 
