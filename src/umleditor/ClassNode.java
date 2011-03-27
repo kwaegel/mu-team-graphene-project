@@ -45,7 +45,7 @@ public class ClassNode
 	{
 		this.setPropertiesTo(otherNode);
 		this.relationships = new ArrayList<Relationship>();
-		this.nodePanel = otherNode.nodePanel;
+		this.nodePanel = null;
 	}
 
 	/**
