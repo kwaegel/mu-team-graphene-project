@@ -31,19 +31,15 @@ public class RelationshipDragListener extends MouseAdapter
 			return m_lastSelectedRelationship;
 		}
 
-		Relationship selectedReleationship = null;
 		for (Relationship r : m_relationships)
 		{
-			boolean isSelected = r.contains(clickPoint);
-
-			if (isSelected)
+			if (r.contains(clickPoint))
 			{
-				selectedReleationship = r;
-				break;
+				return r;
 			}
 		}
 
-		return selectedReleationship;
+		return null;
 	}
 
 	/* Mouse adapter methods */
@@ -70,6 +66,7 @@ public class RelationshipDragListener extends MouseAdapter
 		if (m_lastSelectedRelationship != null && m_lastSelectedRelationship != selected)
 		{
 			m_lastSelectedRelationship.setSelected(false, null);
+			m_lastSelectedRelationship.repaint();
 		}
 
 		if (selected != null)
