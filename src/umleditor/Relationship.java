@@ -168,9 +168,6 @@ public class Relationship extends JComponent implements ISelectable
 		setArrowFill();
 
 		recalculateBounds();
-
-		// Test mouse methods
-		this.enableEvents(-1L);
 	}
 
 	/***** Methods *****/
@@ -570,6 +567,13 @@ public class Relationship extends JComponent implements ISelectable
 	@Override
 	public boolean contains(int x, int y)
 	{
+		// Note: the provided point is relative to the bounding box of the component, not the parent window.
+		// Convert coordinates (local-to-parent) for testing. This is a workaround until all data is stored in local
+		// coordinates.
+		Point loc = getLocation();
+		x += loc.x;
+		y += loc.y;
+
 		Rectangle2D clickArea = new Rectangle2D.Float(x - m_clickDelta, y - m_clickDelta, m_clickDelta * 2,
 				m_clickDelta * 2);
 
