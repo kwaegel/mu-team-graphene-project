@@ -157,8 +157,10 @@ public class UMLEditor extends JFrame implements ActionListener
 		fileMenu.add(exitOption);
 
 		menuBar.add(fileMenu);
-		helpMenu.setActionCommand("HELP");
-		helpMenu.addActionListener(this);
+		
+		
+		JMenu editMenu = new JMenu("Edit");
+		
 		JMenuItem cutOption = new JMenuItem("Cut");
 		cutOption.setActionCommand("CUT");
 		cutOption.addActionListener(this);
@@ -176,6 +178,8 @@ public class UMLEditor extends JFrame implements ActionListener
 		
 		menuBar.add(editMenu);
 
+		JMenu helpMenu = new JMenu("Help");
+		
 		JMenuItem helpOption = new JMenuItem("Help Contents  ");
 		helpOption.setActionCommand("HELP");
 		helpOption.addActionListener(this);
@@ -187,6 +191,8 @@ public class UMLEditor extends JFrame implements ActionListener
 		aboutOption.setActionCommand("ABOUT");
 		aboutOption.addActionListener(this);
 		helpMenu.add(aboutOption);
+		
+		menuBar.add(helpMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);
 
@@ -245,8 +251,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		helpPanel.setVisible(false);
 	}
 
-	@Override
-	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
 		if (arg0.getActionCommand() == "ADD")
@@ -265,7 +269,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "DELETE")
 		{
 			ClassDiagram currentDiagram = getCurrentDiagram();
-			currentDiagram.deleteSelectedNode();
+			currentDiagram.deleteSelectedObject();
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{
@@ -285,6 +289,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "SAVEAS")
 		{
 			ClassDiagram currentDiagram = getCurrentDiagram();
+		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
 			// Close function to be implemented
@@ -316,10 +321,6 @@ public class UMLEditor extends JFrame implements ActionListener
 			helpPanel.setToAboutTab();
 			helpPanel.setVisible(true);
 		}
-	}
-
-		}
-
 	}
 
 	/**
