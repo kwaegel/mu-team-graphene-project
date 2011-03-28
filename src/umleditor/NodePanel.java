@@ -3,9 +3,8 @@ package umleditor;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,7 +19,7 @@ import net.miginfocom.swing.MigLayout;
  * format. Handles interactions between the user and the class.
  * 
  */
-public class NodePanel extends JPanel implements MouseListener
+public class NodePanel extends JPanel
 {
 	/**
 	 * Generated id, recommended for all GUI components
@@ -63,7 +62,7 @@ public class NodePanel extends JPanel implements MouseListener
 
 		this.createDisplay();
 
-		this.addMouseListener(this);
+		this.addMouseListener(new NodeSelectionListener());
 	}
 
 	public ClassNode getClassNode()
@@ -85,7 +84,7 @@ public class NodePanel extends JPanel implements MouseListener
 	{
 		this.setBackground(Color.pink);
 	}
-	
+
 	public void displayEditPanel()
 	{
 		EditPanel editPanel = new EditPanel(this.associatedNode);
@@ -123,13 +122,17 @@ public class NodePanel extends JPanel implements MouseListener
 			// but while editing, don't want strange effects where making
 			// a field empty causes node lenght to shrink
 			if (attributeName.isEmpty())
+			{
 				attributeLabel.setMinimumSize(new Dimension(0, 16));
+			}
 			this.add(attributeLabel, "gapx 3 3");
 		}
 
 		// add space if there are no attributes so displays properly
 		if (associatedNode.getNumAttributes() == 0)
+		{
 			addSpacer();
+		}
 
 		// add separator
 		addSeparator();
@@ -144,13 +147,17 @@ public class NodePanel extends JPanel implements MouseListener
 			// but while editing, don't want strange effects where making
 			// a field empty causes node lenght to shrink
 			if (methodName.isEmpty())
+			{
 				methodLabel.setMinimumSize(new Dimension(0, DEFAULT_FIELD_HEIGHT));
+			}
 			this.add(methodLabel, "gapx 3 3");
 		}
 
 		// add space if there are no attributes so displays properly
 		if (associatedNode.getNumMethods() == 0)
+		{
 			addSpacer();
+		}
 
 		// add an empty JLabel, workaround for a bug in MigLayout
 		// where using direction docking causes the last component
@@ -178,49 +185,44 @@ public class NodePanel extends JPanel implements MouseListener
 		this.add(spacer);
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e)
+	/**
+	 * Class to handle ClassNode selection and adding relationships.
+	 */
+	private class NodeSelectionListener extends MouseAdapter
 	{
-		int clickCount = e.getClickCount();
-		if (clickCount > 1)
+
+		@Override
+		public void mouseClicked(MouseEvent e)
 		{
-			displayEditPanel();
+			int clickCount = e.getClickCount();
+			if (clickCount > 1)
+			{
+				displayEditPanel();
+			}
+			else
+			{
+				parentDiagram.setSelectedObject(associatedNode);
+				makeSelected();
+			}
 		}
-		else
+
+		@Override
+		public void mousePressed(MouseEvent e)
 		{
 			parentDiagram.setSelectedObject(associatedNode);
-			this.makeSelected();
+			makeSelected();
 		}
-	}
 
-	@Override
-	public void mouseEntered(MouseEvent e)
-	{
-		// do nothing
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e)
-	{
-		// do nothing
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e)
-	{
-		parentDiagram.setSelectedObject(associatedNode);
-		this.makeSelected();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e)
-	{
-		Component comp = parentDiagram.getComponentUnder(e);
-
-		if (comp instanceof NodePanel)
+		@Override
+		public void mouseReleased(MouseEvent e)
 		{
-			ClassNode targetNode = ((NodePanel) comp).getClassNode();
-			parentDiagram.addRelationship(targetNode);
+			Component comp = parentDiagram.getComponentUnder(e);
+
+			if (comp instanceof NodePanel)
+			{
+				ClassNode targetNode = ((NodePanel) comp).getClassNode();
+				parentDiagram.addRelationship(targetNode);
+			}
 		}
 	}
 }

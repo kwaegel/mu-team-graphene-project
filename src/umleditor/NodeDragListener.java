@@ -16,10 +16,11 @@ public class NodeDragListener extends MouseInputAdapter
 		panel = parentPanel;
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e)
 	{
 		// forward event to node panel
-		panel.mouseClicked(e);
+		panel.dispatchEvent(e);
 	}
 
 	@Override
@@ -40,14 +41,14 @@ public class NodeDragListener extends MouseInputAdapter
 	public void mousePressed(MouseEvent e)
 	{
 		// forward event to node panel
-		panel.mousePressed(e);
+		panel.dispatchEvent(e);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
 		// forward event to node panel
-		panel.mouseReleased(e);
+		panel.dispatchEvent(e);
 	}
 
 	@Override
