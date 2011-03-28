@@ -5,14 +5,22 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+/**
+ * Handles selection testing for {@link Relationship relationships}.
+ */
 public class RelationshipDragListener extends MouseAdapter
 {
+	private ClassDiagram m_diagram;
 	private List<Relationship> m_relationships;
 
-	private Relationship m_lastSelectedRelationship; // Cache the last selected relationship.
+	/**
+	 * Cache of the last selected relationship for faster intersection testing.
+	 */
+	private Relationship m_lastSelectedRelationship;
 
-	public RelationshipDragListener(List<Relationship> relationships)
+	public RelationshipDragListener(ClassDiagram diagram, List<Relationship> relationships)
 	{
+		m_diagram = diagram;
 		m_relationships = relationships;
 	}
 
@@ -48,6 +56,7 @@ public class RelationshipDragListener extends MouseAdapter
 	public void mouseClicked(MouseEvent e)
 	{
 		Point clickPoint = e.getPoint();
+		// Add control node on double click.
 		if (m_lastSelectedRelationship != null && e.getClickCount() == 2
 				&& m_lastSelectedRelationship.contains(clickPoint))
 		{
@@ -73,6 +82,9 @@ public class RelationshipDragListener extends MouseAdapter
 		{
 			selected.setSelected(true, clickPoint);
 			selected.repaint();
+
+			// Tell the ClassDiagram that the relationship is selected.
+			m_diagram.setSelectedObject(selected);
 		}
 
 		// Store the selected relationship
