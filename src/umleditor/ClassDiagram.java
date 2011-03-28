@@ -149,6 +149,7 @@ public class ClassDiagram implements KeyListener
 			r.removeFromLinkedNodes();
 			m_relationships.remove(r);
 			view.remove(r);
+			view.repaint();
 		}
 
 		currentlySelectedObject = null;
