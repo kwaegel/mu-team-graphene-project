@@ -128,6 +128,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		JMenuItem closeOption = new JMenuItem("Close");
 		closeOption.setActionCommand("CLOSE");
 		closeOption.addActionListener(this);
+		closeOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
 		fileMenu.add(closeOption);
 
 		fileMenu.addSeparator();
@@ -164,16 +165,19 @@ public class UMLEditor extends JFrame implements ActionListener
 		JMenuItem cutOption = new JMenuItem("Cut");
 		cutOption.setActionCommand("CUT");
 		cutOption.addActionListener(this);
+		cutOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(cutOption);
 		
 		JMenuItem copyOption = new JMenuItem("Copy");
 		copyOption.setActionCommand("COPY");
 		copyOption.addActionListener(this);
+		copyOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(copyOption);
 		
 		JMenuItem pasteOption = new JMenuItem("Paste");
 		pasteOption.setActionCommand("PASTE");
 		pasteOption.addActionListener(this);
+		pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(pasteOption);
 		
 		menuBar.add(editMenu);
