@@ -235,6 +235,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setFocusable(false);
+		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		this.add(tabbedPane, BorderLayout.CENTER);
 	}
 
@@ -246,9 +247,10 @@ public class UMLEditor extends JFrame implements ActionListener
 		JScrollPane scrollPane = new JScrollPane();
 		ClassDiagram initialDiagram = new ClassDiagram(this, scrollPane);
 		classDiagrams.add(initialDiagram);
-		tabbedPane.addTab("Unsaved Diagram", scrollPane);
+		tabbedPane.add(scrollPane);
 		if (!classDiagrams.isEmpty())
 			tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, "Unsaved Diagram"));
 		addClassButton.setEnabled(true);
 		initialDiagram.requestFocusOnView();
 	}
@@ -337,7 +339,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 	}
 
-	private boolean closeCurrentTab()
+	public boolean closeCurrentTab()
 	{
 		ClassDiagram currentDiagram = getCurrentDiagram();
 		int userOption = JOptionPane.NO_OPTION;
