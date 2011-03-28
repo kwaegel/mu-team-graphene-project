@@ -14,8 +14,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -93,7 +93,7 @@ public class Relationship extends JComponent implements ISelectable
 	/**
 	 * Contains a list of class nodes to draw between.
 	 */
-	private Point[] m_points;
+	private List<Point> m_points;
 
 	private Path2D.Float m_line;
 
@@ -151,13 +151,15 @@ public class Relationship extends JComponent implements ISelectable
 		m_secondNode = second;
 
 		int initialNumPoints = 2;
-		m_points = new Point[initialNumPoints];
+		m_points = new ArrayList<Point>(initialNumPoints);
+		m_points.add(new Point());
+		m_points.add(new Point());
 		m_line = new Path2D.Float(Path2D.WIND_NON_ZERO, initialNumPoints);
 
 		calculateDefaultPathControlPoints();
 
-		m_firstNodeOffset = calculateOffset(m_points[0], m_firstNode.getBounds());
-		m_secondNodeOffset = calculateOffset(m_points[m_points.length - 1], m_secondNode.getBounds());
+		m_firstNodeOffset = calculateOffset(m_points.get(0), m_firstNode.getBounds());
+		m_secondNodeOffset = calculateOffset(m_points.get(m_points.size() - 1), m_secondNode.getBounds());
 
 		createPathFromPoints();
 
@@ -225,8 +227,8 @@ public class Relationship extends JComponent implements ISelectable
 				double dist = startPoint.distance(endPoint);
 				if (dist < minDistence)
 				{
-					m_points[0] = startPoint;
-					m_points[m_points.length - 1] = endPoint;
+					m_points.set(0, startPoint);
+					m_points.set(m_points.size() - 1, endPoint);
 					minDistence = dist;
 				}
 			}
@@ -242,11 +244,12 @@ public class Relationship extends JComponent implements ISelectable
 		Rectangle firstBounds = m_firstNode.getBounds();
 		Rectangle secondBounds = m_secondNode.getBounds();
 
-		m_points[0].x = firstBounds.x + m_firstNodeOffset.x;
-		m_points[0].y = firstBounds.y + m_firstNodeOffset.y;
+		m_points.get(0).x = firstBounds.x + m_firstNodeOffset.x;
+		m_points.get(0).y = firstBounds.y + m_firstNodeOffset.y;
 
-		m_points[m_points.length - 1].x = secondBounds.x + m_secondNodeOffset.x;
-		m_points[m_points.length - 1].y = secondBounds.y + m_secondNodeOffset.y;
+		int end = m_points.size() - 1;
+		m_points.get(end).x = secondBounds.x + m_secondNodeOffset.x;
+		m_points.get(end).y = secondBounds.y + m_secondNodeOffset.y;
 	}
 
 	/**
@@ -254,7 +257,7 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	private void recalculateBounds()
 	{
-		Rectangle newBounds = new Rectangle(m_points[0]);
+		Rectangle newBounds = new Rectangle(m_points.get(0));
 		int offset = m_cpDrawSize / 2;
 		for (Point p : m_points)
 		{
@@ -297,8 +300,8 @@ public class Relationship extends JComponent implements ISelectable
 		m_arrow.reset();
 
 		// Get start and end points from the last line segment.
-		Point start = m_points[m_points.length - 2];
-		Point end = m_points[m_points.length - 1];
+		Point start = m_points.get(m_points.size() - 2);
+		Point end = m_points.get(m_points.size() - 1);
 
 		// Calculate line direction vector.
 		double dirX = end.x - start.x;
@@ -348,11 +351,11 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		// Reset the path.
 		m_line.reset();
-		m_line.moveTo(m_points[0].x, m_points[0].y);
+		m_line.moveTo(m_points.get(0).x, m_points.get(0).y);
 
-		for (int i = 1; i < m_points.length; i++)
+		for (int i = 1; i < m_points.size(); i++)
 		{
-			Point p = m_points[i];
+			Point p = m_points.get(i);
 			m_line.lineTo(p.x, p.y);
 		}
 	}
@@ -369,37 +372,20 @@ public class Relationship extends JComponent implements ISelectable
 				m_selectionTolerence, m_selectionTolerence);
 
 		// Find which line segment to add the new control point on
-		for (int i = 0; i < m_points.length - 1; i++)
+		for (int i = 0; i < m_points.size() - 1; i++)
 		{
-			Point segStart = m_points[i];
-			Point segEnd = m_points[i + 1];
+			Point segStart = m_points.get(i);
+			Point segEnd = m_points.get(i + 1);
 
 			Line2D seg = new Line2D.Float(segStart, segEnd);
 
 			if (boundingRect.intersectsLine(seg))
 			{
-				this.addControlPoint(clickPoint, i + 1);
+				// Insert the new point after the current index.
+				m_points.add(i + 1, clickPoint);
 				break;
 			}
 		}
-	}
-
-	/**
-	 * Add a control point before the specified index.
-	 * 
-	 * @param newControlPoint
-	 *            - the new control point to add.
-	 * @param indexOfPointAfterNewPoint
-	 *            - the index that will be after the new control point.
-	 */
-	private void addControlPoint(Point newControlPoint, int indexOfPointAfterNewPoint)
-	{
-		// TODO: convert m_points to a linked list to avoid the conversion.
-		List<Point> pointList = new LinkedList<Point>(Arrays.asList(m_points));
-
-		pointList.add(indexOfPointAfterNewPoint, newControlPoint);
-
-		m_points = pointList.toArray(new Point[0]);
 	}
 
 	/**
@@ -408,14 +394,9 @@ public class Relationship extends JComponent implements ISelectable
 	public void removeSelectedControlPoint()
 	{
 		// Don't allow the end points to be removed.
-		if (m_selectedControlPointIndex > 0 && m_selectedControlPointIndex < m_points.length - 1)
+		if (m_selectedControlPointIndex > 0 && m_selectedControlPointIndex < m_points.size() - 1)
 		{
-			// TODO: convert m_points to a list to avoid the conversion.
-			List<Point> pointList = new LinkedList<Point>(Arrays.asList(m_points));
-
-			pointList.remove(m_selectedControlPointIndex);
-
-			m_points = pointList.toArray(new Point[0]);
+			m_points.remove(m_selectedControlPointIndex);
 
 			this.createPathFromPoints();
 			this.createArrow();
@@ -439,30 +420,32 @@ public class Relationship extends JComponent implements ISelectable
 			if (m_selectedControlPointIndex == 0)
 			{
 				Rectangle bounds = m_firstNode.getBounds();
-				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
+				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
+				m_points.set(m_selectedControlPointIndex, closestPoint);
 
-				m_firstNodeOffset.x = m_points[0].x - bounds.x;
-				m_firstNodeOffset.y = m_points[0].y - bounds.y;
+				m_firstNodeOffset.x = m_points.get(0).x - bounds.x;
+				m_firstNodeOffset.y = m_points.get(0).y - bounds.y;
 			}
-			else if (m_selectedControlPointIndex == m_points.length - 1)
+			else if (m_selectedControlPointIndex == m_points.size() - 1)
 			{
 				Rectangle bounds = m_secondNode.getBounds();
-				m_points[m_selectedControlPointIndex] = getClosestPointOnRectangle(dragPoint, bounds);
+				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
+				m_points.set(m_selectedControlPointIndex, closestPoint);
 
-				int lastPointIndex = m_points.length - 1;
-				m_secondNodeOffset.x = m_points[lastPointIndex].x - bounds.x;
-				m_secondNodeOffset.y = m_points[lastPointIndex].y - bounds.y;
+				int end = m_points.size() - 1;
+				m_secondNodeOffset.x = m_points.get(end).x - bounds.x;
+				m_secondNodeOffset.y = m_points.get(end).y - bounds.y;
 			}
 			else
 			{
-				m_points[m_selectedControlPointIndex] = dragPoint;
+				m_points.set(m_selectedControlPointIndex, dragPoint);
 			}
 
 			// Rebuild the path.
 			createPathFromPoints();
 
 			// If we are dragging nodes at the end of the line, also rebuild the arrows.
-			if (m_selectedControlPointIndex <= 1 || m_selectedControlPointIndex >= m_points.length - 2)
+			if (m_selectedControlPointIndex <= 1 || m_selectedControlPointIndex >= m_points.size() - 2)
 			{
 				createArrow();
 			}
@@ -560,9 +543,9 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		int tol = m_selectionTolerence * m_selectionTolerence;
 
-		for (int i = 0; i < m_points.length; i++)
+		for (int i = 0; i < m_points.size(); i++)
 		{
-			if (clickPoint.distanceSq(m_points[i]) < tol)
+			if (clickPoint.distanceSq(m_points.get(i)) < tol)
 			{
 				return i;
 			}
@@ -662,12 +645,12 @@ public class Relationship extends JComponent implements ISelectable
 			Color oldColor = g2d.getColor();
 
 			int offset = m_cpDrawSize / 2;
-			for (int i = 0; i < m_points.length; i++)
+			for (int i = 0; i < m_points.size(); i++)
 			{
 				boolean isControlPoint = (i == m_selectedControlPointIndex);
 				g2d.setColor(isControlPoint ? m_selectedNodeColor : m_nodeColor);
 
-				g2d.fillRect(m_points[i].x - offset, m_points[i].y - offset, m_cpDrawSize, m_cpDrawSize);
+				g2d.fillRect(m_points.get(i).x - offset, m_points.get(i).y - offset, m_cpDrawSize, m_cpDrawSize);
 			}
 
 			g2d.setColor(oldColor);
