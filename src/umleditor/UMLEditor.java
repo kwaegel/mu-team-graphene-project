@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -146,15 +147,26 @@ public class UMLEditor extends JFrame implements ActionListener
 		fileMenu.add(exitOption);
 
 		menuBar.add(fileMenu);
+		
+		JMenu editMenu = new JMenu("Edit");
+		
+		JMenuItem cutOption = new JMenuItem("Cut");
+		cutOption.setActionCommand("CUT");
+		cutOption.addActionListener(this);
+		editMenu.add(cutOption);
+		
+		JMenuItem copyOption = new JMenuItem("Copy");
+		copyOption.setActionCommand("COPY");
+		copyOption.addActionListener(this);
+		editMenu.add(copyOption);
+		
+		JMenuItem pasteOption = new JMenuItem("Paste");
+		pasteOption.setActionCommand("PASTE");
+		pasteOption.addActionListener(this);
+		editMenu.add(pasteOption);
+		
+		menuBar.add(editMenu);
 
-		JMenu helpMenu = new JMenu("Help");
-
-		JMenuItem instructOption = new JMenuItem("Instructions");
-		instructOption.setActionCommand("INSTRUCT");
-		instructOption.addActionListener(this);
-		helpMenu.add(instructOption);
-
-		menuBar.add(helpMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);
 
@@ -261,22 +273,13 @@ public class UMLEditor extends JFrame implements ActionListener
 
 			}
 		}
+		else if (arg0.getActionCommand() == "CUT")
+		{
+			
+		}
 		else if (arg0.getActionCommand() == "INSTRUCT")
 		{
 
-			// Currently cannot find file
-
-			JFrame frame = new JFrame();
-			frame.setTitle("Instructions");
-			String instructions = " ";
-			File file = new File("Instructions.txt");
-
-			instructions = "Adding a class (N): Click on the Add Class button and then click where you want to create the class. Hold shift down to create more than one class at a time. \n"
-				+ "Deleting a class (Del): Select the class you would like to delete then click on the delete button. \n"
-				+ "Edit a class (E): Double click on the class you wish to edit. When finished select the Close button to save changes. Select the Discard Changes button if you wish to undo changes. \n"
-				+ "Create Relationship: Click and hold the first class you wish to create a relationship with and drag your mouse to the second node and release. Select the relationship you would like to create. \n"
-				+ "Move a class: Move the mouse over the title of a class. Click and hold to move the class. Release mouse button when finished.";
-			JOptionPane.showMessageDialog(frame, instructions);
 		}
 
 	}
