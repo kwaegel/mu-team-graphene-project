@@ -256,7 +256,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 				fileSavedTo = fileSaveChooser.getSelectedFile();
 			}
 		}
-		if (changedSinceSaved || chooseNewFile)
+		if (fileSavedTo != null && (changedSinceSaved || chooseNewFile))
 		{
 			// code to save to file goes here
 			changedSinceSaved = false;
@@ -271,6 +271,12 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 			changedSinceSaved = true;
 			this.setTabTitle(fileSavedTo.getName() + "*");
 		}
+	}
+	
+	public boolean isUnsaved()
+	{
+		boolean diagramBlank = (fileSavedTo == null && listOfNodes.isEmpty());
+		return (!diagramBlank && changedSinceSaved);
 	}
 
 	private void setTabTitle(String title)
@@ -364,7 +370,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 	@Override
 	public void focusGained(FocusEvent e)
 	{
-		if (selectedNode != null)
+		if (currentlySelectedObject != null)
 		{
 			parentEditor.setDeleteButtonState(true);
 		}
@@ -428,6 +434,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 	private class ClassCreationListener extends java.awt.event.MouseAdapter
 	{
 
+		@Override
 		public void mouseReleased(MouseEvent arg0)
 		{
 			// mouse clicked in the view, not on any node

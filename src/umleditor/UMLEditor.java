@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,10 +50,11 @@ public class UMLEditor extends JFrame implements ActionListener
 	public UMLEditor()
 	{
 		super("UML Editor");
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setPreferredSize(new Dimension(800, 800));
 		this.setMinimumSize(new Dimension(250, 200));
 		this.setLocationByPlatform(true);
+		this.addWindowListener(new WindowCloseListener());
 
 		classDiagrams = new ArrayList<ClassDiagram>();
 
@@ -158,32 +161,31 @@ public class UMLEditor extends JFrame implements ActionListener
 		fileMenu.add(exitOption);
 
 		menuBar.add(fileMenu);
-		
-		
+
 		JMenu editMenu = new JMenu("Edit");
-		
+
 		JMenuItem cutOption = new JMenuItem("Cut");
 		cutOption.setActionCommand("CUT");
 		cutOption.addActionListener(this);
 		cutOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(cutOption);
-		
+
 		JMenuItem copyOption = new JMenuItem("Copy");
 		copyOption.setActionCommand("COPY");
 		copyOption.addActionListener(this);
 		copyOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(copyOption);
-		
+
 		JMenuItem pasteOption = new JMenuItem("Paste");
 		pasteOption.setActionCommand("PASTE");
 		pasteOption.addActionListener(this);
 		pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(pasteOption);
-		
+
 		menuBar.add(editMenu);
 
 		JMenu helpMenu = new JMenu("Help");
-		
+
 		JMenuItem helpOption = new JMenuItem("Help Contents  ");
 		helpOption.setActionCommand("HELP");
 		helpOption.addActionListener(this);
@@ -195,7 +197,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		aboutOption.setActionCommand("ABOUT");
 		aboutOption.addActionListener(this);
 		helpMenu.add(aboutOption);
-		
+
 		menuBar.add(helpMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);
@@ -245,7 +247,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		ClassDiagram initialDiagram = new ClassDiagram(this, scrollPane);
 		classDiagrams.add(initialDiagram);
 		tabbedPane.addTab("Unsaved Diagram", scrollPane);
-		tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+		if (!classDiagrams.isEmpty())
+			tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+		addClassButton.setEnabled(true);
 		initialDiagram.requestFocusOnView();
 	}
 
@@ -297,24 +301,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
-			// Close function to be implemented
+			closeCurrentTab();
 		}
 		else if (arg0.getActionCommand() == "EXIT")
 		{
-			// When save is implemented, message will be changed to: Do you want
-			// to save?
-			JFrame frame = new JFrame();
-			String message = "Are you sure you want to quit?";
-			int answer = JOptionPane.showConfirmDialog(frame, message);
-			if (answer == JOptionPane.YES_OPTION)
-			{
-				// Dispose of the current jFrame, which terminates the program.
-				this.dispose();
-			}
-			else if (answer == JOptionPane.NO_OPTION)
-			{
-
-			}
+			closeEditor();
 		}
 		else if (arg0.getActionCommand() == "HELP")
 		{
@@ -326,6 +317,50 @@ public class UMLEditor extends JFrame implements ActionListener
 			helpPanel.setToAboutTab();
 			helpPanel.setVisible(true);
 		}
+	}
+
+	private void closeEditor()
+	{
+		int numOpenTabs = tabbedPane.getTabCount();
+		for (int i = 0; i < numOpenTabs; ++i)
+		{
+			boolean closedTab = closeCurrentTab();
+			if (!closedTab)
+				break;
+		}
+
+		if (classDiagrams.isEmpty())
+		{
+			// we removed all diagrams without the user canceling,
+			// so go ahead and close the editor
+			this.dispose();
+		}
+	}
+
+	private boolean closeCurrentTab()
+	{
+		ClassDiagram currentDiagram = getCurrentDiagram();
+		int userOption = JOptionPane.NO_OPTION;
+		if (currentDiagram.isUnsaved())
+		{
+			userOption = JOptionPane.showConfirmDialog(this,
+					"There are unsaved changes to the current diagram. \nDo you want to save before closing?");
+		}
+
+		if (userOption == JOptionPane.YES_OPTION)
+		{
+			currentDiagram.saveToFile(false);
+		}
+
+		if (userOption != JOptionPane.CANCEL_OPTION && userOption != JOptionPane.CLOSED_OPTION)
+		{
+			tabbedPane.remove(tabbedPane.getSelectedIndex());
+			classDiagrams.remove(currentDiagram);
+			if (classDiagrams.isEmpty())
+				addClassButton.setEnabled(false);
+			return (true);
+		}
+		return (false);
 	}
 
 	/**
@@ -363,5 +398,14 @@ public class UMLEditor extends JFrame implements ActionListener
 	public static void main(String[] args)
 	{
 		new UMLEditor();
+	}
+
+	private class WindowCloseListener extends WindowAdapter
+	{
+		@Override
+		public void windowClosing(WindowEvent e)
+		{
+			closeEditor();
+		}
 	}
 }
