@@ -6,7 +6,10 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +18,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
@@ -24,7 +28,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private Color unselectedButtonColor = javax.swing.UIManager.getColor("Button.background");
 	private Color selectedButtonColor = Color.gray;
-	
+
 	private HelpPanel helpPanel;
 
 	private JMenuBar menuBar;
@@ -33,9 +37,9 @@ public class UMLEditor extends JFrame implements ActionListener
 	private JButton deleteButton;
 	private JButton addClassButton;
 
-	private JScrollPane scrollPane;
+	private JTabbedPane tabbedPane;
 
-	private ClassDiagram classDiagram;
+	private List<ClassDiagram> classDiagrams;
 
 	private ClassNode copyNode;
 
@@ -49,10 +53,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		this.setMinimumSize(new Dimension(250, 200));
 		this.setLocationByPlatform(true);
 
+		classDiagrams = new ArrayList<ClassDiagram>();
+
 		setUpMenuBar();
 		setUpToolBar();
-		setUpScrollPane();
-		setUpClassDiagram();
+		setUpTabbedPane();
+		createNewClassDiagram();
 		setUpHelpPanel();
 
 		this.pack();
@@ -104,13 +110,25 @@ public class UMLEditor extends JFrame implements ActionListener
 		JMenuItem newOption = new JMenuItem("New");
 		newOption.setActionCommand("NEW");
 		newOption.addActionListener(this);
+		newOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
 		fileMenu.add(newOption);
 
 		JMenuItem loadOption = new JMenuItem("Load...");
+		loadOption.setActionCommand("LOAD");
+		loadOption.addActionListener(this);
+		loadOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		fileMenu.add(loadOption);
 
 		JMenuItem saveOption = new JMenuItem("Save");
+		saveOption.setActionCommand("SAVE");
+		saveOption.addActionListener(this);
+		saveOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		fileMenu.add(saveOption);
+
+		JMenuItem saveAsOption = new JMenuItem("Save As...");
+		saveAsOption.setActionCommand("SAVEAS");
+		saveAsOption.addActionListener(this);
+		fileMenu.add(saveAsOption);
 		//
 		// fileMenu.addSeparator();
 		//
@@ -122,6 +140,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		JMenuItem exitOption = new JMenuItem("Exit");
 		exitOption.setActionCommand("EXIT");
 		exitOption.addActionListener(this);
+		exitOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
 		fileMenu.add(exitOption);
 
 		menuBar.add(fileMenu);
@@ -130,7 +149,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		helpMenu.setActionCommand("HELP");
 		helpMenu.addActionListener(this);
 		menuBar.add(helpMenu);
-		
+
 		JMenuItem helpOption = new JMenuItem("Help Contents  ");
 		helpOption.setActionCommand("HELP");
 		helpOption.addActionListener(this);
@@ -168,18 +187,24 @@ public class UMLEditor extends JFrame implements ActionListener
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
 
-	private void setUpScrollPane()
+	private void setUpTabbedPane()
 	{
-		scrollPane = new JScrollPane();
-		this.add(scrollPane, BorderLayout.CENTER);
+		tabbedPane = new JTabbedPane();
+		tabbedPane.setFocusable(false);
+		this.add(tabbedPane, BorderLayout.CENTER);
 	}
 
-	private void setUpClassDiagram()
+	private void createNewClassDiagram()
 	{
-		classDiagram = new ClassDiagram(this);
+		JScrollPane scrollPane = new JScrollPane();
+		ClassDiagram initialDiagram = new ClassDiagram(this, scrollPane);
+		classDiagrams.add(initialDiagram);
+		tabbedPane.addTab("Unsaved Diagram", scrollPane);
+		tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+		initialDiagram.requestFocusOnView();
 	}
-	
-	private void setUpHelpPanel ()
+
+	private void setUpHelpPanel()
 	{
 		helpPanel = new HelpPanel();
 		helpPanel.setVisible(false);
@@ -203,11 +228,28 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "DELETE")
 		{
-			classDiagram.deleteSelectedNode();
+			ClassDiagram currentDiagram = getCurrentDiagram();
+			currentDiagram.deleteSelectedNode();
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{
-			clearDiagram();
+			disableAddNewClassMode();
+			createNewClassDiagram();
+			this.validate();
+		}
+		else if (arg0.getActionCommand() == "LOAD")
+		{
+
+		}
+		else if (arg0.getActionCommand() == "SAVE")
+		{
+			ClassDiagram currentDiagram = getCurrentDiagram();
+			currentDiagram.saveToFile(false);
+		}
+		else if (arg0.getActionCommand() == "SAVEAS")
+		{
+			ClassDiagram currentDiagram = getCurrentDiagram();
+			currentDiagram.saveToFile(true);
 		}
 		else if (arg0.getActionCommand() == "EXIT")
 		{
@@ -243,13 +285,15 @@ public class UMLEditor extends JFrame implements ActionListener
 	public void clearDiagram()
 	{
 		this.disableAddNewClassMode();
-		classDiagram = new ClassDiagram(this);
+		// classDiagram = new ClassDiagram(this);
 		this.validate();
 	}
 
-	public JScrollPane getScrollPane()
+	private ClassDiagram getCurrentDiagram()
 	{
-		return (scrollPane);
+		int currentIndex = tabbedPane.getSelectedIndex();
+		ClassDiagram openDiagram = classDiagrams.get(currentIndex);
+		return (openDiagram);
 	}
 
 	public ClassNode getCopyNode()

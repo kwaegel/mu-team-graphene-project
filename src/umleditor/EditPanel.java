@@ -9,6 +9,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,7 +32,7 @@ import umleditor.NumberedTextField.FieldType;
  * value in the class. There is a "revert" option which changes all values back to the point when the edit panel was
  * opened. Choosing this option and then closing the dialog has the effect of "cancel"
  */
-public class EditPanel extends JDialog implements FocusListener, ActionListener, KeyListener
+public class EditPanel extends JDialog implements FocusListener, ActionListener, KeyListener, WindowListener
 {
 	/**
 	 * Generated id, recommended for all GUI components
@@ -98,6 +100,8 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		super.setLocation(500, 100);
 		super.setMinimumSize(new Dimension(400, 450));
 		super.setResizable(false);
+
+		this.addWindowListener(this);
 
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -261,7 +265,8 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 				ntf.setText(associatedNode.getMethod(componentIndex));
 				dialogMessage = "Method name cannot be blank. To delete this method, click Delete";
 			}
-			else // type == FieldType.ClassName
+			else
+			// type == FieldType.ClassName
 			{
 				associatedNode.setName("DefaultClass");
 				ntf.setText(associatedNode.getName());
@@ -281,6 +286,10 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 
 		if (actionCommand == "Exit")
 		{
+			if (!associatedNode.propertiesEqual(copyOfOriginalNode))
+			{
+				associatedNode.getNodePanel().getParentDiagram().markAsChanged();
+			}
 			// get rid of JDialog
 			super.dispose();
 		}
@@ -339,7 +348,6 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		this.validate();
 	}
 
-	
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
@@ -358,6 +366,15 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			if (!associatedNode.propertiesEqual(copyOfOriginalNode))
+			{
+				associatedNode.getNodePanel().getParentDiagram().markAsChanged();
+			}
+			super.dispose();
+		}
+
 		NumberedTextField ntf = (NumberedTextField) e.getComponent();
 		int componentIndex = ntf.getNumberIndex();
 		FieldType type = ntf.getType();
@@ -370,9 +387,56 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		{
 			associatedNode.setMethod(componentIndex, ntf.getText());
 		}
-		else // type == FieldType.ClassName
+		else
+		// type == FieldType.ClassName
 		{
 			associatedNode.setName(ntf.getText());
 		}
 	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e)
+	{
+		if (!associatedNode.propertiesEqual(copyOfOriginalNode))
+		{
+			associatedNode.getNodePanel().getParentDiagram().markAsChanged();
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e)
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e)
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e)
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e)
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e)
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e)
+	{
+		// Do nothing
+	}
+
 }

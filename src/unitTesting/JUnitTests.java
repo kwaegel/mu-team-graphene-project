@@ -2,6 +2,8 @@ package unitTesting;
 
 import static org.junit.Assert.assertTrue;
 
+import javax.swing.JScrollPane;
+
 import org.junit.Test;
 
 import umleditor.ClassDiagram;
@@ -37,7 +39,7 @@ public class JUnitTests extends UMLEditor
 	@Test
 	public void testDelete()
 	{
-		ClassDiagram testDiagram = new ClassDiagram(this);
+		ClassDiagram testDiagram = new ClassDiagram(this, new JScrollPane());
 		ClassNode testNode = new ClassNode();
 		testNode.attachPanel(new NodePanel(testDiagram, testNode));
 
@@ -56,7 +58,7 @@ public class JUnitTests extends UMLEditor
 	{
 
 		ClassNode testNode = new ClassNode(); // Method 1 is automatically created on Node creation
-		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor()), testNode));
+		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode));
 		testNode.addMethod("Method 2");
 		testNode.addMethod("Method 3");
 		testNode.addMethod("Method 4");
@@ -80,7 +82,7 @@ public class JUnitTests extends UMLEditor
 	{
 
 		ClassNode testNode = new ClassNode(); // Attribute 1 is automatically created on Node creation
-		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor()), testNode));
+		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode));
 		testNode.addAttribute("Attrib 2");
 		testNode.addAttribute("Attrib 3");
 		testNode.addAttribute("Attrib 4");
@@ -100,7 +102,7 @@ public class JUnitTests extends UMLEditor
 	public void testNaming()
 	{
 		ClassNode testNode = new ClassNode();
-		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor()), testNode));
+		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode));
 		testNode.setName("ThisIsTheTestNode");
 		String name = testNode.getName();
 		assertTrue("Error: Class name was not set, or get does not work", name.equals("ThisIsTheTestNode"));
