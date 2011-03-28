@@ -270,43 +270,12 @@ public class UMLEditor extends JFrame implements ActionListener
 			frame.setTitle("Instructions");
 			String instructions = " ";
 			File file = new File("Instructions.txt");
-			StringBuffer contents = new StringBuffer();
-			BufferedReader reader = null;
 
-			try
-			{
-				reader = new BufferedReader(new FileReader(file));
-				String text = null;
-
-				while ((text = reader.readLine()) != null)
-				{
-					contents.append(text).append(System.getProperty("line.separator"));
-				}
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				try
-				{
-					if (reader != null)
-					{
-						reader.close();
-					}
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-			instructions = contents.toString();
-
+			instructions = "Adding a class (N): Click on the Add Class button and then click where you want to create the class. Hold shift down to create more than one class at a time. \n"
+				+ "Deleting a class (Del): Select the class you would like to delete then click on the delete button. \n"
+				+ "Edit a class (E): Double click on the class you wish to edit. When finished select the Close button to save changes. Select the Discard Changes button if you wish to undo changes. \n"
+				+ "Create Relationship: Click and hold the first class you wish to create a relationship with and drag your mouse to the second node and release. Select the relationship you would like to create. \n"
+				+ "Move a class: Move the mouse over the title of a class. Click and hold to move the class. Release mouse button when finished.";
 			JOptionPane.showMessageDialog(frame, instructions);
 		}
 
