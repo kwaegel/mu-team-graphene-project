@@ -221,7 +221,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "DELETE")
 		{
-			classDiagram.deleteSelectedNode();
+			classDiagram.deleteSelectedObject();
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{

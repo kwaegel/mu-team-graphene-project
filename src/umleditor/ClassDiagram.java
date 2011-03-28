@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +16,7 @@ import javax.swing.JScrollPane;
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
-public class ClassDiagram implements MouseListener, KeyListener
+public class ClassDiagram implements KeyListener
 {
 	// Lists of objects in the diagram
 	private List<ClassNode> listOfNodes;
@@ -37,7 +36,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		parentEditor = parent;
 
 		view = new JPanel();
-		view.addMouseListener(this);
+		// view.addMouseListener(this);
 		view.setFocusable(true);
 		view.requestFocus();
 		view.addKeyListener(this);
@@ -85,16 +84,17 @@ public class ClassDiagram implements MouseListener, KeyListener
 		view.revalidate();
 	}
 
-	private void unselectCurrentNode()
+	private void unselectCurrentObject()
 	{
 		if (currentlySelectedObject instanceof ClassNode)
 		{
+			// This is a temporary workaround. Eventually switch entirely over to using ISelectable.
 			selectedNode.getNodePanel().makeUnselected();
 			selectedNode = null;
 		}
 		else if (currentlySelectedObject instanceof Relationship)
 		{
-
+			((Relationship) currentlySelectedObject).setSelected(false, null);
 		}
 
 		currentlySelectedObject = null;
@@ -102,9 +102,17 @@ public class ClassDiagram implements MouseListener, KeyListener
 		parentEditor.setDeleteButtonState(false);
 	}
 
+	/**
+	 * Notify the classDiagram of object selection. Sending null indicates that no object was selected.
+	 * 
+	 * @param selected
+	 */
 	public void setSelectedObject(ISelectable selected)
 	{
-		unselectCurrentNode();
+		if (selected != currentlySelectedObject)
+		{
+			unselectCurrentObject();
+		}
 		currentlySelectedObject = selected;
 
 		if (selected instanceof ClassNode)
@@ -112,11 +120,13 @@ public class ClassDiagram implements MouseListener, KeyListener
 			selectedNode = (ClassNode) selected;
 		}
 
-		parentEditor.setDeleteButtonState(true);
+		// Turn the delete button on if something non-null was selected.
+		parentEditor.setDeleteButtonState(selected != null ? true : false);
+
 		parentEditor.disableAddNewClassMode();
 	}
 
-	public void deleteSelectedNode()
+	public void deleteSelectedObject()
 	{
 		if (currentlySelectedObject instanceof ClassNode)
 		{
@@ -202,31 +212,6 @@ public class ClassDiagram implements MouseListener, KeyListener
 		}
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e)
-	{
-		// do nothing
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0)
-	{
-		// do nothing
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0)
-	{
-		// do nothing
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0)
-	{
-		// do nothing
-	}
-
-	@Override
 	public void mouseReleased(MouseEvent arg0)
 	{
 		// mouse clicked in the view, not on any node
@@ -242,16 +227,16 @@ public class ClassDiagram implements MouseListener, KeyListener
 		}
 		else
 		{
-			this.unselectCurrentNode();
+			this.unselectCurrentObject();
 		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent arg0)
 	{
-		if (arg0.getKeyCode() == KeyEvent.VK_DELETE && selectedNode != null)
+		if (arg0.getKeyCode() == KeyEvent.VK_DELETE && currentlySelectedObject != null)
 		{
-			this.deleteSelectedNode();
+			this.deleteSelectedObject();
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_N)
 		{
@@ -278,7 +263,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		else if (arg0.getKeyCode() == KeyEvent.VK_X && arg0.isControlDown() && selectedNode != null)
 		{
 			parentEditor.setCopyNode(new ClassNode(selectedNode));
-			this.deleteSelectedNode();
+			this.deleteSelectedObject();
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_E && selectedNode != null)
 		{

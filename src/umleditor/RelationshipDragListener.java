@@ -101,4 +101,15 @@ public class RelationshipDragListener extends MouseAdapter
 		}
 	}
 
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		// If there is not a selected relationship, pass the event on to the ClassDiagram so it can check about adding a
+		// new ClassNode.
+		if (m_lastSelectedRelationship == null)
+		{
+			m_diagram.mouseReleased(e);
+		}
+	}
+
 }

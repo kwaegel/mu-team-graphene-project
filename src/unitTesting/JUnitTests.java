@@ -41,7 +41,7 @@ public class JUnitTests extends UMLEditor
 		testNode.attachPanel(new NodePanel(testDiagram, testNode));
 
 		testDiagram.setSelectedObject(testNode);
-		testDiagram.deleteSelectedNode();
+		testDiagram.deleteSelectedObject();
 		
 		//assertNotNull(testDiagram.getView());
 		//assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
