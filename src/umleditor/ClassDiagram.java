@@ -6,8 +6,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +21,7 @@ import javax.swing.JTabbedPane;
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
-public class ClassDiagram implements MouseListener, KeyListener, FocusListener
+public class ClassDiagram implements KeyListener, FocusListener
 {
 	// Lists of objects in the diagram
 	private List<ClassNode> listOfNodes;
@@ -63,9 +63,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 		// view.addMouseListener(m_relationshipDragController);
 		// view.addMouseMotionListener(m_relationshipDragController);
 
-		view.addMouseListener(new ClassCreationListener());
-		// TODO: why is code duplicated here?
-		//view.addMouseListener(this);
+		view.addMouseListener(new MouseClickListener());
 	}
 
 	public void requestFocusOnView()
@@ -272,7 +270,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 			this.setTabTitle(fileSavedTo.getName() + "*");
 		}
 	}
-	
+
 	public boolean isUnsaved()
 	{
 		boolean diagramBlank = (fileSavedTo == null && listOfNodes.isEmpty());
@@ -282,13 +280,10 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 	private void setTabTitle(String title)
 	{
 		JTabbedPane containingTabbedPane = (JTabbedPane) (view.getParent().getParent().getParent());
-		containingTabbedPane.setTitleAt(containingTabbedPane.getSelectedIndex(), title);
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e)
-	{
-
+		TabComponent tabComponent = (TabComponent) containingTabbedPane.getTabComponentAt(containingTabbedPane
+				.getSelectedIndex());
+		tabComponent.setTitle(title);
+		// containingTabbedPane.setTitleAt(containingTabbedPane.getSelectedIndex(), title);
 	}
 
 	@Override
@@ -386,52 +381,11 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 		// do nothing
 	}
 
-	@Override
-	public void mouseEntered(MouseEvent arg0)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0)
-	{
-		// mouse clicked in the view, not on any node
-		// check to see if adding a class is enabled
-		if (parentEditor.isAddNewClassModeEnabled())
-		{
-			// add new class mode enabled, so add a new class
-			this.createNode(arg0.getPoint());
-			if (!arg0.isShiftDown())
-			{
-				parentEditor.disableAddNewClassMode();
-			}
-		}
-		else
-		{
-			this.unselectCurrentObject();
-		}
-	}
-
 	/**
 	 * This class listens for clicks to an empty part of the class diagram and creates a new ClassNode if the new node
 	 * button is enabled.
 	 */
-	private class ClassCreationListener extends java.awt.event.MouseAdapter
+	private class MouseClickListener extends MouseAdapter
 	{
 
 		@Override
