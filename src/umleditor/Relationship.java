@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 /**
  * Relationship defines a connection between two ClassNodes. Relationships will be maintained by the individual classes
@@ -413,6 +414,8 @@ public class Relationship extends JComponent implements ISelectable
 		if (m_selected && m_selectedControlPointIndex >= 0)
 		{
 			Point dragPoint = e.getPoint();
+			// TODO: change this to work in local coordinates instead of doing a conversion.
+			dragPoint = SwingUtilities.convertPoint(this, dragPoint, getParent());
 
 			if (m_selectedControlPointIndex == 0)
 			{
