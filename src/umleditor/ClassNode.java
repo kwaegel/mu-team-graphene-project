@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassNode
+public class ClassNode implements ISelectable
 {
 
 	private static int nodesCreated = 0;
@@ -25,7 +25,7 @@ public class ClassNode
 	 */
 	public ClassNode()
 	{
-		className = "NewClass" + ++nodesCreated;
+		className = "NewClass" + (++nodesCreated);
 		listOfAttributes = new ArrayList<String>();
 		listOfAttributes.add("attribute 1");
 		listOfMethods = new ArrayList<String>();
@@ -35,7 +35,7 @@ public class ClassNode
 
 	/**
 	 * Constructs a copy of otherNode which has identical name, attributes, and methods NodePanel will initially be
-	 * null. Relationships will not be copied
+	 * null. Relationships will not be copied.
 	 * 
 	 * @param otherNode
 	 *            - node from which we get name, attributes and methods
@@ -60,7 +60,8 @@ public class ClassNode
 	 * Sets the core properties of the node (name, attributes, methods) to those of otherNode. Used in the EditPanel to
 	 * easily revert the node's properties without modifying unrelated values such as nodePanel or relationships
 	 * 
-	 * @param otherNode - node from which to get name, attributes and methods
+	 * @param otherNode
+	 *            - node from which to get name, attributes and methods
 	 */
 	public void setPropertiesTo(ClassNode otherNode)
 	{
@@ -203,10 +204,9 @@ public class ClassNode
 	{
 		return nodePanel.getBounds();
 	}
-	
+
 	/**
-	 * Ensures the NodePanel will reflect changes in the ClassNode
-	 * Called whenever the class node changes.
+	 * Ensures the NodePanel will reflect changes in the ClassNode Called whenever the class node changes.
 	 */
 	public void updateNodePanel()
 	{

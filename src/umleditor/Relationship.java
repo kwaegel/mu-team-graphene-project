@@ -174,6 +174,24 @@ public class Relationship extends JComponent implements ISelectable
 	/***** Methods *****/
 
 	/**
+	 * Return a {@link java.util.Collection collection} containing the {@link ClassNode ClassNodes} this relationship is
+	 * linked to.
+	 */
+	public java.util.Collection<ClassNode> getClassNodes()
+	{
+		return Arrays.asList(m_firstNode, m_secondNode);
+	}
+
+	/**
+	 * Tell this relationship to remove itself from the {@link ClassNode nodes} it links together.
+	 */
+	public void removeFromLinkedNodes()
+	{
+		m_firstNode.removeRelationship(this);
+		m_secondNode.removeRelationship(this);
+	}
+
+	/**
 	 * Calculate some default path control points. The points chosen are the centers of the nearest two sides of the
 	 * {@link ClassNode ClassNodes}.
 	 */

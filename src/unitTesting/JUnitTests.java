@@ -40,7 +40,7 @@ public class JUnitTests extends UMLEditor
 		ClassNode testNode = new ClassNode();
 		testNode.attachPanel(new NodePanel(testDiagram, testNode));
 
-		testDiagram.setSelectedNode(testNode);
+		testDiagram.setSelectedObject(testNode);
 		testDiagram.deleteSelectedNode();
 		
 		//assertNotNull(testDiagram.getView());

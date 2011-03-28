@@ -188,7 +188,7 @@ public class NodePanel extends JPanel implements MouseListener
 		}
 		else
 		{
-			parentDiagram.setSelectedNode(associatedNode);
+			parentDiagram.setSelectedObject(associatedNode);
 			this.makeSelected();
 		}
 	}
@@ -208,7 +208,7 @@ public class NodePanel extends JPanel implements MouseListener
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		parentDiagram.setSelectedNode(associatedNode);
+		parentDiagram.setSelectedObject(associatedNode);
 		this.makeSelected();
 	}
 

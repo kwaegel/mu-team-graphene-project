@@ -26,7 +26,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 	// Listeners for mouse events on the diagram
 	private RelationshipDragListener m_relationshipDragController;
 
-	private ISelectable selectedObject;
+	private ISelectable currentlySelectedObject;
 
 	private ClassNode selectedNode;
 	private UMLEditor parentEditor;
@@ -52,7 +52,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		m_relationships = new LinkedList<Relationship>();
 
 		// Create listeners on the view.
-		m_relationshipDragController = new RelationshipDragListener(m_relationships);
+		m_relationshipDragController = new RelationshipDragListener(this, m_relationships);
 		view.addMouseListener(m_relationshipDragController);
 		view.addMouseMotionListener(m_relationshipDragController);
 	}
@@ -87,35 +87,62 @@ public class ClassDiagram implements MouseListener, KeyListener
 
 	private void unselectCurrentNode()
 	{
-		if (selectedNode != null)
+		if (currentlySelectedObject instanceof ClassNode)
 		{
 			selectedNode.getNodePanel().makeUnselected();
 			selectedNode = null;
 		}
+		else if (currentlySelectedObject instanceof Relationship)
+		{
+
+		}
+
+		currentlySelectedObject = null;
+
 		parentEditor.setDeleteButtonState(false);
 	}
 
-	public void setSelectedNode(ClassNode node)
+	public void setSelectedObject(ISelectable selected)
 	{
 		unselectCurrentNode();
-		selectedNode = node;
+		currentlySelectedObject = selected;
+
+		if (selected instanceof ClassNode)
+		{
+			selectedNode = (ClassNode) selected;
+		}
+
 		parentEditor.setDeleteButtonState(true);
 		parentEditor.disableAddNewClassMode();
-		// node.makeSelected here?
 	}
 
 	public void deleteSelectedNode()
 	{
-		NodePanel panelToRemove = selectedNode.getNodePanel();
-		// view.remove(selectedNode.getRelationships());
-		removeRelationships(selectedNode.getRelationships());
-		view.remove(panelToRemove);
-		// need this call so deleting nodes not at edges of screen works properly
-		view.repaint();
-		// need this call so deleting nodes at edges of screen works properly
-		view.revalidate();
-		listOfNodes.remove(selectedNode);
-		selectedNode = null;
+		if (currentlySelectedObject instanceof ClassNode)
+		{
+			NodePanel panelToRemove = selectedNode.getNodePanel();
+			removeRelationships(selectedNode.getRelationships());
+			view.remove(panelToRemove);
+
+			// need this call so deleting nodes not at edges of screen works properly
+			view.repaint();
+
+			// need this call so deleting nodes at edges of screen works properly
+			view.revalidate();
+
+			listOfNodes.remove(selectedNode);
+			selectedNode = null;
+		}
+		else if (currentlySelectedObject instanceof Relationship)
+		{
+			Relationship r = (Relationship) currentlySelectedObject;
+			r.removeFromLinkedNodes();
+			m_relationships.remove(r);
+			view.remove(r);
+		}
+
+		currentlySelectedObject = null;
+
 		parentEditor.setDeleteButtonState(false);
 	}
 
@@ -274,7 +301,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 
 	public void movePanel(NodePanel nodePanelToMove, Point movePoint)
 	{
-		this.setSelectedNode(nodePanelToMove.getClassNode());
+		this.setSelectedObject(nodePanelToMove.getClassNode());
 		nodePanelToMove.makeSelected();
 
 		view.remove(nodePanelToMove);
