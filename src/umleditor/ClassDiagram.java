@@ -146,10 +146,18 @@ public class ClassDiagram implements KeyListener
 		else if (currentlySelectedObject instanceof Relationship)
 		{
 			Relationship r = (Relationship) currentlySelectedObject;
-			r.removeFromLinkedNodes();
-			m_relationships.remove(r);
-			view.remove(r);
-			view.repaint();
+			if (r.isControlPointSelected())
+			{
+				r.removeSelectedControlPoint();
+			}
+			else
+			{
+				// Remove the entire relationship.
+				r.removeFromLinkedNodes();
+				m_relationships.remove(r);
+				view.remove(r);
+			}
+			view.repaint(r.getBounds());
 		}
 
 		currentlySelectedObject = null;

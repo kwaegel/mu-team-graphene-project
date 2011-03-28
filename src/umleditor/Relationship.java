@@ -407,10 +407,10 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	public void removeSelectedControlPoint()
 	{
-		// Don't remove the end points.
+		// Don't allow the end points to be removed.
 		if (m_selectedControlPointIndex > 0 && m_selectedControlPointIndex < m_points.length - 1)
 		{
-			// TODO: convert m_points to a linked list to avoid the conversion.
+			// TODO: convert m_points to a list to avoid the conversion.
 			List<Point> pointList = new LinkedList<Point>(Arrays.asList(m_points));
 
 			pointList.remove(m_selectedControlPointIndex);
@@ -419,6 +419,8 @@ public class Relationship extends JComponent implements ISelectable
 
 			this.createPathFromPoints();
 			this.createArrow();
+
+			m_selectedControlPointIndex = -1;
 		}
 	}
 
@@ -567,6 +569,14 @@ public class Relationship extends JComponent implements ISelectable
 		}
 
 		return -1;
+	}
+
+	/**
+	 * @return true if the relationship has a selected control point.
+	 */
+	public boolean isControlPointSelected()
+	{
+		return m_selected && (m_selectedControlPointIndex >= 0);
 	}
 
 	/**
