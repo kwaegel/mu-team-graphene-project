@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Collection;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,6 +64,8 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 		// view.addMouseMotionListener(m_relationshipDragController);
 
 		view.addMouseListener(new ClassCreationListener());
+		// TODO: why is code duplicated here?
+		//view.addMouseListener(this);
 	}
 
 	public void requestFocusOnView()
@@ -233,7 +234,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 			this.markAsChanged();
 		}
 	}
-	
+
 	public void removeRelationships(List<Relationship> relationshipList)
 	{
 		m_relationships.removeAll(relationshipList);
@@ -255,7 +256,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 				fileSavedTo = fileSaveChooser.getSelectedFile();
 			}
 		}
-		if(changedSinceSaved)
+		if (changedSinceSaved || chooseNewFile)
 		{
 			// code to save to file goes here
 			changedSinceSaved = false;
@@ -281,7 +282,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 	@Override
 	public void mouseClicked(MouseEvent e)
 	{
-		
+
 	}
 
 	@Override
@@ -293,11 +294,7 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_N)
 		{
-			Point mouseLocation = arg0.getComponent().getMousePosition();
-			if (mouseLocation != null)
-			{
-				this.createNode(mouseLocation);
-			}
+			parentEditor.enableAddNewClassMode();
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_C && arg0.isControlDown() && selectedNode != null)
 		{
@@ -354,10 +351,9 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 
 		// call to repaint makes relationships redraw
 		view.repaint();
-		
+
 		this.markAsChanged();
 	}
-
 
 	/**
 	 * When a diagram becomes visible in the UML editor, ensure that the editor's delete button appropriately reflects
@@ -385,57 +381,70 @@ public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
+	public void mouseEntered(MouseEvent arg0)
+	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
+	public void mouseExited(MouseEvent arg0)
+	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
+	public void mousePressed(MouseEvent arg0)
+	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
+	public void mouseReleased(MouseEvent arg0)
+	{
 		// mouse clicked in the view, not on any node
 		// check to see if adding a class is enabled
-		if (parentEditor.isAddNewClassModeEnabled()) {
+		if (parentEditor.isAddNewClassModeEnabled())
+		{
 			// add new class mode enabled, so add a new class
 			this.createNode(arg0.getPoint());
-			if (!arg0.isShiftDown()) {
+			if (!arg0.isShiftDown())
+			{
 				parentEditor.disableAddNewClassMode();
 			}
-		} else {
+		}
+		else
+		{
 			this.unselectCurrentObject();
 		}
 	}
 
 	/**
-	* This class listens for clicks to an empty part of the class diagram and creates a new ClassNode if the new node
-	* button is enabled.
-	*/
-	private class ClassCreationListener extends java.awt.event.MouseAdapter {
+	 * This class listens for clicks to an empty part of the class diagram and creates a new ClassNode if the new node
+	 * button is enabled.
+	 */
+	private class ClassCreationListener extends java.awt.event.MouseAdapter
+	{
 
-		public void mouseReleased(MouseEvent arg0) {
+		public void mouseReleased(MouseEvent arg0)
+		{
 			// mouse clicked in the view, not on any node
 			// check to see if adding a class is enabled
-			if (parentEditor.isAddNewClassModeEnabled()) {
+			if (parentEditor.isAddNewClassModeEnabled())
+			{
 				// add new class mode enabled, so add a new class
 				createNode(arg0.getPoint());
-				if (!arg0.isShiftDown()) {
+				if (!arg0.isShiftDown())
+				{
 					parentEditor.disableAddNewClassMode();
 				}
-			} else {
+			}
+			else
+			{
 				unselectCurrentObject();
 			}
 		}
 	}
 }
-

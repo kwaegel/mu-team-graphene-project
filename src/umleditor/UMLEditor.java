@@ -293,6 +293,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "SAVEAS")
 		{
 			ClassDiagram currentDiagram = getCurrentDiagram();
+			currentDiagram.saveToFile(true);
 		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
