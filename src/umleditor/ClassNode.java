@@ -60,13 +60,28 @@ public class ClassNode
 	 * Sets the core properties of the node (name, attributes, methods) to those of otherNode. Used in the EditPanel to
 	 * easily revert the node's properties without modifying unrelated values such as nodePanel or relationships
 	 * 
-	 * @param otherNode - node from which to get name, attributes and methods
+	 * @param otherNode
+	 *            - node from which to get name, attributes and methods
 	 */
 	public void setPropertiesTo(ClassNode otherNode)
 	{
 		this.className = otherNode.className;
 		this.listOfAttributes = new ArrayList<String>(otherNode.listOfAttributes);
 		this.listOfMethods = new ArrayList<String>(otherNode.listOfMethods);
+	}
+
+	/**
+	 * Determines if the properties of otherNode are identical to those of this node. Checks classNames, contents of
+	 * attribute list and method list.
+	 * 
+	 * @param otherNode - ClassNode to compare this one to.
+	 * @return - <code>true</code> if properties are equal, <code>false</code> if they are not
+	 */
+	// TODO: JUnit tests for this!!
+	public boolean propertiesEqual(ClassNode otherNode)
+	{
+		return (this.className.equals(otherNode.className) && this.listOfAttributes.equals(otherNode.listOfAttributes) && this.listOfMethods
+				.equals(otherNode.listOfMethods));
 	}
 
 	// Returns the name of the Class Node
@@ -203,10 +218,9 @@ public class ClassNode
 	{
 		return nodePanel.getBounds();
 	}
-	
+
 	/**
-	 * Ensures the NodePanel will reflect changes in the ClassNode
-	 * Called whenever the class node changes.
+	 * Ensures the NodePanel will reflect changes in the ClassNode Called whenever the class node changes.
 	 */
 	public void updateNodePanel()
 	{

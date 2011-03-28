@@ -2,19 +2,24 @@ package umleditor;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.LinkedList;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
-public class ClassDiagram implements MouseListener, KeyListener
+public class ClassDiagram implements MouseListener, KeyListener, FocusListener
 {
 	private LinkedList<ClassNode> listOfNodes;
 
@@ -22,37 +27,50 @@ public class ClassDiagram implements MouseListener, KeyListener
 	private UMLEditor parentEditor;
 	private DiagramPanel view;
 
-	public ClassDiagram(UMLEditor parent)
+	private File fileSavedTo;
+	private boolean changedSinceSaved;
+
+	public ClassDiagram(UMLEditor parent, JScrollPane scrollPane)
 	{
 		parentEditor = parent;
 
 		view = new DiagramPanel();
 		view.addMouseListener(this);
 		view.setFocusable(true);
-		view.requestFocus();
 		view.addKeyListener(this);
 		view.setLayout(new MigLayout("", "", ""));
+		view.addFocusListener(this);
 
 		// Add the view to the scroll pane.
-		JScrollPane scrollPane = parent.getScrollPane();
 		scrollPane.setViewportView(view);
+
+		changedSinceSaved = true;
 
 		listOfNodes = new LinkedList<ClassNode>();
 	}
 
+	public void requestFocusOnView()
+	{
+		view.requestFocus();
+	}
+
 	/**
-	 * Create a new node and initializes it. 
+	 * Create a new node and initializes it.
 	 */
 	private void createNode(Point addLocation)
 	{
 		ClassNode newClassNode = new ClassNode();
 		initNode(addLocation, newClassNode);
+		this.markAsChanged();
 	}
-	
+
 	/**
 	 * Adds new node to the list of nodes. Also add it's {@link NodePanel} to the view.
-	 * @param addLocation - location to add node
-	 * @param newClassNode - node to add
+	 * 
+	 * @param addLocation
+	 *            - location to add node
+	 * @param newClassNode
+	 *            - node to add
 	 */
 	private void initNode(Point addLocation, ClassNode newClassNode)
 	{
@@ -96,6 +114,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		listOfNodes.remove(selectedNode);
 		selectedNode = null;
 		parentEditor.setDeleteButtonState(false);
+		this.markAsChanged();
 	}
 
 	public Component getComponentUnder(MouseEvent evt)
@@ -138,9 +157,44 @@ public class ClassDiagram implements MouseListener, KeyListener
 			view.addRelationship(rel);
 
 			rel.draw(view.getGraphics());
+
+			this.markAsChanged();
 		}
 	}
 
+	public void saveToFile(boolean chooseNewFile)
+	{
+		if (fileSavedTo == null || chooseNewFile)
+		{
+			JFileChooser fileSaveChooser = new JFileChooser();
+			int userChoice = fileSaveChooser.showSaveDialog(parentEditor);
+			if (userChoice == JFileChooser.APPROVE_OPTION)
+			{
+				fileSavedTo = fileSaveChooser.getSelectedFile();
+			}
+		}
+		if(changedSinceSaved)
+		{
+			// code to save to file goes here
+			changedSinceSaved = false;
+			this.setTabTitle(fileSavedTo.getName());
+		}
+	}
+
+	public void markAsChanged()
+	{
+		if (fileSavedTo != null)
+		{
+			changedSinceSaved = true;
+			this.setTabTitle(fileSavedTo.getName() + "*");
+		}
+	}
+
+	private void setTabTitle(String title)
+	{
+		JTabbedPane containingTabbedPane = (JTabbedPane) (view.getParent().getParent().getParent());
+		containingTabbedPane.setTitleAt(containingTabbedPane.getSelectedIndex(), title);
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e)
@@ -207,7 +261,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		{
 			ClassNode copy = parentEditor.getCopyNode();
 			Point mouseLocation = arg0.getComponent().getMousePosition();
-			if(copy != null && mouseLocation != null)
+			if (copy != null && mouseLocation != null)
 			{
 				ClassNode nodeCopy = new ClassNode(copy);
 				initNode(mouseLocation, nodeCopy);
@@ -222,7 +276,7 @@ public class ClassDiagram implements MouseListener, KeyListener
 		{
 			selectedNode.getNodePanel().displayEditPanel();
 		}
-			
+
 	}
 
 	@Override
@@ -254,6 +308,33 @@ public class ClassDiagram implements MouseListener, KeyListener
 
 		// call to repaint makes relationships redraw
 		view.repaint();
+		
+		this.markAsChanged();
+	}
+
+	/**
+	 * When a diagram becomes visible in the UML editor, ensure that the editor's delete button appropriately reflects
+	 * the current diagram.
+	 * 
+	 * @param e
+	 */
+	@Override
+	public void focusGained(FocusEvent e)
+	{
+		if (selectedNode != null)
+		{
+			parentEditor.setDeleteButtonState(true);
+		}
+		else
+		{
+			parentEditor.setDeleteButtonState(false);
+		}
+	}
+
+	@Override
+	public void focusLost(FocusEvent e)
+	{
+		// do nothing
 	}
 
 }
