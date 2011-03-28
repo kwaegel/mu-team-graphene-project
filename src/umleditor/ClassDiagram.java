@@ -52,8 +52,10 @@ public class ClassDiagram implements KeyListener
 
 		// Create listeners on the view.
 		m_relationshipDragController = new RelationshipDragListener(this, m_relationships);
-		view.addMouseListener(m_relationshipDragController);
-		view.addMouseMotionListener(m_relationshipDragController);
+		// view.addMouseListener(m_relationshipDragController);
+		// view.addMouseMotionListener(m_relationshipDragController);
+
+		view.addMouseListener(new ClassCreationListener());
 	}
 
 	/**
@@ -206,6 +208,8 @@ public class ClassDiagram implements KeyListener
 				// Add the relationship to the view.
 				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
 				view.add(rel, "external");
+				rel.addMouseListener(m_relationshipDragController);
+				rel.addMouseMotionListener(m_relationshipDragController);
 
 				rel.repaint();
 			}
@@ -217,26 +221,8 @@ public class ClassDiagram implements KeyListener
 		m_relationships.removeAll(relationshipList);
 		for (Relationship r : relationshipList)
 		{
+			r.removeMouseListener(m_relationshipDragController);
 			view.remove(r);
-		}
-	}
-
-	public void mouseReleased(MouseEvent arg0)
-	{
-		// mouse clicked in the view, not on any node
-		// check to see if adding a class is enabled
-		if (parentEditor.isAddNewClassModeEnabled())
-		{
-			// add new class mode enabled, so add a new class
-			this.createNode(arg0.getPoint());
-			if (!arg0.isShiftDown())
-			{
-				parentEditor.disableAddNewClassMode();
-			}
-		}
-		else
-		{
-			this.unselectCurrentObject();
 		}
 	}
 
@@ -310,6 +296,33 @@ public class ClassDiagram implements KeyListener
 
 		// call to repaint makes relationships redraw
 		view.repaint();
+	}
+
+	/**
+	 * This class listens for clicks to an empty part of the class diagram and creates a new ClassNode if the new node
+	 * button is enabled.
+	 */
+	private class ClassCreationListener extends java.awt.event.MouseAdapter
+	{
+		@Override
+		public void mouseReleased(MouseEvent arg0)
+		{
+			// mouse clicked in the view, not on any node
+			// check to see if adding a class is enabled
+			if (parentEditor.isAddNewClassModeEnabled())
+			{
+				// add new class mode enabled, so add a new class
+				createNode(arg0.getPoint());
+				if (!arg0.isShiftDown())
+				{
+					parentEditor.disableAddNewClassMode();
+				}
+			}
+			else
+			{
+				unselectCurrentObject();
+			}
+		}
 	}
 
 }
