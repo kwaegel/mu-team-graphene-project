@@ -70,6 +70,20 @@ public class ClassNode implements ISelectable
 		this.listOfMethods = new ArrayList<String>(otherNode.listOfMethods);
 	}
 
+	/**
+	 * Determines if the properties of otherNode are identical to those of this node. Checks classNames, contents of
+	 * attribute list and method list.
+	 * 
+	 * @param otherNode - ClassNode to compare this one to.
+	 * @return - <code>true</code> if properties are equal, <code>false</code> if they are not
+	 */
+	// TODO: JUnit tests for this!!
+	public boolean propertiesEqual(ClassNode otherNode)
+	{
+		return (this.className.equals(otherNode.className) && this.listOfAttributes.equals(otherNode.listOfAttributes) && this.listOfMethods
+				.equals(otherNode.listOfMethods));
+	}
+
 	// Returns the name of the Class Node
 	public String getName()
 	{
