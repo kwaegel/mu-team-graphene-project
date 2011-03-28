@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -90,6 +88,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		addClassButton.setBackground(unselectedButtonColor);
 		setCursor(Cursor.getDefaultCursor());
 	}
+
 	/**
 	 * Enables Delete Button. The delete button becomes clickable.
 	 */
@@ -97,9 +96,9 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		deleteButton.setEnabled(enabled);
 	}
+
 	/**
-	 * Sets up the File and Help menu bars
-	 * File menu contains New, Load, Close, Save, Save As, and Exit
+	 * Sets up the File and Help menu bars File menu contains New, Load, Close, Save, Save As, and Exit
 	 */
 	private void setUpMenuBar()
 	{
@@ -116,19 +115,19 @@ public class UMLEditor extends JFrame implements ActionListener
 		loadOption.setActionCommand("LOAD");
 		loadOption.addActionListener(this);
 		fileMenu.add(loadOption);
-		
+
 		JMenuItem closeOption = new JMenuItem("Close");
 		closeOption.setActionCommand("CLOSE");
 		closeOption.addActionListener(this);
 		fileMenu.add(closeOption);
-		
+
 		fileMenu.addSeparator();
 
 		JMenuItem saveOption = new JMenuItem("Save");
 		saveOption.setActionCommand("SAVE");
 		saveOption.addActionListener(this);
 		fileMenu.add(saveOption);
-		
+
 		JMenuItem saveAsOption = new JMenuItem("Save As...");
 		saveAsOption.setActionCommand("SAVEAS");
 		saveAsOption.addActionListener(this);
@@ -149,12 +148,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		menuBar.add(fileMenu);
 
 		JMenu helpMenu = new JMenu("Help");
-		
+
 		JMenuItem instructOption = new JMenuItem("Instructions");
 		instructOption.setActionCommand("INSTRUCT");
 		instructOption.addActionListener(this);
 		helpMenu.add(instructOption);
-		
+
 		menuBar.add(helpMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);
@@ -184,6 +183,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
+
 	/**
 	 * Sets up a scroll pane.
 	 */
@@ -192,6 +192,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		scrollPane = new JScrollPane();
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
+
 	/**
 	 * Initializes a new ClassDiagram.
 	 */
@@ -201,9 +202,9 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Performs actions based on what the user has selected in the 
-	 * File or Help menus or Tool bar
+	 * Performs actions based on what the user has selected in the File or Help menus or Tool bar
 	 */
+	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
 		if (arg0.getActionCommand() == "ADD")
@@ -229,19 +230,19 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "SAVE")
 		{
-			//Save function to be implemented
+			// Save function to be implemented
 		}
 		else if (arg0.getActionCommand() == "SAVEAS")
 		{
-			//Save As function to be implemented
+			// Save As function to be implemented
 		}
 		else if (arg0.getActionCommand() == "LOAD")
 		{
-			//Load function to be implemented
+			// Load function to be implemented
 		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
-			//Close function to be implemented
+			// Close function to be implemented
 		}
 		else if (arg0.getActionCommand() == "EXIT")
 		{
@@ -252,21 +253,19 @@ public class UMLEditor extends JFrame implements ActionListener
 			int answer = JOptionPane.showConfirmDialog(frame, message);
 			if (answer == JOptionPane.YES_OPTION)
 			{
-				System.exit(0);
+				// Dispose of the current jFrame, which terminates the program.
+				this.dispose();
 			}
 			else if (answer == JOptionPane.NO_OPTION)
 			{
 
 			}
 		}
-		else if(arg0.getActionCommand() == "INSTRUCT")
+		else if (arg0.getActionCommand() == "INSTRUCT")
 		{
-			
-			//Currently cannot find file
-			
-			
-			
-			
+
+			// Currently cannot find file
+
 			JFrame frame = new JFrame();
 			frame.setTitle("Instructions");
 			String instructions = " ";
@@ -274,36 +273,44 @@ public class UMLEditor extends JFrame implements ActionListener
 			StringBuffer contents = new StringBuffer();
 			BufferedReader reader = null;
 
-			try {
+			try
+			{
 				reader = new BufferedReader(new FileReader(file));
 				String text = null;
 
-				while ((text = reader.readLine()) != null) {
-					contents.append(text).append(
-							System.getProperty("line.separator"));
+				while ((text = reader.readLine()) != null)
+				{
+					contents.append(text).append(System.getProperty("line.separator"));
 				}
-			} catch (FileNotFoundException e) {
+			}
+			catch (FileNotFoundException e)
+			{
 				e.printStackTrace();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
-			} finally {
-				try {
-					if (reader != null) {
+			}
+			finally
+			{
+				try
+				{
+					if (reader != null)
+					{
 						reader.close();
 					}
-				} catch (IOException e) {
+				}
+				catch (IOException e)
+				{
 					e.printStackTrace();
 				}
 			}
 			instructions = contents.toString();
-			
 
-			
-			
 			JOptionPane.showMessageDialog(frame, instructions);
 		}
-			
-		}
+
+	}
 
 	/**
 	 * Used when New is selected in the File menu. Deletes everything in the diagram
