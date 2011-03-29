@@ -12,7 +12,7 @@ public class ClassNode implements ISelectable
 
 	private static int nodesCreated = 0;
 
-	private NodePanel nodePanel;
+	private transient NodePanel nodePanel;
 	private String className;
 	private ArrayList<String> listOfAttributes;
 	private ArrayList<String> listOfMethods;

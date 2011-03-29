@@ -8,7 +8,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +24,8 @@ import javax.swing.JTabbedPane;
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
+import com.thoughtworks.xstream.XStream;
+
 public class ClassDiagram implements KeyListener, FocusListener
 {
 	// Lists of objects in the diagram
@@ -28,16 +33,16 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private List<Relationship> m_relationships;
 
 	// Listeners for mouse events on the diagram
-	private RelationshipDragListener m_relationshipDragController;
+	private transient RelationshipDragListener m_relationshipDragController;
 
-	private ISelectable currentlySelectedObject;
+	private transient ISelectable currentlySelectedObject;
 
 	// private ClassNode selectedNode;
-	private UMLEditor parentEditor;
-	private JLayeredPane view;
+	private transient UMLEditor parentEditor;
+	private transient JLayeredPane view;
 
-	private File fileSavedTo;
-	private boolean changedSinceSaved;
+	private transient File fileSavedTo;
+	private transient boolean changedSinceSaved;
 
 	public ClassDiagram(UMLEditor parent, JScrollPane scrollPane)
 	{
@@ -249,7 +254,25 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 		if (fileSavedTo != null && (changedSinceSaved || chooseNewFile))
 		{
-			// code to save to file goes here
+			FileWriter fileOutStream;
+			BufferedWriter buffOutStream;
+			try
+			{
+				// code to save to file goes here
+				XStream xmlStream = new XStream();
+
+				fileOutStream = new FileWriter(fileSavedTo);
+				buffOutStream = new BufferedWriter(fileOutStream);
+
+				xmlStream.toXML(this, buffOutStream);
+
+				buffOutStream.close();
+			}
+			catch (IOException e)
+			{
+
+			}
+
 			changedSinceSaved = false;
 			this.setTabTitle(fileSavedTo.getName());
 		}
@@ -303,9 +326,13 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			Point pastePosition;
 			if (view.hasFocus())
+			{
 				pastePosition = view.getMousePosition();
+			}
 			else
+			{
 				pastePosition = new Point((parentEditor.getWidth() - 100) / 2, (parentEditor.getHeight() - 140) / 2);
+			}
 			System.out.println(pastePosition);
 			ClassNode nodeCopy = new ClassNode(copy);
 			initNode(pastePosition, nodeCopy);
