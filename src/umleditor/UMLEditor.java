@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -164,12 +163,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		menuBar.add(fileMenu);
 
 		JMenu editMenu = new JMenu("Edit");
-		
-		/*JMenuItem pasteOption = new JMenuItem("Paste");
-		pasteOption.setActionCommand("PASTE");
-		pasteOption.addActionListener(this);
-		pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-		editMenu.add(pasteOption);*/
+
+		/*
+		 * JMenuItem pasteOption = new JMenuItem("Paste"); pasteOption.setActionCommand("PASTE");
+		 * pasteOption.addActionListener(this); pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
+		 * InputEvent.CTRL_DOWN_MASK)); editMenu.add(pasteOption);
+		 */
 
 		JMenuItem cutOption = new JMenuItem("Cut");
 		cutOption.setActionCommand("CUT");
@@ -182,7 +181,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		copyOption.addActionListener(this);
 		copyOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(copyOption);
-		
+
 		JMenuItem pasteOption = new JMenuItem("Paste");
 		pasteOption.setActionCommand("PASTE");
 		pasteOption.addActionListener(this);

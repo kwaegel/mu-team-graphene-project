@@ -96,7 +96,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 		view.add(newNodePanel, "external");
 		newNodePanel.resetBounds(addLocation);
 		this.setSelectedObject(newClassNode);
-		newNodePanel.makeSelected();
 		view.revalidate();
 	}
 
@@ -279,17 +278,17 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	public void copyNode()
 	{
-		if (selectedNode != null)
+		if (currentlySelectedObject instanceof ClassNode)
 		{
-			parentEditor.setCopyNode(new ClassNode(selectedNode));
+			parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
 		}
 	}
 
 	public void cutNode()
 	{
-		if (selectedNode != null)
+		if (currentlySelectedObject instanceof ClassNode)
 		{
-			parentEditor.setCopyNode(new ClassNode(selectedNode));
+			parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
 			this.deleteSelectedObject();
 		}
 	}
