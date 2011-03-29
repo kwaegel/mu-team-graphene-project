@@ -176,11 +176,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		copyOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(copyOption);
 
-		JMenuItem pasteOption = new JMenuItem("Paste");
+		/*JMenuItem pasteOption = new JMenuItem("Paste");
 		pasteOption.setActionCommand("PASTE");
 		pasteOption.addActionListener(this);
 		pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-		editMenu.add(pasteOption);
+		editMenu.add(pasteOption);*/
 
 		menuBar.add(editMenu);
 

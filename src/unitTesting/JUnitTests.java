@@ -40,7 +40,7 @@ public class JUnitTests
 
 	}
 
-	/*
+	/**
 	 * create a ClassDiagram,ClassNode, and NodePanel. Then delete new node
 	 */
 	@Test
@@ -57,7 +57,7 @@ public class JUnitTests
 		//assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
 	}
 
-	/*
+	/**
 	 * create several methods, add them, remove them
 	 */
 	@Test
@@ -101,7 +101,7 @@ public class JUnitTests
 		assertTrue("Error: second method has wrong name", testNode.getMethod(1).equals(m3));
 	}
 	
-	/*
+	/**
 	 * create several Attributes, add them, remove them
 	 */
 	@Test
@@ -143,10 +143,11 @@ public class JUnitTests
 		assertTrue("Error: more attributes removed than should have been", testNode.getNumAttributes() > 1);
 		assertTrue("Error: first attribute has wrong name", testNode.getAttribute(0).equals(attribute2));
 		assertTrue("Error: second attributehas wrong name", testNode.getAttribute(1).equals(attribute3));
-		
-		//TODO: put setters in here
 	}
 	
+	/**
+	 * test setters
+	 */
 	@Test
 	public void testSetters()
 	{
@@ -171,6 +172,9 @@ public class JUnitTests
 		assertTrue("Error: now wrong number of methods", testNode2.getNumMethods() == 1);
 	}
 	
+	/**
+	 * test naming
+	 */
 	@Test
 	public void testNaming()
 	{
@@ -181,6 +185,9 @@ public class JUnitTests
 		assertTrue("Error: Class name was not set, or get does not work", name.equals("ThisIsTheTestNode"));
 	}
 	
+	/**
+	 * test Numbered Text Field Constructor
+	 */
 	@Test
 	public void testNumberedTextFieldConstructor()
 	{
@@ -190,6 +197,9 @@ public class JUnitTests
 		assertTrue("Error: does not have correct type", ntf.getType() == FieldType.Method);
 	}
 	
+	/**
+	 * test copy constructor
+	 */
 	@Test
 	public void testCopyConstructor()
 	{
@@ -237,5 +247,4 @@ public class JUnitTests
 		assertTrue("Error: second method has wrong name", copyConstructedNode.getMethod(1).equals("newMeth!!"));
 		assertTrue("Error: wrong class name", copyConstructedNode.getName().equals(name));	
 	}
-
 }
