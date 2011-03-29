@@ -407,15 +407,16 @@ public class ClassDiagram implements KeyListener, FocusListener
 			{
 				// add new class mode enabled, so add a new class
 				createNode(arg0.getPoint());
-				if (!arg0.isShiftDown())
+				if (arg0.isShiftDown())
 				{
-					parentEditor.disableAddNewClassMode();
+					parentEditor.enableAddNewClassMode();
 				}
 			}
 			else
 			{
 				unselectCurrentObject();
 			}
+			System.out.println("bigger bla");
 		}
 	}
 }
