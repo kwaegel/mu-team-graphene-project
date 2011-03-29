@@ -13,8 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
@@ -34,7 +34,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	// private ClassNode selectedNode;
 	private UMLEditor parentEditor;
-	private JPanel view;
+	private JLayeredPane view;
 
 	private File fileSavedTo;
 	private boolean changedSinceSaved;
@@ -43,7 +43,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	{
 		parentEditor = parent;
 
-		view = new JPanel();
+		view = new JLayeredPane();
 		// view.addMouseListener(this);
 		view.setFocusable(true);
 		view.addKeyListener(this);
@@ -93,7 +93,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 		listOfNodes.add(newClassNode);
 
-		view.add(newNodePanel, "external");
+		view.add(newNodePanel, "external", JLayeredPane.DRAG_LAYER);
 		newNodePanel.resetBounds(addLocation);
 		this.setSelectedObject(newClassNode);
 		view.revalidate();
@@ -305,7 +305,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 			if (view.hasFocus())
 				pastePosition = view.getMousePosition();
 			else
-				pastePosition = new Point((parentEditor.getWidth() - 100)/ 2, (parentEditor.getHeight() - 140)/ 2);
+				pastePosition = new Point((parentEditor.getWidth() - 100) / 2, (parentEditor.getHeight() - 140) / 2);
 			System.out.println(pastePosition);
 			ClassNode nodeCopy = new ClassNode(copy);
 			initNode(pastePosition, nodeCopy);
