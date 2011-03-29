@@ -51,7 +51,13 @@ public class TabComponent extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		JTabbedPane parentPane = (JTabbedPane) this.getParent().getParent();
+		// the only alternative to this long list of getParent calls is to keep the tabbed pane
+		// as an instance variable
+		// parent is tabbedPane's TabContainer
+		// parent's parent is ScrollableTabPanel (for the SCROLL_TAB_LAYOUT)
+		// parent's parent's parent is ScrollableTabViewport (for the SCROLL_TAB_LAYOUT)
+		// parent of that is the tabbed pane
+		JTabbedPane parentPane = (JTabbedPane) (this.getParent().getParent().getParent().getParent());
 		if (parentPane.getTabComponentAt(parentPane.getSelectedIndex()).equals(this))
 		{
 			editor.closeCurrentTab();
