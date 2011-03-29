@@ -519,7 +519,17 @@ public class Relationship extends JComponent implements ISelectable
 
 	/**
 	 * Mark this relationship as selected. When selected, control nodes will be drawn to allow manipulation of the
-	 * relationship path.
+	 * relationship path. No control nodes will be selected.
+	 */
+	@Override
+	public void setSelected(boolean selected)
+	{
+		setSelected(selected, null);
+	}
+
+	/**
+	 * Mark this relationship as selected. When selected, control nodes will be drawn to allow manipulation of the
+	 * relationship path. The control node under the click point (if any) will also be selected.
 	 * 
 	 * @param selected
 	 * @param clickPoint
@@ -527,7 +537,8 @@ public class Relationship extends JComponent implements ISelectable
 	public void setSelected(boolean selected, Point clickPoint)
 	{
 		m_selected = selected;
-		if (m_selected)
+		m_selectedControlPointIndex = -1;
+		if (m_selected && clickPoint != null)
 		{
 			m_selectedControlPointIndex = getSelectedControlIndex(clickPoint);
 		}
