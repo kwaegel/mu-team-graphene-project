@@ -136,8 +136,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 		if (currentlySelectedObject instanceof ClassNode)
 		{
 			ClassNode node = (ClassNode) currentlySelectedObject;
-			NodePanel panelToRemove = node.getNodePanel();
 			removeRelationships(node.getRelationships());
+
+			// Remove the view part
+			NodePanel panelToRemove = node.getNodePanel();
 			view.remove(panelToRemove);
 
 			// need this call so deleting nodes not at edges of screen works properly
@@ -228,6 +230,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		for (Relationship r : relationshipList)
 		{
 			r.removeMouseListener(m_relationshipDragController);
+			r.removeFromLinkedNodes();
 			view.remove(r);
 		}
 	}
