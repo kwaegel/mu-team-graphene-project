@@ -103,22 +103,44 @@ public class JUnitTests /*extends UMLEditor*/
 	@Test
 	public void testAttributes()
 	{
-
+		String attribute1 = "Attribute 2";
+		String attribute2 = "Attribute 3";
+		String attribute3 = "Attribute 4";
+		String attribute4 = "Attribute 5";
 		ClassNode testNode = new ClassNode(); // Attribute 1 is automatically created on Node creation
 		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode));
-		testNode.addAttribute("Attrib 2");
-		testNode.addAttribute("Attrib 3");
-		testNode.addAttribute("Attrib 4");
-		testNode.addAttribute("Attrib 5");
-		assertTrue("Error: incorrect number of Attributes in class", testNode.getNumAttributes() == 5);
+		testNode.addAttribute(attribute1);
+		assertTrue("Error: incorrect number of attributes in class", testNode.getNumAttributes() == 2);
+		assertTrue("Error: second attribute has wrong name", testNode.getAttribute(1).equals(attribute1));
+		testNode.addAttribute(attribute2);
+		assertTrue("Error: incorrect number of attributes in class", testNode.getNumAttributes() == 3);
+		assertTrue("Error: third attribute has wrong name", testNode.getAttribute(2).equals(attribute2));
+		testNode.addAttribute(attribute3);
+		assertTrue("Error: incorrect number of attributes in class", testNode.getNumAttributes() == 4);
+		assertTrue("Error: fourth attribute has wrong name", testNode.getAttribute(3).equals(attribute3));
+		testNode.addAttribute(attribute4);
+		assertTrue("Error: incorrect number of attributes in class", testNode.getNumAttributes() == 5);
+		assertTrue("Error: fourth attribute has wrong name", testNode.getAttribute(4).equals(attribute4));
 
-		// remove 3 Attributes
 		testNode.removeAttribute(4);
-		testNode.removeAttribute(3);
-		testNode.removeAttribute(2);
-		assertTrue("Error: Attributes were not all removed", testNode.getNumAttributes() < 3);
-		assertTrue("Error: more Attributes removed than should have been", testNode.getNumAttributes() > 1);
-
+		assertTrue("Error: incorrect number of attributes in class", testNode.getNumAttributes() == 4);
+		assertTrue("Error: first attribute has wrong name", testNode.getAttribute(0).equals("attribute 1"));
+		assertTrue("Error: second attribute has wrong name", testNode.getAttribute(1).equals(attribute1));
+		assertTrue("Error: third attribute has wrong name", testNode.getAttribute(2).equals(attribute2));
+		
+		testNode.removeAttribute(1);
+		assertTrue("Error: incorrect number of attribute in class", testNode.getNumAttributes() == 3);
+		assertTrue("Error: first attribute has wrong name", testNode.getAttribute(0).equals("attribute 1"));
+		assertTrue("Error: second attribute has wrong name", testNode.getAttribute(1).equals(attribute2));
+		assertTrue("Error: third attribute has wrong name", testNode.getAttribute(2).equals(attribute3));
+		
+		testNode.removeAttribute(0);
+		assertTrue("Error: attributes were not all removed", testNode.getNumAttributes() < 3);
+		assertTrue("Error: more attributes removed than should have been", testNode.getNumAttributes() > 1);
+		assertTrue("Error: first attribute has wrong name", testNode.getAttribute(0).equals(attribute2));
+		assertTrue("Error: second attributehas wrong name", testNode.getAttribute(1).equals(attribute3));
+		
+		//TODO: put setters in here
 	}
 	
 	@Test
@@ -141,11 +163,51 @@ public class JUnitTests /*extends UMLEditor*/
 	}
 	
 	@Test
-	public void testNumberedTextFieldNumberSetter()
+	public void testCopyConstructor()
 	{
-		NumberedTextField ntf = new NumberedTextField("contentsoffield", 3, FieldType.Method);
-		ntf.setNumberIndex(4);
-		assertTrue("Error: did not change number", ntf.getNumberIndex() == 4);
+		// set up initial class node & test contructed properly 
+		String attrib = "this is the name of the attribute";
+		String meth = "this is the method name";
+		String name = "class name!";
+		ClassNode testNode = new ClassNode();
+		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode));
+		testNode.setName(name);
+		testNode.setAttribute(0, attrib);
+		testNode.addMethod(meth);
+		assertTrue("Error: wrong number of attributes", testNode.getNumAttributes() == 1);
+		assertTrue("Error: first attribute has wrong name", testNode.getAttribute(0).equals(attrib));
+		assertTrue("Error: not constructed correctly, wrong number of methods", testNode.getNumMethods() == 2);
+		assertTrue("Error: first method has wrong name", testNode.getMethod(0).equals("method 1"));
+		assertTrue("Error: second method has wrong name", testNode.getMethod(1).equals(meth));
+		assertTrue("Error: wrong class name", testNode.getName().equals(name));
+		
+		// construct a copy
+		ClassNode copyConstructedNode = new ClassNode(testNode);
+		copyConstructedNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode));
+		assertTrue("Error: wrong number of attributes", copyConstructedNode.getNumAttributes() == 1);
+		assertTrue("Error: first attribute has wrong name", copyConstructedNode.getAttribute(0).equals(attrib));
+		assertTrue("Error: not constructed correctly, wrong number of methods", copyConstructedNode.getNumMethods() == 2);
+		assertTrue("Error: first method has wrong name", copyConstructedNode.getMethod(0).equals("method 1"));
+		assertTrue("Error: second method has wrong name", copyConstructedNode.getMethod(1).equals(meth));
+		assertTrue("Error: wrong class name", copyConstructedNode.getName().equals(name));
+		
+		// modify copied, ensure original not modified
+		copyConstructedNode.setMethod(1, "newMeth!!");
+		assertTrue("Error: wrong number of attributes", testNode.getNumAttributes() == 1);
+		assertTrue("Error: first attribute has wrong name", testNode.getAttribute(0).equals(attrib));
+		assertTrue("Error: not constructed correctly, wrong number of methods", testNode.getNumMethods() == 2);
+		assertTrue("Error: first method has wrong name", testNode.getMethod(0).equals("method 1"));
+		assertTrue("Error: second method has wrong name", testNode.getMethod(1).equals(meth));
+		assertTrue("Error: wrong class name", testNode.getName().equals(name));
+		
+		// modify original, ensure copy not modified
+		testNode.setName("newname!!");
+		assertTrue("Error: wrong number of attributes", copyConstructedNode.getNumAttributes() == 1);
+		assertTrue("Error: first attribute has wrong name", copyConstructedNode.getAttribute(0).equals(attrib));
+		assertTrue("Error: not constructed correctly, wrong number of methods", copyConstructedNode.getNumMethods() == 2);
+		assertTrue("Error: first method has wrong name", copyConstructedNode.getMethod(0).equals("method 1"));
+		assertTrue("Error: second method has wrong name", copyConstructedNode.getMethod(1).equals("newMeth!!"));
+		assertTrue("Error: wrong class name", copyConstructedNode.getName().equals(name));	
 	}
 
 }
