@@ -32,7 +32,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	private ISelectable currentlySelectedObject;
 
-	private ClassNode selectedNode;
+	// private ClassNode selectedNode;
 	private UMLEditor parentEditor;
 	private JPanel view;
 
@@ -98,22 +98,17 @@ public class ClassDiagram implements KeyListener, FocusListener
 		view.revalidate();
 	}
 
+	/**
+	 * Deselect the currently selected object and disable the delete button.
+	 */
 	private void unselectCurrentObject()
 	{
-		if (currentlySelectedObject instanceof ClassNode)
+		if (currentlySelectedObject != null)
 		{
-			// This is a temporary workaround. Eventually switch entirely over to using ISelectable.
-			selectedNode.getNodePanel().makeUnselected();
-			selectedNode = null;
+			currentlySelectedObject.setSelected(false);
+			currentlySelectedObject = null;
+			parentEditor.setDeleteButtonState(false);
 		}
-		else if (currentlySelectedObject instanceof Relationship)
-		{
-			((Relationship) currentlySelectedObject).setSelected(false, null);
-		}
-
-		currentlySelectedObject = null;
-
-		parentEditor.setDeleteButtonState(false);
 	}
 
 	/**
@@ -126,13 +121,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 		if (selected != currentlySelectedObject)
 		{
 			unselectCurrentObject();
+			selected.setSelected(true);
 		}
 		currentlySelectedObject = selected;
-
-		if (selected instanceof ClassNode)
-		{
-			selectedNode = (ClassNode) selected;
-		}
 
 		// Turn the delete button on if something non-null was selected.
 		parentEditor.setDeleteButtonState(selected != null ? true : false);
@@ -144,8 +135,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 	{
 		if (currentlySelectedObject instanceof ClassNode)
 		{
-			NodePanel panelToRemove = selectedNode.getNodePanel();
-			removeRelationships(selectedNode.getRelationships());
+			ClassNode node = (ClassNode) currentlySelectedObject;
+			NodePanel panelToRemove = node.getNodePanel();
+			removeRelationships(node.getRelationships());
 			view.remove(panelToRemove);
 
 			// need this call so deleting nodes not at edges of screen works properly
@@ -154,8 +146,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 			// need this call so deleting nodes at edges of screen works properly
 			view.revalidate();
 
-			listOfNodes.remove(selectedNode);
-			selectedNode = null;
+			listOfNodes.remove(node);
 		}
 		else if (currentlySelectedObject instanceof Relationship)
 		{
@@ -189,9 +180,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	public void addRelationship(ClassNode secondNode)
 	{
-		if (selectedNode != null)
+		if (currentlySelectedObject instanceof ClassNode)
 		{
-			addRelationship(selectedNode, secondNode);
+			addRelationship((ClassNode) currentlySelectedObject, secondNode);
 		}
 	}
 
@@ -283,50 +274,53 @@ public class ClassDiagram implements KeyListener, FocusListener
 		tabComponent.setTitle(title);
 		// containingTabbedPane.setTitleAt(containingTabbedPane.getSelectedIndex(), title);
 	}
-	
+
 	public void copyNode()
 	{
-		parentEditor.setCopyNode(new ClassNode(selectedNode));
+		parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
 	}
-	
+
 	public void cutNode()
 	{
-		parentEditor.setCopyNode(new ClassNode(selectedNode));
+		parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
 		this.deleteSelectedObject();
 	}
 
 	@Override
-	public void keyPressed(KeyEvent arg0)
+	public void keyPressed(KeyEvent event)
 	{
-		if (arg0.getKeyCode() == KeyEvent.VK_DELETE && currentlySelectedObject != null)
+		if (event.getKeyCode() == KeyEvent.VK_DELETE && currentlySelectedObject != null)
 		{
 			this.deleteSelectedObject();
 		}
-		else if (arg0.getKeyCode() == KeyEvent.VK_N)
+		else if (event.getKeyCode() == KeyEvent.VK_N)
 		{
 			parentEditor.enableAddNewClassMode();
 		}
-		else if (arg0.getKeyCode() == KeyEvent.VK_C && arg0.isControlDown() && selectedNode != null)
+		else if (event.getKeyCode() == KeyEvent.VK_C && event.isControlDown()
+				&& currentlySelectedObject instanceof ClassNode)
 		{
 			copyNode();
 		}
-		else if (arg0.getKeyCode() == KeyEvent.VK_V && arg0.isControlDown())
+		else if (event.getKeyCode() == KeyEvent.VK_V && event.isControlDown())
 		{
 			ClassNode copy = parentEditor.getCopyNode();
-			Point mouseLocation = arg0.getComponent().getMousePosition();
+			Point mouseLocation = event.getComponent().getMousePosition();
 			if (copy != null && mouseLocation != null)
 			{
 				ClassNode nodeCopy = new ClassNode(copy);
 				initNode(mouseLocation, nodeCopy);
 			}
 		}
-		else if (arg0.getKeyCode() == KeyEvent.VK_X && arg0.isControlDown() && selectedNode != null)
+		else if (event.getKeyCode() == KeyEvent.VK_X && event.isControlDown()
+				&& currentlySelectedObject instanceof ClassNode)
 		{
 			cutNode();
 		}
-		else if (arg0.getKeyCode() == KeyEvent.VK_E && selectedNode != null)
+		else if (event.getKeyCode() == KeyEvent.VK_E && currentlySelectedObject instanceof ClassNode)
 		{
-			selectedNode.getNodePanel().displayEditPanel();
+			ClassNode node = (ClassNode) currentlySelectedObject;
+			node.getNodePanel().displayEditPanel();
 		}
 
 	}
@@ -346,9 +340,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 	public void movePanel(NodePanel nodePanelToMove, Point movePoint)
 	{
 		this.setSelectedObject(nodePanelToMove.getClassNode());
-		nodePanelToMove.makeSelected();
-
-		//view.remove(nodePanelToMove);
 
 		int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
 		int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
