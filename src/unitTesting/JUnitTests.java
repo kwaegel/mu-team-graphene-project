@@ -2,6 +2,8 @@ package unitTesting;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
+
 import javax.swing.JScrollPane;
 
 import org.junit.Test;
@@ -11,12 +13,12 @@ import umleditor.ClassNode;
 import umleditor.NodePanel;
 import umleditor.NumberedTextField;
 import umleditor.NumberedTextField.FieldType;
+import umleditor.Relationship;
+import umleditor.Relationship.RelationshipType;
 import umleditor.UMLEditor;
 
-// TODO: test add, remove, and get relationships for class node
 // TODO: test propertiesEqual
 // TODO: test setPropertiesTo
-// TODO: test Relationship - construct with two nodes, get nodes, test if equal
 
 public class JUnitTests
 {
@@ -53,6 +55,7 @@ public class JUnitTests
 		testDiagram.setSelectedObject(testNode);
 		testDiagram.deleteSelectedObject();
 		
+		//assertNull("",);
 		//assertNotNull(testDiagram.getView());
 		//assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
 	}
@@ -246,5 +249,59 @@ public class JUnitTests
 		assertTrue("Error: first method has wrong name", copyConstructedNode.getMethod(0).equals("method 1"));
 		assertTrue("Error: second method has wrong name", copyConstructedNode.getMethod(1).equals("newMeth!!"));
 		assertTrue("Error: wrong class name", copyConstructedNode.getName().equals(name));	
+	}
+	
+	/**
+	 * Test adding, removing, and getting relationships
+	 * Also test creating relationships and getting nodes
+	 */
+	@Test
+	public void testRelationships()
+	{
+		//Initialize 3 nodes with relationships
+		//node1 has a relationship with node2
+		//node2 has a relationship with node3
+		ClassDiagram testDiagram = new ClassDiagram(new UMLEditor(), new JScrollPane());
+		ClassNode node1 = new ClassNode();
+		ClassNode node2 = new ClassNode();
+		ClassNode node3 = new ClassNode();
+		node1.attachPanel(new NodePanel(testDiagram, node1));
+		node2.attachPanel(new NodePanel(testDiagram, node2));
+		node3.attachPanel(new NodePanel(testDiagram, node3));
+		RelationshipType[] possibleValues = RelationshipType.values();
+		Relationship rel = new Relationship(node1, node2, possibleValues[1]);
+		Relationship rel2 = new Relationship(node2, node3, possibleValues[0]);
+		node1.addRelationship(rel);
+		node2.addRelationship(rel);
+		node2.addRelationship(rel2);
+		node3.addRelationship(rel2);
+		
+		//Test relationship construction and getting nodes
+		Collection nodes = rel2.getClassNodes();
+		assertTrue("Error: node1 should not be in this relationship", !nodes.contains(node1));
+		assertTrue("Error: nodes are not properly stored", nodes.contains(node2));
+		assertTrue("Error: nodes are not properly stored", nodes.contains(node3));
+		
+		//Test relationships are added properly
+		assertTrue("Error: wrong number of relationships in node 1", node1.getRelationships().size() == 1);
+		assertTrue("Error: wrong number of relationships in node 2", node2.getRelationships().size() == 2);
+		assertTrue("Error: wrong number of relationships in node 3", node3.getRelationships().size() == 1);
+		assertTrue("Error: addRelationship error, relationship not properly stored", node2.getRelationships().get(0).equals(rel));
+		
+		//Delete node1
+		testDiagram.setSelectedObject(node1);
+		testDiagram.deleteSelectedObject();
+		
+		/*assertTrue("Error: relationship was not removed", node2.getRelationships().size() == 2);
+		assertTrue("Error: relationship was removed from wrong node", node3.getRelationships().size() == 1);
+		assertTrue("Error: relationships with node1 was not removed", node2.getRelationships().get(0).equals(rel2));
+		
+		testDiagram.setSelectedObject(rel2);
+		testDiagram.deleteSelectedObject();
+		
+		assertTrue("Error: relationship 2 was not deleted from node2", node2.getRelationships().size() == 0);
+		assertTrue("Error: relationship 2 was not deleted from node3", node3.getRelationships().size() == 0);*/
+		
+		
 	}
 }

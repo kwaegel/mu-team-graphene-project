@@ -60,7 +60,7 @@ public class Relationship extends JComponent implements ISelectable
 		 */
 		Aggregation,
 		/**
-		 * 
+		 * A dependency is represented by an arrow with a dotted line.
 		 */
 		Dependency,
 		/**
