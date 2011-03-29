@@ -95,6 +95,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 		view.add(newNodePanel, "external");
 		newNodePanel.resetBounds(addLocation);
+		this.setSelectedObject(newClassNode);
 		view.revalidate();
 	}
 
@@ -280,13 +281,35 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	public void copyNode()
 	{
-		parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
+		if (currentlySelectedObject instanceof ClassNode)
+		{
+			parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
+		}
 	}
 
 	public void cutNode()
 	{
-		parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
-		this.deleteSelectedObject();
+		if (currentlySelectedObject instanceof ClassNode)
+		{
+			parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
+			this.deleteSelectedObject();
+		}
+	}
+
+	public void pasteNode()
+	{
+		ClassNode copy = parentEditor.getCopyNode();
+		if (copy != null)
+		{
+			Point pastePosition;
+			if (view.hasFocus())
+				pastePosition = view.getMousePosition();
+			else
+				pastePosition = new Point((parentEditor.getWidth() - 100)/ 2, (parentEditor.getHeight() - 140)/ 2);
+			System.out.println(pastePosition);
+			ClassNode nodeCopy = new ClassNode(copy);
+			initNode(pastePosition, nodeCopy);
+		}
 	}
 
 	@Override
@@ -300,32 +323,16 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			parentEditor.enableAddNewClassMode();
 		}
-		else if (event.getKeyCode() == KeyEvent.VK_C && event.isControlDown()
-				&& currentlySelectedObject instanceof ClassNode)
-		{
-			copyNode();
-		}
 		else if (event.getKeyCode() == KeyEvent.VK_V && event.isControlDown())
 		{
-			ClassNode copy = parentEditor.getCopyNode();
-			Point mouseLocation = event.getComponent().getMousePosition();
-			if (copy != null && mouseLocation != null)
-			{
-				ClassNode nodeCopy = new ClassNode(copy);
-				initNode(mouseLocation, nodeCopy);
-			}
-		}
-		else if (event.getKeyCode() == KeyEvent.VK_X && event.isControlDown()
-				&& currentlySelectedObject instanceof ClassNode)
-		{
-			cutNode();
+			// Point mouseLocation = arg0.getComponent().getMousePosition();
+			// pasteNode(mouseLocation);
 		}
 		else if (event.getKeyCode() == KeyEvent.VK_E && currentlySelectedObject instanceof ClassNode)
 		{
 			ClassNode node = (ClassNode) currentlySelectedObject;
 			node.getNodePanel().displayEditPanel();
 		}
-
 	}
 
 	@Override
@@ -343,6 +350,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 	public void movePanel(NodePanel nodePanelToMove, Point movePoint)
 	{
 		this.setSelectedObject(nodePanelToMove.getClassNode());
+
+		// view.remove(nodePanelToMove);
 
 		int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
 		int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
