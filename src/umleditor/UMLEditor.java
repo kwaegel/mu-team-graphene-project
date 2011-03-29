@@ -13,6 +13,8 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -23,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+
 
 public class UMLEditor extends JFrame implements ActionListener
 {
@@ -211,7 +214,10 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		toolBar = new JToolBar();
 
-		addClassButton = new JButton("Add Class");
+		Icon addClassIcon = new ImageIcon("icons/class.gif");
+		Icon deleteIcon = new ImageIcon("icons/delete.gif");
+		
+		addClassButton = new JButton("Add Class", addClassIcon);
 		addClassButton.setActionCommand("ADD");
 		addClassButton.addActionListener(this);
 		addClassButton.setFocusable(false);
@@ -219,12 +225,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		toolBar.add(addClassButton);
 		addNewClassModeEnabled = false;
 
-		deleteButton = new JButton("Delete");
+		deleteButton = new JButton("Delete", deleteIcon);
 		deleteButton.setActionCommand("DELETE");
 		deleteButton.addActionListener(this);
 		deleteButton.setEnabled(false);
 		toolBar.add(deleteButton);
-
+		
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
 
