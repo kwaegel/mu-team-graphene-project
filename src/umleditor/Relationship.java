@@ -531,6 +531,7 @@ public class Relationship extends JComponent implements ISelectable
 		{
 			m_selectedControlPointIndex = getSelectedControlIndex(clickPoint);
 		}
+		repaint();
 	}
 
 	/**

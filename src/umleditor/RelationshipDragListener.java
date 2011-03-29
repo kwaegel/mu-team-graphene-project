@@ -3,7 +3,6 @@ package umleditor;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -19,7 +18,7 @@ public class RelationshipDragListener extends MouseAdapter
 	 */
 	private Relationship m_lastSelectedRelationship;
 
-	public RelationshipDragListener(ClassDiagram diagram, List<Relationship> relationships)
+	public RelationshipDragListener(ClassDiagram diagram)
 	{
 		m_diagram = diagram;
 	}

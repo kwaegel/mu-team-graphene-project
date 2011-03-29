@@ -59,9 +59,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		m_relationships = new LinkedList<Relationship>();
 
 		// Create listeners on the view.
-		m_relationshipDragController = new RelationshipDragListener(this, m_relationships);
-		// view.addMouseListener(m_relationshipDragController);
-		// view.addMouseMotionListener(m_relationshipDragController);
+		m_relationshipDragController = new RelationshipDragListener(this);
 
 		view.addMouseListener(new MouseClickListener());
 	}
@@ -95,8 +93,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 		listOfNodes.add(newClassNode);
 
-		String positionSpecs = "pos " + addLocation.x + " " + addLocation.y;
-		view.add(newNodePanel, positionSpecs);
+		view.add(newNodePanel, "external");
+		newNodePanel.resetBounds(addLocation);
 		view.revalidate();
 	}
 
@@ -285,6 +283,17 @@ public class ClassDiagram implements KeyListener, FocusListener
 		tabComponent.setTitle(title);
 		// containingTabbedPane.setTitleAt(containingTabbedPane.getSelectedIndex(), title);
 	}
+	
+	public void copyNode()
+	{
+		parentEditor.setCopyNode(new ClassNode(selectedNode));
+	}
+	
+	public void cutNode()
+	{
+		parentEditor.setCopyNode(new ClassNode(selectedNode));
+		this.deleteSelectedObject();
+	}
 
 	@Override
 	public void keyPressed(KeyEvent arg0)
@@ -299,7 +308,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_C && arg0.isControlDown() && selectedNode != null)
 		{
-			parentEditor.setCopyNode(new ClassNode(selectedNode));
+			copyNode();
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_V && arg0.isControlDown())
 		{
@@ -313,8 +322,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_X && arg0.isControlDown() && selectedNode != null)
 		{
-			parentEditor.setCopyNode(new ClassNode(selectedNode));
-			this.deleteSelectedObject();
+			cutNode();
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_E && selectedNode != null)
 		{
@@ -340,12 +348,11 @@ public class ClassDiagram implements KeyListener, FocusListener
 		this.setSelectedObject(nodePanelToMove.getClassNode());
 		nodePanelToMove.makeSelected();
 
-		view.remove(nodePanelToMove);
+		//view.remove(nodePanelToMove);
 
 		int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
 		int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
-		String newPositionSpecs = "pos " + newPosX + " " + newPosY;
-		view.add(nodePanelToMove, newPositionSpecs);
+		nodePanelToMove.resetBounds(new Point(newPosX, newPosY));
 
 		// call to revalidate makes node redraw.
 		view.revalidate();

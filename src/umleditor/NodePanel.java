@@ -3,6 +3,7 @@ package umleditor;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
@@ -183,6 +184,15 @@ public class NodePanel extends JPanel
 		JLabel spacer = new JLabel();
 		spacer.setMinimumSize(new Dimension(0, DEFAULT_FIELD_HEIGHT));
 		this.add(spacer);
+	}
+	
+	public void resetBounds(Point position)
+	{
+		int x = (position == null) ? this.getX() : position.x;
+		int y = (position == null) ? this.getY() : position.y;
+		int width = this.getPreferredSize().width;
+		int height = this.getPreferredSize().height;
+		this.setBounds(x, y, width, height);
 	}
 
 	/**
