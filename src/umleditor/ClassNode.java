@@ -43,7 +43,6 @@ public class ClassNode implements ISelectable
 	 * @param otherNode
 	 *            - node from which we get name, attributes and methods
 	 */
-	// TODO: should be able to write some good JUnit tests with this
 	public ClassNode(ClassNode otherNode)
 	{
 		this.setPropertiesTo(otherNode);
@@ -81,7 +80,6 @@ public class ClassNode implements ISelectable
 	 *            - ClassNode to compare this one to.
 	 * @return - <code>true</code> if properties are equal, <code>false</code> if they are not
 	 */
-	// TODO: JUnit tests for this!!
 	public boolean propertiesEqual(ClassNode otherNode)
 	{
 		return (this.className.equals(otherNode.className) && this.listOfAttributes.equals(otherNode.listOfAttributes) && this.listOfMethods
