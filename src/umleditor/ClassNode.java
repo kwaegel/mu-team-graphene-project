@@ -1,5 +1,6 @@
 package umleditor;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,8 @@ public class ClassNode implements ISelectable
 	 * Determines if the properties of otherNode are identical to those of this node. Checks classNames, contents of
 	 * attribute list and method list.
 	 * 
-	 * @param otherNode - ClassNode to compare this one to.
+	 * @param otherNode
+	 *            - ClassNode to compare this one to.
 	 * @return - <code>true</code> if properties are equal, <code>false</code> if they are not
 	 */
 	// TODO: JUnit tests for this!!
@@ -95,6 +97,19 @@ public class ClassNode implements ISelectable
 	{
 		className = name;
 		updateNodePanel();
+	}
+
+	@Override
+	public void setSelected(boolean selected)
+	{
+		if (selected)
+		{
+			nodePanel.setBackground(Color.pink);
+		}
+		else
+		{
+			nodePanel.setBackground(Color.white);
+		}
 	}
 
 	// Add String attribute to listofAttributes

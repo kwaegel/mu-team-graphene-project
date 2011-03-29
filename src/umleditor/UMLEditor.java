@@ -13,6 +13,8 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -23,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+
 
 public class UMLEditor extends JFrame implements ActionListener
 {
@@ -164,6 +167,12 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		JMenu editMenu = new JMenu("Edit");
 
+		/*
+		 * JMenuItem pasteOption = new JMenuItem("Paste"); pasteOption.setActionCommand("PASTE");
+		 * pasteOption.addActionListener(this); pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
+		 * InputEvent.CTRL_DOWN_MASK)); editMenu.add(pasteOption);
+		 */
+
 		JMenuItem cutOption = new JMenuItem("Cut");
 		cutOption.setActionCommand("CUT");
 		cutOption.addActionListener(this);
@@ -176,11 +185,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		copyOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		editMenu.add(copyOption);
 
-		/*JMenuItem pasteOption = new JMenuItem("Paste");
+		JMenuItem pasteOption = new JMenuItem("Paste");
 		pasteOption.setActionCommand("PASTE");
 		pasteOption.addActionListener(this);
 		pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-		editMenu.add(pasteOption);*/
+		editMenu.add(pasteOption);
 
 		menuBar.add(editMenu);
 
@@ -211,7 +220,10 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		toolBar = new JToolBar();
 
-		addClassButton = new JButton("Add Class");
+		Icon addClassIcon = new ImageIcon("icons/class.gif");
+		Icon deleteIcon = new ImageIcon("icons/delete.gif");
+		
+		addClassButton = new JButton("Add Class", addClassIcon);
 		addClassButton.setActionCommand("ADD");
 		addClassButton.addActionListener(this);
 		addClassButton.setFocusable(false);
@@ -219,12 +231,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		toolBar.add(addClassButton);
 		addNewClassModeEnabled = false;
 
-		deleteButton = new JButton("Delete");
+		deleteButton = new JButton("Delete", deleteIcon);
 		deleteButton.setActionCommand("DELETE");
 		deleteButton.addActionListener(this);
 		deleteButton.setEnabled(false);
 		toolBar.add(deleteButton);
-
+		
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
 
@@ -249,8 +261,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		classDiagrams.add(initialDiagram);
 		tabbedPane.add(scrollPane);
 		if (!classDiagrams.isEmpty())
+		{
 			tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
-		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, tabbedPane, "Unsaved Diagram"));
+		}
+		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, tabbedPane,
+				"Unsaved Diagram"));
 		addClassButton.setEnabled(true);
 		initialDiagram.requestFocusOnView();
 	}
@@ -261,6 +276,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		helpPanel.setVisible(false);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
 		if (arg0.getActionCommand() == "ADD")
@@ -309,6 +325,21 @@ public class UMLEditor extends JFrame implements ActionListener
 		{
 			closeEditor();
 		}
+		else if (arg0.getActionCommand() == "CUT")
+		{
+			ClassDiagram currentDiagram = getCurrentDiagram();
+			currentDiagram.cutNode();
+		}
+		else if (arg0.getActionCommand() == "COPY")
+		{
+			ClassDiagram currentDiagram = getCurrentDiagram();
+			currentDiagram.copyNode();
+		}
+		else if (arg0.getActionCommand() == "PASTE")
+		{
+			ClassDiagram currentDiagram = getCurrentDiagram();
+			currentDiagram.pasteNode();
+		}
 		else if (arg0.getActionCommand() == "HELP")
 		{
 			helpPanel.setToContentsTab();
@@ -328,7 +359,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		{
 			boolean closedTab = closeCurrentTab();
 			if (!closedTab)
+			{
 				break;
+			}
 		}
 
 		if (classDiagrams.isEmpty())
@@ -359,7 +392,9 @@ public class UMLEditor extends JFrame implements ActionListener
 			tabbedPane.remove(tabbedPane.getSelectedIndex());
 			classDiagrams.remove(currentDiagram);
 			if (classDiagrams.isEmpty())
+			{
 				addClassButton.setEnabled(false);
+			}
 			return (true);
 		}
 		return (false);
@@ -389,7 +424,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	public void setCopyNode(ClassNode coppiedNode)
 	{
-		copyNode = coppiedNode;
+		copyNode = new ClassNode(coppiedNode);
 	}
 
 	/**
