@@ -246,6 +246,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 		if (fileSavedTo == null || chooseNewFile)
 		{
 			JFileChooser fileSaveChooser = new JFileChooser();
+			fileSaveChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileSaveChooser.addChoosableFileFilter(new FileExtensionFilter());
 			int userChoice = fileSaveChooser.showSaveDialog(parentEditor);
 			if (userChoice == JFileChooser.APPROVE_OPTION)
 			{
@@ -445,4 +447,25 @@ public class ClassDiagram implements KeyListener, FocusListener
 			}
 		}
 	}
+
+	/**
+	 * Class to filter out all but *.xuml files.
+	 * 
+	 */
+	class FileExtensionFilter extends javax.swing.filechooser.FileFilter
+	{
+		@Override
+		public boolean accept(File file)
+		{
+			String filename = file.getName();
+			return filename.endsWith(".xuml");
+		}
+
+		@Override
+		public String getDescription()
+		{
+			return "*.xuml (XML formatted UML diagram)";
+		}
+	}
+
 }
