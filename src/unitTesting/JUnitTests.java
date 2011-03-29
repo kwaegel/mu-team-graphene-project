@@ -1,5 +1,6 @@
 package unitTesting;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -57,7 +58,7 @@ public class JUnitTests /*extends UMLEditor*/
 	 * create several methods, add them, remove them
 	 */
 	@Test
-	public void testMethods()
+	public void testMethodAddRemove()
 	{
 		String m1 = "this is the second method name";
 		String m2 = "Method 3";
@@ -101,7 +102,7 @@ public class JUnitTests /*extends UMLEditor*/
 	 * create several Attributes, add them, remove them
 	 */
 	@Test
-	public void testAttributes()
+	public void testAttributeAddRemove()
 	{
 		String attribute1 = "Attribute 2";
 		String attribute2 = "Attribute 3";
@@ -141,6 +142,30 @@ public class JUnitTests /*extends UMLEditor*/
 		assertTrue("Error: second attributehas wrong name", testNode.getAttribute(1).equals(attribute3));
 		
 		//TODO: put setters in here
+	}
+	
+	@Test
+	public void testSetters()
+	{
+		// test attribute setters
+		String attrib1 = "initialattrib";
+		ClassNode testNode = new ClassNode(); // Attribute 1 is automatically created on Node creation
+		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode));
+		assertTrue("Error: wrong name attribute name to start with", testNode.getAttribute(0).equals("attribute 1"));
+		testNode.setAttribute(0, attrib1);
+		assertTrue("Error: name not set correctly", testNode.getAttribute(0).equals(attrib1));
+		assertFalse("Error: name still same", testNode.getAttribute(0).equals("attribute 1"));
+		assertTrue("Error: now wrong number of attributes", testNode.getNumAttributes() == 1);
+		
+		// test method setters
+		String meth1 = "initialmeth";
+		ClassNode testNode2 = new ClassNode(); // Attribute 1 is automatically created on Node creation
+		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode2));
+		assertTrue("Error: wrong name method name to start with", testNode2.getMethod(0).equals("method 1"));
+		testNode2.setMethod(0, meth1);
+		assertTrue("Error: name not set correctly", testNode2.getMethod(0).equals(meth1));
+		assertFalse("Error: name still same", testNode2.getMethod(0).equals("method 1"));
+		assertTrue("Error: now wrong number of methods", testNode2.getNumMethods() == 1);
 	}
 	
 	@Test
