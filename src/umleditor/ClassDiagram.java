@@ -416,7 +416,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 			{
 				unselectCurrentObject();
 			}
-			System.out.println("bigger bla");
 		}
 	}
 }
