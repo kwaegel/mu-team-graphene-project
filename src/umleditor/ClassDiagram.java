@@ -95,6 +95,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 		view.add(newNodePanel, "external");
 		newNodePanel.resetBounds(addLocation);
+		this.setSelectedObject(newClassNode);
+		newNodePanel.makeSelected();
 		view.revalidate();
 	}
 
@@ -283,16 +285,38 @@ public class ClassDiagram implements KeyListener, FocusListener
 		tabComponent.setTitle(title);
 		// containingTabbedPane.setTitleAt(containingTabbedPane.getSelectedIndex(), title);
 	}
-	
+
 	public void copyNode()
 	{
-		parentEditor.setCopyNode(new ClassNode(selectedNode));
+		if (selectedNode != null)
+		{
+			parentEditor.setCopyNode(new ClassNode(selectedNode));
+		}
 	}
-	
+
 	public void cutNode()
 	{
-		parentEditor.setCopyNode(new ClassNode(selectedNode));
-		this.deleteSelectedObject();
+		if (selectedNode != null)
+		{
+			parentEditor.setCopyNode(new ClassNode(selectedNode));
+			this.deleteSelectedObject();
+		}
+	}
+
+	public void pasteNode()
+	{
+		ClassNode copy = parentEditor.getCopyNode();
+		if (copy != null)
+		{
+			Point pastePosition;
+			if (view.hasFocus())
+				pastePosition = view.getMousePosition();
+			else
+				pastePosition = new Point((parentEditor.getWidth() - 100)/ 2, (parentEditor.getHeight() - 140)/ 2);
+			System.out.println(pastePosition);
+			ClassNode nodeCopy = new ClassNode(copy);
+			initNode(pastePosition, nodeCopy);
+		}
 	}
 
 	@Override
@@ -306,29 +330,15 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			parentEditor.enableAddNewClassMode();
 		}
-		else if (arg0.getKeyCode() == KeyEvent.VK_C && arg0.isControlDown() && selectedNode != null)
-		{
-			copyNode();
-		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_V && arg0.isControlDown())
 		{
-			ClassNode copy = parentEditor.getCopyNode();
-			Point mouseLocation = arg0.getComponent().getMousePosition();
-			if (copy != null && mouseLocation != null)
-			{
-				ClassNode nodeCopy = new ClassNode(copy);
-				initNode(mouseLocation, nodeCopy);
-			}
-		}
-		else if (arg0.getKeyCode() == KeyEvent.VK_X && arg0.isControlDown() && selectedNode != null)
-		{
-			cutNode();
+			// Point mouseLocation = arg0.getComponent().getMousePosition();
+			// pasteNode(mouseLocation);
 		}
 		else if (arg0.getKeyCode() == KeyEvent.VK_E && selectedNode != null)
 		{
 			selectedNode.getNodePanel().displayEditPanel();
 		}
-
 	}
 
 	@Override
@@ -348,7 +358,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		this.setSelectedObject(nodePanelToMove.getClassNode());
 		nodePanelToMove.makeSelected();
 
-		//view.remove(nodePanelToMove);
+		// view.remove(nodePanelToMove);
 
 		int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
 		int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
