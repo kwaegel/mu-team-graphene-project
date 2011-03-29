@@ -21,11 +21,6 @@ public class NumberedTextField extends JTextField
 		return (numberIndex);
 	}
 	
-	public void setNumberIndex(int number)
-	{
-		numberIndex = number;
-	}
-	
 	public FieldType getType()
 	{
 		return (myType);
