@@ -250,7 +250,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		tabbedPane.add(scrollPane);
 		if (!classDiagrams.isEmpty())
 			tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
-		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, "Unsaved Diagram"));
+		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, tabbedPane, "Unsaved Diagram"));
 		addClassButton.setEnabled(true);
 		initialDiagram.requestFocusOnView();
 	}
