@@ -1,8 +1,6 @@
 package unitTesting;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import javax.swing.JScrollPane;
 
@@ -15,7 +13,12 @@ import umleditor.NumberedTextField;
 import umleditor.NumberedTextField.FieldType;
 import umleditor.UMLEditor;
 
-public class JUnitTests /*extends UMLEditor*/
+// TODO: test add, remove, and get relationships for class node
+// TODO: test propertiesEqual
+// TODO: test setPropertiesTo
+// TODO: test Relationship - construct with two nodes, get nodes, test if equal
+
+public class JUnitTests
 {
 
 	/**
@@ -105,7 +108,7 @@ public class JUnitTests /*extends UMLEditor*/
 	public void testAttributeAddRemove()
 	{
 		String attribute1 = "Attribute 2";
-		String attribute2 = "Attribute 3";
+		String attribute2 = "bla bla bla";
 		String attribute3 = "Attribute 4";
 		String attribute4 = "Attribute 5";
 		ClassNode testNode = new ClassNode(); // Attribute 1 is automatically created on Node creation
