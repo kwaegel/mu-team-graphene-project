@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -74,16 +75,6 @@ public class NodePanel extends JPanel
 	public ClassDiagram getParentDiagram()
 	{
 		return parentDiagram;
-	}
-
-	public void makeUnselected()
-	{
-		this.setBackground(Color.white);
-	}
-
-	public void makeSelected()
-	{
-		this.setBackground(Color.pink);
 	}
 
 	public void displayEditPanel()
@@ -185,7 +176,7 @@ public class NodePanel extends JPanel
 		spacer.setMinimumSize(new Dimension(0, DEFAULT_FIELD_HEIGHT));
 		this.add(spacer);
 	}
-	
+
 	public void resetBounds(Point position)
 	{
 		int x = (position == null) ? this.getX() : position.x;
@@ -212,7 +203,6 @@ public class NodePanel extends JPanel
 			else
 			{
 				parentDiagram.setSelectedObject(associatedNode);
-				makeSelected();
 			}
 		}
 
@@ -220,7 +210,6 @@ public class NodePanel extends JPanel
 		public void mousePressed(MouseEvent e)
 		{
 			parentDiagram.setSelectedObject(associatedNode);
-			makeSelected();
 		}
 
 		@Override
