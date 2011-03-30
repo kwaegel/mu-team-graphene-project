@@ -137,6 +137,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 		parentEditor.disableAddNewClassMode();
 	}
 
+	/**
+	 * Deletes the selected object. 
+	 * Can either be a ClassNode or Relationship.
+	 */
 	public void deleteSelectedObject()
 	{
 		if (currentlySelectedObject instanceof ClassNode)
