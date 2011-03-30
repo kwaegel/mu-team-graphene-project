@@ -19,7 +19,6 @@ import umleditor.Relationship;
 import umleditor.Relationship.RelationshipType;
 import umleditor.UMLEditor;
 
-// TODO: test setPropertiesTo
 
 public class JUnitTests
 {
@@ -46,6 +45,7 @@ public class JUnitTests
 	/**
 	 * create a ClassDiagram,ClassNode, and NodePanel. Then delete new node
 	 */
+	//TODO: Need to either remove or fix method
 	@Test
 	public void testDelete()
 	{
@@ -255,6 +255,7 @@ public class JUnitTests
 	 * Test adding, removing, and getting relationships
 	 * Also test creating relationships and getting nodes
 	 */
+	//TODO:Fix testRelationship NullPointerException
 	@Test
 	public void testRelationships()
 	{
@@ -308,7 +309,7 @@ public class JUnitTests
 	}
 
 	/**
-	 * Testing node equality 
+	 * Testing node equality with propertiesEqual and setPropertiesTo methods
 	 */
 	@Test
 	public void testNodeEquality() 
@@ -326,5 +327,13 @@ public class JUnitTests
 		node2.setName("hi");
 		
 		assertTrue("Error: nodes should be the same", node1.propertiesEqual(node2));
+		
+		node1.addAttribute("trib");
+		
+		assertFalse("Error: node1 should have another attribute", node1.propertiesEqual(node2));
+		
+		node2.setPropertiesTo(node1);
+		
+		assertTrue("Error: nodes are not equal", node1.propertiesEqual(node2));
 	}
 }
