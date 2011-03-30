@@ -86,13 +86,20 @@ public class ClassNode implements ISelectable
 				.equals(otherNode.listOfMethods));
 	}
 
-	// Returns the name of the Class Node
+	/** 
+	 * Returns the name of the Class Node
+	 * @return the class name
+	 */
 	public String getName()
 	{
 		return className;
 	}
 
-	// Sets the name of the Class Node
+	/** 
+	 * Sets the name of the Class Node
+	 * @param name
+	 * 			- String to replace the previous class name
+	 */
 	public void setName(String name)
 	{
 		className = name;
@@ -116,28 +123,46 @@ public class ClassNode implements ISelectable
 		}
 	}
 
-	// Add String attribute to listofAttributes
+	/** 
+	 * Add String attribute to listofAttributes
+	 * @param attribute
+	 * 			- String to be added to the list of attributes
+	 */
 	public void addAttribute(String attribute)
 	{
 		listOfAttributes.add(attribute);
 		updateNodePanel();
 	}
 
-	// Returns the name of the Attribute at the index in listofAttributes
+	/** 
+	 * Returns the name of the Attribute at the index in listofAttributes
+	 * @param index
+	 * 			-int used as an index to find an attribute in the list of attributes
+	 * @return the attribute at the index in the list of attributes
+	 */
 	public String getAttribute(int index)
 	{
 		return listOfAttributes.get(index);
 	}
 
-	// Sets the attribute at index in listofAttributes with parameter String
-	// attribute
+	/** 
+	 * Sets the attribute at index in listofAttributes with parameter String
+	 * @param index
+	 * 			-int used to find the attribute to be replaced in the list of attributes
+	 * @param attribute
+	 * 			-String used to replace the attribute at the index in the list of attributes
+	 */
 	public void setAttribute(int index, String attribute)
 	{
 		listOfAttributes.set(index, attribute);
 		updateNodePanel();
 	}
 
-	// Removes the attribute in listofAttributes at the index
+	/** 
+	 * Removes the attribute in listofAttributes at the index
+	 * @param index
+	 * 			-int used as an index to find the attribute to be removed from list of attributes
+	 */
 	public void removeAttribute(int index)
 	{
 		listOfAttributes.remove(index);
@@ -154,28 +179,46 @@ public class ClassNode implements ISelectable
 		return (listOfAttributes.size());
 	}
 
-	// Adds String method to listofMethods
+	/** 
+	 * Adds String method to listofMethods
+	 * @param method
+	 * 			-String to be added to the list of methods
+	 */
 	public void addMethod(String method)
 	{
 		listOfMethods.add(method);
 		updateNodePanel();
 	}
 
-	// Returns the String at the index in listofMethods
+	/**
+	 * Returns the String at the index in listofMethods
+	 * @param index
+	 * 			-int used as an index to find the method in the list of methods
+	 * @return the method at index in list of methods
+	 */
 	public String getMethod(int index)
 	{
 		return listOfMethods.get(index);
 	}
 
-	// Sets the method in listofMethods at the index with parameter String
-	// method
+	/**
+	 * Sets the method in listofMethods at the index with parameter String method
+	 * @param index
+	 * 			-int used as an index to find the method in the list of methods
+	 * @param method
+	 * 			-String to replace the method at the index in list of methods
+	 */
 	public void setMethod(int index, String method)
 	{
 		listOfMethods.set(index, method);
 		updateNodePanel();
 	}
 
-	// Removes the method in listofMethods at the index
+	/** 
+	 * Removes the method in listofMethods at the index
+	 * @param index
+	 * 			-int used as an index to find the method in list of methods
+	 */
 	public void removeMethod(int index)
 	{
 		listOfMethods.remove(index);
@@ -203,8 +246,12 @@ public class ClassNode implements ISelectable
 		relationships.add(relationship);
 	}
 
-	// Removes the Relationship from the relationships ArrayList
-	// Method is called when the other class removes the relationship
+	/**
+	 * Removes the Relationship from the relationships ArrayList
+	 * Method is called when the other class removes the relationship
+	 * @param relationship
+	 * 			-Relationship to be removed from the ArrayList
+	 */
 	public void removeRelationship(Relationship relationship)
 	{
 		relationships.remove(relationship);
