@@ -19,8 +19,9 @@ public class TabComponent extends JPanel implements ActionListener
 	private static final long serialVersionUID = -6628241342810672413L;
 
 	private UMLEditor editor;
-    private JTabbedPane tabbedPane;
+	private JTabbedPane tabbedPane;
 	private JLabel titleLabel;
+	private JButton closeButton;
 
 	public TabComponent(UMLEditor parentEditor, JTabbedPane parentTabbedPane, String title)
 	{
@@ -32,14 +33,14 @@ public class TabComponent extends JPanel implements ActionListener
 		this.add(titleLabel, "dock west, gapx 0 5, gapy 3");
 
 		editor = parentEditor;
-		JButton closeButton = new JButton("X");
+		closeButton = new JButton("X");
 		closeButton.setFont(closeButton.getFont().deriveFont(8.0f));
 		closeButton.setMargin(new Insets(0, 0, 0, 0));
 		closeButton.setFocusable(false);
 		closeButton.setFocusPainted(false);
 		closeButton.addActionListener(this);
 		this.add(closeButton, "dock east, gapy 3");
-		
+
 		tabbedPane = parentTabbedPane;
 
 		this.setOpaque(false);
@@ -53,10 +54,7 @@ public class TabComponent extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		if (tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).equals(this))
-		{
-			editor.closeCurrentTab();
-		}
+		int index = tabbedPane.indexOfTabComponent(this);
+		editor.closeTab(index);
 	}
-
 }
