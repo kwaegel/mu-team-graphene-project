@@ -33,6 +33,9 @@ import javax.swing.KeyStroke;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * 
+ */
 public class UMLEditor extends JFrame implements ActionListener
 {
 	private static final long serialVersionUID = -9139566399320553797L;
