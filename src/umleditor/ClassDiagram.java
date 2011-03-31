@@ -37,7 +37,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	private transient ISelectable currentlySelectedObject;
 
-	// private ClassNode selectedNode;
 	private transient UMLEditor parentEditor;
 	private transient JLayeredPane view;
 
@@ -69,6 +68,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 		view.addMouseListener(new MouseClickListener());
 	}
 
+	/**
+	 * Ensures the view gets focus when a new ClassDiagram has been created. Called whenever a new ClassDiagram is
+	 * created in the UML Editor.
+	 */
 	public void requestFocusOnView()
 	{
 		view.requestFocus();
@@ -138,8 +141,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Deletes the selected object. 
-	 * Can either be a ClassNode or Relationship.
+	 * Deletes the selected object. The selected object can either be a ClassNode or Relationship.
 	 */
 	public void deleteSelectedObject()
 	{
@@ -183,6 +185,13 @@ public class ClassDiagram implements KeyListener, FocusListener
 		this.markAsChanged();
 	}
 
+	/**
+	 * Workaround for bug with improper MouseReleased event handling in Swing.
+	 * 
+	 * @param evt
+	 *            - the mouse event
+	 * @return the component under this event
+	 */
 	public Component getComponentUnder(MouseEvent evt)
 	{
 		Point p = ((Component) evt.getSource()).getLocation();
@@ -190,6 +199,12 @@ public class ClassDiagram implements KeyListener, FocusListener
 		return view.getComponentAt(evt.getX(), evt.getY());
 	}
 
+	/**
+	 * Adds the relationship to the ClassDiagram's currently selected object, if that object is a ClassNode
+	 * 
+	 * @param secondNode
+	 *            - the node that relationship will end on.
+	 */
 	public void addRelationship(ClassNode secondNode)
 	{
 		if (currentlySelectedObject instanceof ClassNode)
@@ -198,6 +213,14 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Adds a relationship between the two nodes. Private internal method in ClassDiagram.
+	 * 
+	 * @param firstNode
+	 *            - the starting node
+	 * @param secondNode
+	 *            - the ending node
+	 */
 	private void addRelationship(ClassNode firstNode, ClassNode secondNode)
 	{
 		// Do not add relationships between identical classes.
@@ -234,6 +257,11 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Removes a list of relationships from the diagram. Called from a ClassNode whenever it gets deleted.
+	 * 
+	 * @param relationshipList
+	 */
 	public void removeRelationships(List<Relationship> relationshipList)
 	{
 		m_relationships.removeAll(relationshipList);

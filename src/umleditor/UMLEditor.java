@@ -299,7 +299,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{
-			disableAddNewClassMode();
 			createNewClassDiagram();
 			this.validate();
 		}
@@ -398,16 +397,6 @@ public class UMLEditor extends JFrame implements ActionListener
 			return (true);
 		}
 		return (false);
-	}
-
-	/**
-	 * Used when New is selected in the File menu. Deletes everything in the diagram
-	 */
-	public void clearDiagram()
-	{
-		this.disableAddNewClassMode();
-		// classDiagram = new ClassDiagram(this);
-		this.validate();
 	}
 
 	private ClassDiagram getCurrentDiagram()
