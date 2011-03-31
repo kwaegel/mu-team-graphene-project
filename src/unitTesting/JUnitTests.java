@@ -2,6 +2,7 @@ package unitTesting;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.JLayeredPane;
@@ -40,27 +41,6 @@ public class JUnitTests
 		assertTrue("Error: not constructed correctly, wrong number of methods", testNode.getNumMethods() == 1);
 		assertTrue("Error: first method has wrong name", testNode.getMethod(0).equals("method 1"));
 
-	}
-
-	/**
-	 * create a ClassDiagram,ClassNode, and NodePanel. Then delete new node
-	 */
-	//TODO: Need to either remove or fix method
-	@Test
-	public void testDelete()
-	{
-		UMLEditor editor = new UMLEditor();
-		ClassDiagram testDiagram = new ClassDiagram(editor, new JScrollPane());
-		ClassNode testNode = new ClassNode();	
-		NodePanel np = new NodePanel(testDiagram, testNode);
-		np.attachToView(new JLayeredPane());
-		testNode.attachPanel(np);
-
-//		testDiagram.setSelectedObject(testNode);
-//		testDiagram.deleteSelectedObject();
-		
-		//assertNotNull(testDiagram.getView());
-		//assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
 	}
 
 	/**
@@ -258,7 +238,6 @@ public class JUnitTests
 	 * Test adding, removing, and getting relationships
 	 * Also test creating relationships and getting nodes
 	 */
-	//TODO:Fix testRelationship NullPointerException
 	@Test
 	public void testRelationships()
 	{
@@ -302,10 +281,11 @@ public class JUnitTests
 		testDiagram.setSelectedObject(node1);
 		testDiagram.deleteSelectedObject();
 		
-		assertTrue("Error: relationship was not removed", node2.getRelationships().size() == 2);
+		assertTrue("Error: node2 should have 1 relationship", node2.getRelationships().size() == 1);
 		assertTrue("Error: relationship was removed from wrong node", node3.getRelationships().size() == 1);
 		assertTrue("Error: relationships with node1 was not removed", node2.getRelationships().get(0).equals(rel2));
 		
+		//Delete relationship between node2 and node3
 		testDiagram.setSelectedObject(rel2);
 		testDiagram.deleteSelectedObject();
 		
