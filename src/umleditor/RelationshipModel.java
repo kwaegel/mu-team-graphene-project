@@ -34,6 +34,11 @@ public class RelationshipModel
 
 	private Point m_firstNodeOffset, m_secondNodeOffset;
 
+	/**
+	 * TODO: This is a hack. Find a way for the model not to need a reference to the controller/view.
+	 */
+	private transient Relationship m_relationship;
+
 	public RelationshipModel(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset,
 			RelationshipType type)
 	{
@@ -146,6 +151,16 @@ public class RelationshipModel
 	}
 
 	/** Getters and Setters **/
+
+	public Relationship getRelationship()
+	{
+		return m_relationship;
+	}
+
+	public void setRelationship(Relationship r)
+	{
+		m_relationship = r;
+	}
 
 	public RelationshipType getType()
 	{

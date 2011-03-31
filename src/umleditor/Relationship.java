@@ -149,6 +149,8 @@ public class Relationship extends JComponent implements ISelectable
 
 	private void rebuildAfterModelChange()
 	{
+		m_model.setRelationship(this);
+
 		createPathFromPoints();
 		createArrow();
 		setArrowFill();
