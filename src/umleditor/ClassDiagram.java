@@ -31,7 +31,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 {
 	// Lists of objects in the diagram
 	private List<ClassNode> listOfNodes;
-	private List<Relationship> m_relationships;
+	private List<RelationshipModel> m_relationships;
 
 	// Listeners for mouse events on the diagram
 	private transient RelationshipDragListener m_relationshipDragController;
@@ -44,18 +44,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	private transient File fileSavedTo;
 	private transient boolean changedSinceSaved;
-
-	// /**
-	// * Create a class diagram by loading data from a file on disk.
-	// *
-	// * @param parent
-	// * @param scrollPane
-	// * @param loadFile
-	// */
-	// public ClassDiagram(UMLEditor parent, JScrollPane scrollPane, File loadFile)
-	// {
-	//
-	// }
 
 	public ClassDiagram(UMLEditor parent, JScrollPane scrollPane)
 	{
@@ -74,7 +62,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		changedSinceSaved = true;
 
 		listOfNodes = new LinkedList<ClassNode>();
-		m_relationships = new LinkedList<Relationship>();
+		m_relationships = new LinkedList<RelationshipModel>();
 
 		// Create listeners on the view.
 		m_relationshipDragController = new RelationshipDragListener(this);
@@ -231,7 +219,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 				secondNode.addRelationship(rel);
 
 				// Add the relationship to the model list
-				m_relationships.add(rel);
+				m_relationships.add(rel.getModel());
 
 				// Add the relationship to the view.
 				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
@@ -246,17 +234,22 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
-	public void removeRelationships(List<Relationship> relationships)
+	public void removeRelationships(List<RelationshipModel> relationships)
 	{
 		// Clone list to prevent concurrent modification of the same list
-		List<Relationship> relationshipList = new ArrayList<Relationship>(relationships);
+		List<RelationshipModel> relationshipList = new ArrayList<RelationshipModel>(relationships);
 
 		m_relationships.removeAll(relationshipList);
-		for (Relationship r : relationshipList)
+		for (RelationshipModel rm : relationshipList)
 		{
+			// Remove the model
+			rm.removeFromLinkedNodes();
+
+			// Remove the view.
+			Relationship r = rm.getRelationship();
 			r.removeMouseListener(m_relationshipDragController);
-			r.removeFromLinkedNodes();
 			view.remove(r);
+
 		}
 	}
 
