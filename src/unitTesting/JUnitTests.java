@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
+import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
 
 import org.junit.Test;
@@ -48,9 +49,12 @@ public class JUnitTests
 	@Test
 	public void testDelete()
 	{
-		ClassDiagram testDiagram = new ClassDiagram(new UMLEditor(), new JScrollPane());
-		ClassNode testNode = new ClassNode();
-		testNode.attachPanel(new NodePanel(testDiagram, testNode));
+		UMLEditor editor = new UMLEditor();
+		ClassDiagram testDiagram = new ClassDiagram(editor, new JScrollPane());
+		ClassNode testNode = new ClassNode();	
+		NodePanel np = new NodePanel(testDiagram, testNode);
+		np.attachToView(new JLayeredPane());
+		testNode.attachPanel(np);
 
 		testDiagram.setSelectedObject(testNode);
 		testDiagram.deleteSelectedObject();
@@ -265,9 +269,15 @@ public class JUnitTests
 		ClassNode node1 = new ClassNode();
 		ClassNode node2 = new ClassNode();
 		ClassNode node3 = new ClassNode();
-		node1.attachPanel(new NodePanel(testDiagram, node1));
-		node2.attachPanel(new NodePanel(testDiagram, node2));
-		node3.attachPanel(new NodePanel(testDiagram, node3));
+		NodePanel np1 = new NodePanel(testDiagram, node1);
+		np1.attachToView(new JLayeredPane());
+		node1.attachPanel(np1);
+		NodePanel np2 = new NodePanel(testDiagram, node1);
+		np2.attachToView(new JLayeredPane());
+		node2.attachPanel(np2);
+		NodePanel np3 = new NodePanel(testDiagram, node1);
+		np3.attachToView(new JLayeredPane());
+		node3.attachPanel(np3);
 		RelationshipType[] possibleValues = RelationshipType.values();
 		Relationship rel = new Relationship(node1, node2, possibleValues[1]);
 		Relationship rel2 = new Relationship(node2, node3, possibleValues[0]);
@@ -277,7 +287,7 @@ public class JUnitTests
 		node3.addRelationship(rel2);
 		
 		//Test relationship construction and getting nodes
-		Collection nodes = rel2.getClassNodes();
+		Collection<ClassNode> nodes = rel2.getClassNodes();
 		assertTrue("Error: node1 should not be in this relationship", !nodes.contains(node1));
 		assertTrue("Error: nodes are not properly stored", nodes.contains(node2));
 		assertTrue("Error: nodes are not properly stored", nodes.contains(node3));

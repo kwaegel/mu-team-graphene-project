@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -184,6 +185,11 @@ public class NodePanel extends JPanel
 		int width = this.getPreferredSize().width;
 		int height = this.getPreferredSize().height;
 		this.setBounds(x, y, width, height);
+	}
+	
+	public void attachToView(JLayeredPane view)
+	{
+		view.add(this, "external", JLayeredPane.DRAG_LAYER);
 	}
 
 	/**

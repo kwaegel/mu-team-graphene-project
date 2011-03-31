@@ -90,11 +90,11 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private void initNode(Point addLocation, ClassNode newClassNode)
 	{
 		NodePanel newNodePanel = new NodePanel(this, newClassNode);
+		newNodePanel.attachToView(view);
+		newNodePanel.resetBounds(addLocation);
 
 		listOfNodes.add(newClassNode);
 
-		view.add(newNodePanel, "external", JLayeredPane.DRAG_LAYER);
-		newNodePanel.resetBounds(addLocation);
 		this.setSelectedObject(newClassNode);
 		view.revalidate();
 	}
