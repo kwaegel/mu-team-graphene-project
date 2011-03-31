@@ -33,6 +33,9 @@ import javax.swing.KeyStroke;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * 
+ */
 public class UMLEditor extends JFrame implements ActionListener
 {
 	private static final long serialVersionUID = -9139566399320553797L;
@@ -287,11 +290,22 @@ public class UMLEditor extends JFrame implements ActionListener
 			}
 			catch (IOException e)
 			{
-
+				// Do nothing.
 			}
 			finally
 			{
-
+				JScrollPane scrollPane = new JScrollPane();
+				loadedDiagram.initAfterLoadFromFile(this, scrollPane);
+				classDiagrams.add(loadedDiagram);
+				tabbedPane.add(scrollPane);
+				if (!classDiagrams.isEmpty())
+				{
+					tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+				}
+				tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, tabbedPane,
+						"Unsaved Diagram"));
+				addClassButton.setEnabled(true);
+				loadedDiagram.requestFocusOnView();
 			}
 		}
 

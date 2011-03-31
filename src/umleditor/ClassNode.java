@@ -1,6 +1,7 @@
 package umleditor;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ClassNode implements ISelectable
 	private ArrayList<String> listOfAttributes;
 	private ArrayList<String> listOfMethods;
 	private ArrayList<RelationshipModel> m_relationships;
+	private Point m_location;
 
 	/**
 	 * Constructor with a default class name.
@@ -319,5 +321,15 @@ public class ClassNode implements ISelectable
 		nodePanel.createDisplay();
 		nodePanel.resetBounds(null);
 		nodePanel.revalidate();
+	}
+
+	public void saveLocation(Point loc)
+	{
+		m_location = loc;
+	}
+
+	public Point getLocation()
+	{
+		return m_location;
 	}
 }
