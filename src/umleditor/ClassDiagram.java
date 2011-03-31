@@ -77,6 +77,39 @@ public class ClassDiagram implements KeyListener, FocusListener
 		view.addMouseListener(new MouseClickListener());
 	}
 
+	public void initAfterLoadFromFile(UMLEditor parent, JScrollPane scrollPane)
+	{
+		parentEditor = parent;
+
+		view = new JLayeredPane();
+		// view.addMouseListener(this);
+		view.setFocusable(true);
+		view.addKeyListener(this);
+		view.setLayout(new MigLayout("", "", ""));
+		view.addFocusListener(this);
+
+		// Add the view to the scroll pane.
+		scrollPane.setViewportView(view);
+
+		changedSinceSaved = false;
+
+		// Create listeners on the view.
+		m_relationshipDragController = new RelationshipDragListener(this);
+		view.addMouseListener(new MouseClickListener());
+
+		// Create views for models.
+		for (ClassNode node : listOfNodes)
+		{
+			Point addPoint = node.getLocation();
+			initExistingNode(addPoint, node);
+		}
+		for (RelationshipModel rm : m_relationships)
+		{
+			Relationship r = new Relationship(rm);
+			view.add(r);
+		}
+	}
+
 	/**
 	 * Ensures the view gets focus when a new ClassDiagram has been created. Called whenever a new ClassDiagram is
 	 * created in the UML Editor.
@@ -111,6 +144,24 @@ public class ClassDiagram implements KeyListener, FocusListener
 		newNodePanel.resetBounds(addLocation);
 
 		listOfNodes.add(newClassNode);
+
+		this.setSelectedObject(newClassNode);
+		view.revalidate();
+	}
+
+	/**
+	 * Adds new node to the list of nodes. Also add it's {@link NodePanel} to the view.
+	 * 
+	 * @param addLocation
+	 *            - location to add node
+	 * @param newClassNode
+	 *            - node to add
+	 */
+	private void initExistingNode(Point addLocation, ClassNode newClassNode)
+	{
+		NodePanel newNodePanel = new NodePanel(this, newClassNode);
+		newNodePanel.attachToView(view);
+		newNodePanel.resetBounds(addLocation);
 
 		this.setSelectedObject(newClassNode);
 		view.revalidate();
