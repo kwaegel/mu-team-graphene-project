@@ -7,6 +7,9 @@ import java.util.List;
 
 import javax.swing.JLayeredPane;
 
+/**
+ * Model of a class in the UML Diagram.
+ */
 public class ClassNode implements ISelectable
 {
 
@@ -291,6 +294,7 @@ public class ClassNode implements ISelectable
 	public void updateNodePanel()
 	{
 		nodePanel.createDisplay();
+		nodePanel.resetBounds(null);
 		nodePanel.revalidate();
 	}
 }

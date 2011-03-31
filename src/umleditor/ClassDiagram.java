@@ -27,6 +27,14 @@ import umleditor.Relationship.RelationshipType;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * A ClassDiagram contains all information associated with a UML diagram in the {@link UMLEditor}. It maintains the
+ * models for Relationships and Classes in the diagram. It is responsible for creating nodes and connecting them with
+ * relationships. It contains a reference to the view in which the classes and relationships are displayed. It keeps
+ * track of the currently selected object in the diagram deletes it when appropriate. It manages cutting and copying
+ * classes from, and pasting classes to itself. It knows what file it was saved to, and keeps track of whether or not it
+ * was saved.
+ */
 public class ClassDiagram implements KeyListener, FocusListener
 {
 	// Lists of objects in the diagram
@@ -289,6 +297,13 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Saves this {@link ClassDiagram} to a file. If chooseNewFile is <code>true</code>, or no file name has been
+	 * associated with this diagram, will display a JFileChoser to get user to select a file.
+	 * 
+	 * @param chooseNewFile
+	 *            - whether or not to find a new file before saving.
+	 */
 	public void saveToFile(boolean chooseNewFile)
 	{
 		if (fileSavedTo == null || chooseNewFile)
