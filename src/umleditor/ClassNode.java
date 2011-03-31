@@ -16,7 +16,7 @@ public class ClassNode implements ISelectable
 	private String className;
 	private ArrayList<String> listOfAttributes;
 	private ArrayList<String> listOfMethods;
-	private ArrayList<Relationship> relationships;
+	private ArrayList<Relationship> m_relationships;
 
 	/**
 	 * Constructor with a default class name.
@@ -33,7 +33,7 @@ public class ClassNode implements ISelectable
 		listOfAttributes.add("attribute 1");
 		listOfMethods = new ArrayList<String>();
 		listOfMethods.add("method 1");
-		relationships = new ArrayList<Relationship>();
+		m_relationships = new ArrayList<Relationship>();
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class ClassNode implements ISelectable
 	public ClassNode(ClassNode otherNode)
 	{
 		this.setPropertiesTo(otherNode);
-		this.relationships = new ArrayList<Relationship>();
+		this.m_relationships = new ArrayList<Relationship>();
 		this.nodePanel = null;
 	}
 
@@ -243,7 +243,7 @@ public class ClassNode implements ISelectable
 	 */
 	public void addRelationship(Relationship relationship)
 	{
-		relationships.add(relationship);
+		m_relationships.add(relationship);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class ClassNode implements ISelectable
 	 */
 	public void removeRelationship(Relationship relationship)
 	{
-		relationships.remove(relationship);
+		m_relationships.remove(relationship);
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class ClassNode implements ISelectable
 	 */
 	public List<Relationship> getRelationships()
 	{
-		return relationships;
+		return m_relationships;
 	}
 
 	/**
