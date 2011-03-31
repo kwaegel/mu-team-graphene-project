@@ -55,12 +55,18 @@ public class JUnitTests
 		NodePanel np = new NodePanel(testDiagram, testNode);
 		np.attachToView(new JLayeredPane());
 		testNode.attachPanel(np);
-
-//		testDiagram.setSelectedObject(testNode);
-//		testDiagram.deleteSelectedObject();
+		
+		System.out.println(np.getComponentCount());
+		
+		assertTrue("Error: blah", np.getComponentCount() == 1);
+		
+		testDiagram.setSelectedObject(testNode);
+		testDiagram.deleteSelectedObject();
 		
 		//assertNotNull(testDiagram.getView());
-		//assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
+//		assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
+		assertTrue("Error: panel not removed when node deleted", np.getComponentCount() == 0);
+		
 	}
 
 	/**
@@ -302,7 +308,7 @@ public class JUnitTests
 		testDiagram.setSelectedObject(node1);
 		testDiagram.deleteSelectedObject();
 		
-		assertTrue("Error: relationship was not removed", node2.getRelationships().size() == 2);
+		assertTrue("Error: relationship was not removed", node2.getRelationships().size() == 1);
 		assertTrue("Error: relationship was removed from wrong node", node3.getRelationships().size() == 1);
 		assertTrue("Error: relationships with node1 was not removed", node2.getRelationships().get(0).equals(rel2));
 		
