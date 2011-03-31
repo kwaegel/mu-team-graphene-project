@@ -3,7 +3,6 @@ package unitTesting;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.JLayeredPane;
@@ -297,7 +296,7 @@ public class JUnitTests
 		assertTrue("Error: wrong number of relationships in node 2", node2.getRelationships().size() == 2);
 		assertTrue("Error: wrong number of relationships in node 3", node3.getRelationships().size() == 1);
 		assertTrue("Error: addRelationship error, relationship not properly stored", node2.getRelationships().get(0)
-				.equals(rel));
+				.equals(rel.getModel()));
 
 		// Delete node1
 		testDiagram.setSelectedObject(node1);
@@ -305,7 +304,7 @@ public class JUnitTests
 
 		assertTrue("Error: node2 should have 1 relationship", node2.getRelationships().size() == 1);
 		assertTrue("Error: relationship was removed from wrong node", node3.getRelationships().size() == 1);
-		assertTrue("Error: relationships with node1 was not removed", node2.getRelationships().get(0).equals(rel2));
+		assertTrue("Error: relationships with node1 was not removed", node2.getRelationships().get(0).equals(rel2.getModel()));
 
 		//Delete relationship between node2 and node3
 		testDiagram.setSelectedObject(rel2);
