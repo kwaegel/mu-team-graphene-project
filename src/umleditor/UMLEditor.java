@@ -346,7 +346,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{
-			disableAddNewClassMode();
 			createNewClassDiagram();
 			this.validate();
 		}
@@ -421,6 +420,24 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 	}
 
+	/**
+	 * Allows deletion of any tab. Makes the ClassDiagram at index current, then deletes it.
+	 * 
+	 * @param tabIndex
+	 *            - index in the tabbed pane of the tab to close.
+	 * @return <code>true</code> if the tab was actually closed, <code>false</code> if the user canceled before closing
+	 */
+	public boolean closeTab(int tabIndex)
+	{
+		tabbedPane.setSelectedIndex(tabIndex);
+		return (closeCurrentTab());
+	}
+
+	/**
+	 * Closes the currently open diagram.
+	 * 
+	 * @return <code>true</code> if the tab was actually closed, <code>false</code> if the user canceled before closing
+	 */
 	public boolean closeCurrentTab()
 	{
 		ClassDiagram currentDiagram = getCurrentDiagram();
@@ -447,16 +464,6 @@ public class UMLEditor extends JFrame implements ActionListener
 			return (true);
 		}
 		return (false);
-	}
-
-	/**
-	 * Used when New is selected in the File menu. Deletes everything in the diagram
-	 */
-	public void clearDiagram()
-	{
-		this.disableAddNewClassMode();
-		// classDiagram = new ClassDiagram(this);
-		this.validate();
 	}
 
 	private ClassDiagram getCurrentDiagram()
