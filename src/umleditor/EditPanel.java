@@ -45,7 +45,8 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	private ClassNode associatedNode;
 
 	/**
-	 * 
+	 * Class node which maintains the methods, attributes and class name in associatedNode before editing began. Used to
+	 * provide Discard Changes functionality and determine if changes have occurred.
 	 */
 	private ClassNode copyOfOriginalNode;
 
@@ -160,8 +161,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	}
 
 	/**
-	 * Shows a list of the attributes in EditPanel.
-	 * List is able to be modified
+	 * Shows a list of the attributes in EditPanel. List is able to be modified
 	 */
 	private void displayAttributesList()
 	{
@@ -197,8 +197,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	}
 
 	/**
-	 * Shows a list of the methods in EditPanel.
-	 * List is able to be modified
+	 * Shows a list of the methods in EditPanel. List is able to be modified
 	 */
 	private void displayMethodsList()
 	{
@@ -406,10 +405,14 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		{
 			associatedNode.setName(ntf.getText());
 		}
-		
+
 		associatedNode.getNodePanel().resetBounds(null);
 	}
 
+	/**
+	 * When {@link EditPanel} closes, determines if the node has been changed, and, if so, sets the state in the node's
+	 * parent {@link ClassDiagram}.
+	 */
 	@Override
 	public void windowDeactivated(WindowEvent e)
 	{

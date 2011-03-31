@@ -33,6 +33,9 @@ import javax.swing.KeyStroke;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * 
+ */
 public class UMLEditor extends JFrame implements ActionListener
 {
 	private static final long serialVersionUID = -9139566399320553797L;
@@ -431,6 +434,24 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 	}
 
+	/**
+	 * Allows deletion of any tab. Makes the ClassDiagram at index current, then deletes it.
+	 * 
+	 * @param tabIndex
+	 *            - index in the tabbed pane of the tab to close.
+	 * @return <code>true</code> if the tab was actually closed, <code>false</code> if the user canceled before closing
+	 */
+	public boolean closeTab(int tabIndex)
+	{
+		tabbedPane.setSelectedIndex(tabIndex);
+		return (closeCurrentTab());
+	}
+
+	/**
+	 * Closes the currently open diagram.
+	 * 
+	 * @return <code>true</code> if the tab was actually closed, <code>false</code> if the user canceled before closing
+	 */
 	public boolean closeCurrentTab()
 	{
 		ClassDiagram currentDiagram = getCurrentDiagram();
