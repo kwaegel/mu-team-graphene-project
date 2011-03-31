@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -176,6 +177,13 @@ public class NodePanel extends JPanel
 		JLabel spacer = new JLabel();
 		spacer.setMinimumSize(new Dimension(0, DEFAULT_FIELD_HEIGHT));
 		this.add(spacer);
+	}
+
+	@Override
+	public void setBounds(Rectangle bounds)
+	{
+		super.setBounds(bounds);
+		associatedNode.saveLocation(bounds.getLocation());
 	}
 
 	public void resetBounds(Point position)
