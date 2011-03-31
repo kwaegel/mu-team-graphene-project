@@ -275,7 +275,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	 * 
 	 * @param relationshipList
 	 */
-	public void removeRelationships(List<Relationship> relationshipList)
+	public void removeRelationships(List<Relationship> relationships)
 	{
 		// Clone list to prevent concurrent modification of the same list
 		List<Relationship> relationshipList = new ArrayList<Relationship>(relationships);
