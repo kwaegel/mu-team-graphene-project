@@ -14,8 +14,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -76,6 +75,8 @@ public class Relationship extends JComponent implements ISelectable
 
 	/* Member variables. */
 
+	private RelationshipModel m_model;
+
 	private enum FillType
 	{
 		None, Outline, Solid
@@ -86,29 +87,7 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	private FillType m_endFill;
 
-	/**
-	 * The type of relationship to draw.
-	 */
-	private RelationshipType m_type;
-
-	/**
-	 * Contains a list of class nodes to draw between.
-	 */
-	private List<Point> m_points;
-
 	private transient Path2D.Float m_line;
-
-	/**
-	 * Contains a reference to the first ClassNode (relationship comes ‘from’ this one).
-	 */
-	private ClassNode m_firstNode;
-
-	/**
-	 * Contains a reference to the second ClassNode (relationship goes ‘to’ this one).
-	 */
-	private ClassNode m_secondNode;
-
-	private Point m_firstNodeOffset, m_secondNodeOffset;
 
 	/**
 	 * The {@link java.awt.Polygon Polygon} used to draw the end arrow of the relationship.
@@ -120,6 +99,14 @@ public class Relationship extends JComponent implements ISelectable
 
 	// Which control node, if any, is selected.
 	private transient int m_selectedControlPointIndex = -1;
+
+	/**
+	 * Initializer block.
+	 */
+	{
+		m_line = new Path2D.Float();
+		m_arrow = new Polygon();
+	}
 
 	/***** Constructors *****/
 
@@ -133,9 +120,9 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
 	{
-		this(first, second, type);
-		m_firstNodeOffset = firstOffset;
-		m_secondNodeOffset = secondOffset;
+		m_model = new RelationshipModel(first, firstOffset, second, secondOffset, type);
+
+		rebuildAfterModelChange();
 	}
 
 	/**
@@ -147,39 +134,55 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	public Relationship(ClassNode first, ClassNode second, RelationshipType type)
 	{
-		this.m_type = type;
-		m_firstNode = first;
-		m_secondNode = second;
+		m_model = new RelationshipModel(first, second, type);
 
-		int initialNumPoints = 2;
-		m_points = new ArrayList<Point>(initialNumPoints);
-		m_points.add(new Point());
-		m_points.add(new Point());
-		m_line = new Path2D.Float(Path2D.WIND_NON_ZERO, initialNumPoints);
+		rebuildAfterModelChange();
+	}
 
-		calculateDefaultPathControlPoints();
+	public Relationship(RelationshipModel model)
+	{
+		m_model = model;
+		rebuildAfterModelChange();
+	}
 
-		m_firstNodeOffset = calculateOffset(m_points.get(0), m_firstNode.getBounds());
-		m_secondNodeOffset = calculateOffset(m_points.get(m_points.size() - 1), m_secondNode.getBounds());
+	/***** Methods *****/
 
+	private void rebuildAfterModelChange()
+	{
 		createPathFromPoints();
-
-		m_arrow = new Polygon();
 		createArrow();
 		setArrowFill();
 
 		recalculateBounds();
 	}
 
-	/***** Methods *****/
+	/**
+	 * Get the model.
+	 */
+	public RelationshipModel getModel()
+	{
+		return m_model;
+	}
+
+	/**
+	 * Set the model.
+	 * 
+	 * @param model
+	 *            - the new model to use.
+	 */
+	public void setModel(RelationshipModel model)
+	{
+		m_model = model;
+		rebuildAfterModelChange();
+	}
 
 	/**
 	 * Return a {@link java.util.Collection collection} containing the {@link ClassNode ClassNodes} this relationship is
 	 * linked to.
 	 */
-	public java.util.Collection<ClassNode> getClassNodes()
+	public Collection<ClassNode> getClassNodes()
 	{
-		return Arrays.asList(m_firstNode, m_secondNode);
+		return m_model.getClassNodes();
 	}
 
 	/**
@@ -187,67 +190,7 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	public void removeFromLinkedNodes()
 	{
-		m_firstNode.removeRelationship(this);
-		m_secondNode.removeRelationship(this);
-	}
-
-	/**
-	 * Calculate some default path control points. The points chosen are the centers of the nearest two sides of the
-	 * {@link ClassNode ClassNodes}.
-	 */
-	private void calculateDefaultPathControlPoints()
-	{
-		Rectangle firstBounds = m_firstNode.getBounds();
-		Rectangle secondBounds = m_secondNode.getBounds();
-
-		// Find the center points of each edge for the first node.
-		Point[] startEdges = new Point[4];
-		startEdges[0] = new Point((int) (firstBounds.x + firstBounds.width / 2.0f), firstBounds.y);
-		startEdges[1] = new Point(firstBounds.x + firstBounds.width, (int) (firstBounds.y + firstBounds.height / 2.0f));
-		startEdges[2] = new Point((int) (firstBounds.x + firstBounds.width / 2.0f), firstBounds.y + firstBounds.height);
-		startEdges[3] = new Point(firstBounds.x, (int) (firstBounds.y + firstBounds.height / 2.0f));
-
-		// Find the center points of each edge for the second node.
-		Point[] endEdges = new Point[4];
-		endEdges[0] = new Point((int) (secondBounds.x + secondBounds.width / 2.0f), secondBounds.y);
-		endEdges[1] = new Point(secondBounds.x + secondBounds.width,
-				(int) (secondBounds.y + secondBounds.height / 2.0f));
-		endEdges[2] = new Point((int) (secondBounds.x + secondBounds.width / 2.0f), secondBounds.y
-				+ secondBounds.height);
-		endEdges[3] = new Point(secondBounds.x, (int) (secondBounds.y + secondBounds.height / 2.0f));
-
-		// Search for the closest two edge points to use for drawing.
-		double minDistence = Float.POSITIVE_INFINITY;
-		for (Point startPoint : startEdges)
-		{
-			for (Point endPoint : endEdges)
-			{
-				double dist = startPoint.distance(endPoint);
-				if (dist < minDistence)
-				{
-					m_points.set(0, startPoint);
-					m_points.set(m_points.size() - 1, endPoint);
-					minDistence = dist;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Recalculate the end points of the relationship path, based on the previously stored offsets. This allows the
-	 * relationship ends to maintain the same relative position to the classNodes as they are moved.
-	 */
-	private void recalculateEndPoints()
-	{
-		Rectangle firstBounds = m_firstNode.getBounds();
-		Rectangle secondBounds = m_secondNode.getBounds();
-
-		m_points.get(0).x = firstBounds.x + m_firstNodeOffset.x;
-		m_points.get(0).y = firstBounds.y + m_firstNodeOffset.y;
-
-		int end = m_points.size() - 1;
-		m_points.get(end).x = secondBounds.x + m_secondNodeOffset.x;
-		m_points.get(end).y = secondBounds.y + m_secondNodeOffset.y;
+		m_model.removeFromLinkedNodes();
 	}
 
 	/**
@@ -255,9 +198,10 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	private void recalculateBounds()
 	{
-		Rectangle newBounds = new Rectangle(m_points.get(0));
+		List<Point> points = m_model.getPoints();
+		Rectangle newBounds = new Rectangle(points.get(0));
 		int offset = m_cpDrawSize / 2;
-		for (Point p : m_points)
+		for (Point p : points)
 		{
 			// Add rectangles instead of points to ensure the control nodes draw correctly.
 			newBounds.add(new Rectangle(p.x - offset, p.y - offset, m_cpDrawSize, m_cpDrawSize));
@@ -276,15 +220,17 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	private void setArrowFill()
 	{
-		if (m_type == RelationshipType.Composition || m_type == RelationshipType.Dependency)
+		RelationshipType type = m_model.getType();
+
+		if (type == RelationshipType.Composition || type == RelationshipType.Dependency)
 		{
 			m_endFill = FillType.Solid;
 		}
-		else if (m_type == RelationshipType.Generalization || m_type == RelationshipType.Aggregation)
+		else if (type == RelationshipType.Generalization || type == RelationshipType.Aggregation)
 		{
 			m_endFill = FillType.Outline;
 		}
-		else if (m_type == RelationshipType.Association)
+		else if (type == RelationshipType.Association)
 		{
 			m_endFill = FillType.None;
 		}
@@ -297,9 +243,11 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		m_arrow.reset();
 
+		List<Point> points = m_model.getPoints();
+
 		// Get start and end points from the last line segment.
-		Point start = m_points.get(m_points.size() - 2);
-		Point end = m_points.get(m_points.size() - 1);
+		Point start = points.get(points.size() - 2);
+		Point end = points.get(points.size() - 1);
 
 		// Calculate line direction vector.
 		double dirX = end.x - start.x;
@@ -325,12 +273,13 @@ public class Relationship extends JComponent implements ISelectable
 		m_arrow.addPoint((int) (centerX - perpX), (int) (centerY - perpY));
 
 		// Add back point if needed.
-		if (m_type == RelationshipType.Aggregation || m_type == RelationshipType.Composition)
+		RelationshipType type = m_model.getType();
+		if (type == RelationshipType.Aggregation || type == RelationshipType.Composition)
 		{
 			m_arrow.addPoint((int) (end.x - 2 * dirX * m_arrowHeight), (int) (end.y - 2 * dirY * m_arrowHeight));
 		}
 
-		if (m_type == RelationshipType.Dependency)
+		if (type == RelationshipType.Dependency)
 		{
 			// m_arrow.addPoint(end.x, end.y);
 			m_arrow.addPoint((int) (end.x - 0.5 * dirX * m_arrowHeight), (int) (end.y - 0.5 * dirY * m_arrowHeight));
@@ -347,13 +296,15 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	private void createPathFromPoints()
 	{
+		List<Point> points = m_model.getPoints();
+
 		// Reset the path.
 		m_line.reset();
-		m_line.moveTo(m_points.get(0).x, m_points.get(0).y);
+		m_line.moveTo(points.get(0).x, points.get(0).y);
 
-		for (int i = 1; i < m_points.size(); i++)
+		for (int i = 1; i < points.size(); i++)
 		{
-			Point p = m_points.get(i);
+			Point p = points.get(i);
 			m_line.lineTo(p.x, p.y);
 		}
 	}
@@ -370,17 +321,18 @@ public class Relationship extends JComponent implements ISelectable
 				m_selectionTolerence, m_selectionTolerence);
 
 		// Find which line segment to add the new control point on
-		for (int i = 0; i < m_points.size() - 1; i++)
+		List<Point> points = m_model.getPoints();
+		for (int i = 0; i < points.size() - 1; i++)
 		{
-			Point segStart = m_points.get(i);
-			Point segEnd = m_points.get(i + 1);
+			Point segStart = points.get(i);
+			Point segEnd = points.get(i + 1);
 
 			Line2D seg = new Line2D.Float(segStart, segEnd);
 
 			if (boundingRect.intersectsLine(seg))
 			{
 				// Insert the new point after the current index.
-				m_points.add(i + 1, clickPoint);
+				points.add(i + 1, clickPoint);
 				break;
 			}
 		}
@@ -391,10 +343,12 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	public void removeSelectedControlPoint()
 	{
+		List<Point> points = m_model.getPoints();
+
 		// Don't allow the end points to be removed.
-		if (m_selectedControlPointIndex > 0 && m_selectedControlPointIndex < m_points.size() - 1)
+		if (m_selectedControlPointIndex > 0 && m_selectedControlPointIndex < points.size() - 1)
 		{
-			m_points.remove(m_selectedControlPointIndex);
+			points.remove(m_selectedControlPointIndex);
 
 			this.createPathFromPoints();
 			this.createArrow();
@@ -417,9 +371,13 @@ public class Relationship extends JComponent implements ISelectable
 			// TODO: change this to work in local coordinates instead of doing a conversion.
 			dragPoint = SwingUtilities.convertPoint(this, dragPoint, getParent());
 
+			List<Point> m_points = m_model.getPoints();
+			Point m_firstNodeOffset = m_model.getFirstNodeOffset();
+			Point m_secondNodeOffset = m_model.getSecondNodeOffset();
+
 			if (m_selectedControlPointIndex == 0)
 			{
-				Rectangle bounds = m_firstNode.getBounds();
+				Rectangle bounds = m_model.getFirstNode().getBounds();
 				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
 				m_points.set(m_selectedControlPointIndex, closestPoint);
 
@@ -428,7 +386,7 @@ public class Relationship extends JComponent implements ISelectable
 			}
 			else if (m_selectedControlPointIndex == m_points.size() - 1)
 			{
-				Rectangle bounds = m_secondNode.getBounds();
+				Rectangle bounds = m_model.getSecondNode().getBounds();
 				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
 				m_points.set(m_selectedControlPointIndex, closestPoint);
 
@@ -554,10 +512,10 @@ public class Relationship extends JComponent implements ISelectable
 	private int getSelectedControlIndex(Point clickPoint)
 	{
 		int tol = m_selectionTolerence * m_selectionTolerence;
-
-		for (int i = 0; i < m_points.size(); i++)
+		List<Point> points = m_model.getPoints();
+		for (int i = 0; i < points.size(); i++)
 		{
-			if (clickPoint.distanceSq(m_points.get(i)) < tol)
+			if (clickPoint.distanceSq(points.get(i)) < tol)
 			{
 				return i;
 			}
@@ -621,8 +579,10 @@ public class Relationship extends JComponent implements ISelectable
 		// Save the previous stroke pattern;
 		Stroke oldStroke = g2d.getStroke();
 
+		RelationshipType type = m_model.getType();
+
 		// Dependencies need to be drawn with a dashed line.
-		if (m_type == RelationshipType.Dependency)
+		if (type == RelationshipType.Dependency)
 		{
 			g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, new float[] { 8.0f,
 					8.0f }, 5.0f));
@@ -630,7 +590,7 @@ public class Relationship extends JComponent implements ISelectable
 
 		// these two lines copy-pasted to make relationships redraw
 		// These should be moved to the mouseDraged methods for better drawing performance.
-		recalculateEndPoints();
+		m_model.recalculateEndPoints();
 		createPathFromPoints();
 		createArrow();
 		recalculateBounds();
@@ -663,12 +623,13 @@ public class Relationship extends JComponent implements ISelectable
 			Color oldColor = g2d.getColor();
 
 			int offset = m_cpDrawSize / 2;
-			for (int i = 0; i < m_points.size(); i++)
+			List<Point> points = m_model.getPoints();
+			for (int i = 0; i < points.size(); i++)
 			{
 				boolean isControlPoint = (i == m_selectedControlPointIndex);
 				g2d.setColor(isControlPoint ? m_selectedNodeColor : m_nodeColor);
 
-				g2d.fillRect(m_points.get(i).x - offset, m_points.get(i).y - offset, m_cpDrawSize, m_cpDrawSize);
+				g2d.fillRect(points.get(i).x - offset, points.get(i).y - offset, m_cpDrawSize, m_cpDrawSize);
 			}
 
 			g2d.setColor(oldColor);
@@ -676,17 +637,5 @@ public class Relationship extends JComponent implements ISelectable
 
 		// Set the old transform back
 		g2d.translate(loc.x, loc.y);
-	}
-
-	/**
-	 * Calculate the offset between the given point and the origin of the given rectangle.
-	 * 
-	 * @param p
-	 * @param r
-	 * @return
-	 */
-	private static Point calculateOffset(Point p, Rectangle r)
-	{
-		return new Point(p.x - r.x, p.y - r.y);
 	}
 }
