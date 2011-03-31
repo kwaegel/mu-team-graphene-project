@@ -16,7 +16,7 @@ public class ClassNode implements ISelectable
 	private String className;
 	private ArrayList<String> listOfAttributes;
 	private ArrayList<String> listOfMethods;
-	private ArrayList<Relationship> m_relationships;
+	private ArrayList<RelationshipModel> m_relationships;
 
 	/**
 	 * Constructor with a default class name.
@@ -33,7 +33,7 @@ public class ClassNode implements ISelectable
 		listOfAttributes.add("attribute 1");
 		listOfMethods = new ArrayList<String>();
 		listOfMethods.add("method 1");
-		m_relationships = new ArrayList<Relationship>();
+		m_relationships = new ArrayList<RelationshipModel>();
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class ClassNode implements ISelectable
 	public ClassNode(ClassNode otherNode)
 	{
 		this.setPropertiesTo(otherNode);
-		this.m_relationships = new ArrayList<Relationship>();
+		this.m_relationships = new ArrayList<RelationshipModel>();
 		this.nodePanel = null;
 	}
 
@@ -86,8 +86,9 @@ public class ClassNode implements ISelectable
 				.equals(otherNode.listOfMethods));
 	}
 
-	/** 
+	/**
 	 * Returns the name of the Class Node
+	 * 
 	 * @return the class name
 	 */
 	public String getName()
@@ -95,10 +96,11 @@ public class ClassNode implements ISelectable
 		return className;
 	}
 
-	/** 
+	/**
 	 * Sets the name of the Class Node
+	 * 
 	 * @param name
-	 * 			- String to replace the previous class name
+	 *            - String to replace the previous class name
 	 */
 	public void setName(String name)
 	{
@@ -123,10 +125,11 @@ public class ClassNode implements ISelectable
 		}
 	}
 
-	/** 
+	/**
 	 * Add String attribute to listofAttributes
+	 * 
 	 * @param attribute
-	 * 			- String to be added to the list of attributes
+	 *            - String to be added to the list of attributes
 	 */
 	public void addAttribute(String attribute)
 	{
@@ -134,10 +137,11 @@ public class ClassNode implements ISelectable
 		updateNodePanel();
 	}
 
-	/** 
+	/**
 	 * Returns the name of the Attribute at the index in listofAttributes
+	 * 
 	 * @param index
-	 * 			-int used as an index to find an attribute in the list of attributes
+	 *            -int used as an index to find an attribute in the list of attributes
 	 * @return the attribute at the index in the list of attributes
 	 */
 	public String getAttribute(int index)
@@ -145,12 +149,13 @@ public class ClassNode implements ISelectable
 		return listOfAttributes.get(index);
 	}
 
-	/** 
+	/**
 	 * Sets the attribute at index in listofAttributes with parameter String
+	 * 
 	 * @param index
-	 * 			-int used to find the attribute to be replaced in the list of attributes
+	 *            -int used to find the attribute to be replaced in the list of attributes
 	 * @param attribute
-	 * 			-String used to replace the attribute at the index in the list of attributes
+	 *            -String used to replace the attribute at the index in the list of attributes
 	 */
 	public void setAttribute(int index, String attribute)
 	{
@@ -158,10 +163,11 @@ public class ClassNode implements ISelectable
 		updateNodePanel();
 	}
 
-	/** 
+	/**
 	 * Removes the attribute in listofAttributes at the index
+	 * 
 	 * @param index
-	 * 			-int used as an index to find the attribute to be removed from list of attributes
+	 *            -int used as an index to find the attribute to be removed from list of attributes
 	 */
 	public void removeAttribute(int index)
 	{
@@ -179,10 +185,11 @@ public class ClassNode implements ISelectable
 		return (listOfAttributes.size());
 	}
 
-	/** 
+	/**
 	 * Adds String method to listofMethods
+	 * 
 	 * @param method
-	 * 			-String to be added to the list of methods
+	 *            -String to be added to the list of methods
 	 */
 	public void addMethod(String method)
 	{
@@ -192,8 +199,9 @@ public class ClassNode implements ISelectable
 
 	/**
 	 * Returns the String at the index in listofMethods
+	 * 
 	 * @param index
-	 * 			-int used as an index to find the method in the list of methods
+	 *            -int used as an index to find the method in the list of methods
 	 * @return the method at index in list of methods
 	 */
 	public String getMethod(int index)
@@ -203,10 +211,11 @@ public class ClassNode implements ISelectable
 
 	/**
 	 * Sets the method in listofMethods at the index with parameter String method
+	 * 
 	 * @param index
-	 * 			-int used as an index to find the method in the list of methods
+	 *            -int used as an index to find the method in the list of methods
 	 * @param method
-	 * 			-String to replace the method at the index in list of methods
+	 *            -String to replace the method at the index in list of methods
 	 */
 	public void setMethod(int index, String method)
 	{
@@ -214,10 +223,11 @@ public class ClassNode implements ISelectable
 		updateNodePanel();
 	}
 
-	/** 
+	/**
 	 * Removes the method in listofMethods at the index
+	 * 
 	 * @param index
-	 * 			-int used as an index to find the method in list of methods
+	 *            -int used as an index to find the method in list of methods
 	 */
 	public void removeMethod(int index)
 	{
@@ -243,16 +253,29 @@ public class ClassNode implements ISelectable
 	 */
 	public void addRelationship(Relationship relationship)
 	{
-		m_relationships.add(relationship);
+		m_relationships.add(relationship.getModel());
 	}
 
 	/**
-	 * Removes the Relationship from the relationships ArrayList
-	 * Method is called when the other class removes the relationship
+	 * Removes the Relationship from the relationships ArrayList Method is called when the other class removes the
+	 * relationship
+	 * 
 	 * @param relationship
-	 * 			-Relationship to be removed from the ArrayList
+	 *            -Relationship to be removed from the ArrayList
 	 */
 	public void removeRelationship(Relationship relationship)
+	{
+		m_relationships.remove(relationship);
+	}
+
+	/**
+	 * Removes the Relationship from the relationships ArrayList Method is called when the other class removes the
+	 * relationship
+	 * 
+	 * @param relationship
+	 *            -Relationship to be removed from the ArrayList
+	 */
+	public void removeRelationship(RelationshipModel relationship)
 	{
 		m_relationships.remove(relationship);
 	}
@@ -262,7 +285,7 @@ public class ClassNode implements ISelectable
 	 * 
 	 * @return - list of relationships
 	 */
-	public List<Relationship> getRelationships()
+	public List<RelationshipModel> getRelationships()
 	{
 		return m_relationships;
 	}
