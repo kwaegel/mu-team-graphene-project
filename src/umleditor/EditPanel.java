@@ -150,12 +150,19 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		everythingPanel.add(classTitleEditField, "gapx 5");
 	}
 
+	/**
+	 * Adds a JSeparator to editPanel
+	 */
 	private void addSeparator()
 	{
 		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
 		everythingPanel.add(separator, "gapx 0, h 1:1:1, w 400");
 	}
 
+	/**
+	 * Shows a list of the attributes in EditPanel.
+	 * List is able to be modified
+	 */
 	private void displayAttributesList()
 	{
 		JLabel attributeLabel = new JLabel("Attributes:");
@@ -189,6 +196,10 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		everythingPanel.add(newAttributeButton, "split 2");
 	}
 
+	/**
+	 * Shows a list of the methods in EditPanel.
+	 * List is able to be modified
+	 */
 	private void displayMethodsList()
 	{
 		JLabel methodLabel = new JLabel("Methods:");
@@ -219,6 +230,9 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		everythingPanel.add(newMethodButton, "split 2, wrap 15:push");
 	}
 
+	/**
+	 * Adds Close and Discard Changes buttons
+	 */
 	private void addCloseButtons()
 	{
 		JButton closeButton = new JButton("Close");

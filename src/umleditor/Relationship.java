@@ -96,7 +96,7 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	private List<Point> m_points;
 
-	private Path2D.Float m_line;
+	private transient Path2D.Float m_line;
 
 	/**
 	 * Contains a reference to the first ClassNode (relationship comes ‘from’ this one).
@@ -113,13 +113,13 @@ public class Relationship extends JComponent implements ISelectable
 	/**
 	 * The {@link java.awt.Polygon Polygon} used to draw the end arrow of the relationship.
 	 */
-	private Polygon m_arrow;
+	private transient Polygon m_arrow;
 
 	// If the relationship is selected or not.
-	private boolean m_selected = false;
+	private transient boolean m_selected = false;
 
 	// Which control node, if any, is selected.
-	private int m_selectedControlPointIndex = -1;
+	private transient int m_selectedControlPointIndex = -1;
 
 	/***** Constructors *****/
 
@@ -642,20 +642,19 @@ public class Relationship extends JComponent implements ISelectable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill)
-		{
-			case Solid:
-				g2d.fillPolygon(m_arrow);
-				break;
-			case Outline: {
-				g2d.setColor(Color.white);
-				g2d.fillPolygon(m_arrow);
-				g2d.setColor(Color.black);
-				g2d.drawPolygon(m_arrow);
-			}
-				break;
-			case None:// Do not draw an arrow.
-				break;
+		switch (m_endFill) {
+		case Solid:
+			g2d.fillPolygon(m_arrow);
+			break;
+		case Outline: {
+			g2d.setColor(Color.white);
+			g2d.fillPolygon(m_arrow);
+			g2d.setColor(Color.black);
+			g2d.drawPolygon(m_arrow);
+		}
+			break;
+		case None:// Do not draw an arrow.
+			break;
 		}
 
 		// If the relationship is selected, draw a handle at each control node
