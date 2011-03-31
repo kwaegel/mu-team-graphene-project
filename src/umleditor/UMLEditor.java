@@ -10,12 +10,17 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -26,6 +31,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
+import com.thoughtworks.xstream.XStream;
 
 public class UMLEditor extends JFrame implements ActionListener
 {
@@ -222,7 +228,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		Icon addClassIcon = new ImageIcon("icons/class.gif");
 		Icon deleteIcon = new ImageIcon("icons/delete.gif");
-		
+
 		addClassButton = new JButton("Add Class", addClassIcon);
 		addClassButton.setActionCommand("ADD");
 		addClassButton.addActionListener(this);
@@ -236,7 +242,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		deleteButton.addActionListener(this);
 		deleteButton.setEnabled(false);
 		toolBar.add(deleteButton);
-		
+
 		this.add(toolBar, BorderLayout.SOUTH);
 	}
 
@@ -249,6 +255,47 @@ public class UMLEditor extends JFrame implements ActionListener
 		tabbedPane.setFocusable(false);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		this.add(tabbedPane, BorderLayout.CENTER);
+	}
+
+	private ClassDiagram loadClassFromFile()
+	{
+		JFileChooser fileLoadChooser = new JFileChooser();
+		fileLoadChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileLoadChooser.setMultiSelectionEnabled(false);
+		fileLoadChooser.addChoosableFileFilter(new FileExtensionFilter());
+		int userChoice = fileLoadChooser.showOpenDialog(this);
+
+		ClassDiagram loadedDiagram = null;
+
+		if (userChoice == JFileChooser.APPROVE_OPTION)
+		{
+			File f = fileLoadChooser.getSelectedFile();
+			try
+			{
+				FileReader fileInStream;
+				BufferedReader buffInStream;
+
+				// code to save to file goes here
+				XStream xmlStream = new XStream();
+
+				fileInStream = new FileReader(f);
+				buffInStream = new BufferedReader(fileInStream);
+
+				loadedDiagram = (ClassDiagram) xmlStream.fromXML(buffInStream);
+
+				buffInStream.close();
+			}
+			catch (IOException e)
+			{
+
+			}
+			finally
+			{
+
+			}
+		}
+
+		return loadedDiagram;
 	}
 
 	/**
@@ -304,7 +351,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "LOAD")
 		{
-
+			disableAddNewClassMode();
+			loadClassFromFile();
+			this.validate();
 		}
 		else if (arg0.getActionCommand() == "SAVE")
 		{

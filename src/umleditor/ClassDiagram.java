@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +43,18 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	private transient File fileSavedTo;
 	private transient boolean changedSinceSaved;
+
+	// /**
+	// * Create a class diagram by loading data from a file on disk.
+	// *
+	// * @param parent
+	// * @param scrollPane
+	// * @param loadFile
+	// */
+	// public ClassDiagram(UMLEditor parent, JScrollPane scrollPane, File loadFile)
+	// {
+	//
+	// }
 
 	public ClassDiagram(UMLEditor parent, JScrollPane scrollPane)
 	{
@@ -264,6 +277,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 	 */
 	public void removeRelationships(List<Relationship> relationshipList)
 	{
+		// Clone list to prevent concurrent modification of the same list
+		List<Relationship> relationshipList = new ArrayList<Relationship>(relationships);
+
 		m_relationships.removeAll(relationshipList);
 		for (Relationship r : relationshipList)
 		{
@@ -279,6 +295,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			JFileChooser fileSaveChooser = new JFileChooser();
 			fileSaveChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileSaveChooser.setMultiSelectionEnabled(false);
 			fileSaveChooser.addChoosableFileFilter(new FileExtensionFilter());
 			int userChoice = fileSaveChooser.showSaveDialog(parentEditor);
 			if (userChoice == JFileChooser.APPROVE_OPTION)
@@ -477,26 +494,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 			{
 				unselectCurrentObject();
 			}
-		}
-	}
-
-	/**
-	 * Class to filter out all but *.xuml files.
-	 * 
-	 */
-	class FileExtensionFilter extends javax.swing.filechooser.FileFilter
-	{
-		@Override
-		public boolean accept(File file)
-		{
-			String filename = file.getName();
-			return filename.endsWith(".xuml");
-		}
-
-		@Override
-		public String getDescription()
-		{
-			return "*.xuml (XML formatted UML diagram)";
 		}
 	}
 
