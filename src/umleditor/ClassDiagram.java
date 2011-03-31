@@ -27,6 +27,14 @@ import umleditor.Relationship.RelationshipType;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * A ClassDiagram contains all information associated with a UML diagram in the {@link UMLEditor}. It maintains the
+ * models for Relationships and Classes in the diagram. It is responsible for creating nodes and connecting them with
+ * relationships. It contains a reference to the view in which the classes and relationships are displayed. It keeps
+ * track of the currently selected object in the diagram deletes it when appropriate. It manages cutting and copying
+ * classes from, and pasting classes to itself. It knows what file it was saved to, and keeps track of whether or not it
+ * was saved.
+ */
 public class ClassDiagram implements KeyListener, FocusListener
 {
 	// Lists of objects in the diagram
@@ -38,7 +46,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	private transient ISelectable currentlySelectedObject;
 
-	// private ClassNode selectedNode;
 	private transient UMLEditor parentEditor;
 	private transient JLayeredPane view;
 
@@ -70,6 +77,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 		view.addMouseListener(new MouseClickListener());
 	}
 
+	/**
+	 * Ensures the view gets focus when a new ClassDiagram has been created. Called whenever a new ClassDiagram is
+	 * created in the UML Editor.
+	 */
 	public void requestFocusOnView()
 	{
 		view.requestFocus();
@@ -139,7 +150,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Deletes the selected object. Can either be a ClassNode or Relationship.
+	 * Deletes the selected object. The selected object can either be a ClassNode or Relationship.
 	 */
 	public void deleteSelectedObject()
 	{
@@ -183,6 +194,13 @@ public class ClassDiagram implements KeyListener, FocusListener
 		this.markAsChanged();
 	}
 
+	/**
+	 * Workaround for bug with improper MouseReleased event handling in Swing.
+	 * 
+	 * @param evt
+	 *            - the mouse event
+	 * @return the component under this event
+	 */
 	public Component getComponentUnder(MouseEvent evt)
 	{
 		Point p = ((Component) evt.getSource()).getLocation();
@@ -190,6 +208,12 @@ public class ClassDiagram implements KeyListener, FocusListener
 		return view.getComponentAt(evt.getX(), evt.getY());
 	}
 
+	/**
+	 * Adds the relationship to the ClassDiagram's currently selected object, if that object is a ClassNode
+	 * 
+	 * @param secondNode
+	 *            - the node that relationship will end on.
+	 */
 	public void addRelationship(ClassNode secondNode)
 	{
 		if (currentlySelectedObject instanceof ClassNode)
@@ -198,6 +222,14 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Adds a relationship between the two nodes. Private internal method in ClassDiagram.
+	 * 
+	 * @param firstNode
+	 *            - the starting node
+	 * @param secondNode
+	 *            - the ending node
+	 */
 	private void addRelationship(ClassNode firstNode, ClassNode secondNode)
 	{
 		// Do not add relationships between identical classes.
@@ -234,6 +266,11 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Removes a list of relationships from the diagram. Called from a ClassNode whenever it gets deleted.
+	 * 
+	 * @param relationshipList
+	 */
 	public void removeRelationships(List<RelationshipModel> relationships)
 	{
 		// Clone list to prevent concurrent modification of the same list
@@ -253,6 +290,13 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Saves this {@link ClassDiagram} to a file. If chooseNewFile is <code>true</code>, or no file name has been
+	 * associated with this diagram, will display a JFileChoser to get user to select a file.
+	 * 
+	 * @param chooseNewFile
+	 *            - whether or not to find a new file before saving.
+	 */
 	public void saveToFile(boolean chooseNewFile)
 	{
 		if (fileSavedTo == null || chooseNewFile)

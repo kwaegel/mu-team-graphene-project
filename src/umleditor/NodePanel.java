@@ -186,7 +186,7 @@ public class NodePanel extends JPanel
 		int height = this.getPreferredSize().height;
 		this.setBounds(x, y, width, height);
 	}
-	
+
 	public void attachToView(JLayeredPane view)
 	{
 		view.add(this, "external", JLayeredPane.DRAG_LAYER);
