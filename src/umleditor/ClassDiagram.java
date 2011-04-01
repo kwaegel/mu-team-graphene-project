@@ -77,7 +77,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		view.addMouseListener(new MouseClickListener());
 	}
 
-	public void initAfterLoadFromFile(UMLEditor parent, JScrollPane scrollPane)
+	public void initAfterLoadFromFile(UMLEditor parent, JScrollPane scrollPane, File fileLoadedFrom)
 	{
 		parentEditor = parent;
 
@@ -91,6 +91,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		// Add the view to the scroll pane.
 		scrollPane.setViewportView(view);
 
+		fileSavedTo = fileLoadedFrom;
 		changedSinceSaved = false;
 
 		// Create listeners on the view.
@@ -144,6 +145,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 		newNodePanel.resetBounds(addLocation);
 	}
 
+	/**
+	 * Adds the class node to this diagram. Called whenever a new node is constructed.
+	 * @param newClassNode
+	 */
 	private void attachNode(ClassNode newClassNode)
 	{
 		listOfNodes.add(newClassNode);
@@ -436,6 +441,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 			}
 			ClassNode nodeCopy = new ClassNode(copy);
 			initNodePanel(pastePosition, nodeCopy);
+			attachNode(nodeCopy);
 		}
 	}
 
@@ -446,7 +452,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			this.deleteSelectedObject();
 		}
-		else if (event.getKeyCode() == KeyEvent.VK_N)
+		else if (event.getKeyCode() == KeyEvent.VK_N && !event.isControlDown())
 		{
 			parentEditor.enableAddNewClassMode();
 		}
