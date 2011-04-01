@@ -41,9 +41,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private List<ClassNode> listOfNodes;
 	private List<RelationshipModel> listOfRelationships;
 
-	// Listeners for mouse events on the diagram
-	//private transient RelationshipDragListener m_relationshipDragController;
-
 	private transient ISelectable currentlySelectedObject;
 
 	private transient UMLEditor parentEditor;
@@ -71,9 +68,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 		listOfNodes = new LinkedList<ClassNode>();
 		listOfRelationships = new LinkedList<RelationshipModel>();
 
-		// Create listeners on the view.
-		//m_relationshipDragController = new RelationshipDragListener(this);
-
 		view.addMouseListener(new MouseClickListener());
 	}
 
@@ -94,8 +88,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 		fileSavedTo = fileLoadedFrom;
 		changedSinceSaved = false;
 
-		// Create listeners on the view.
-		//m_relationshipDragController = new RelationshipDragListener(this);
 		view.addMouseListener(new MouseClickListener());
 
 		// Create views for models.
@@ -147,6 +139,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 	/**
 	 * Adds the class node to this diagram. Called whenever a new node is constructed.
+	 * 
 	 * @param newClassNode
 	 */
 	private void attachNode(ClassNode newClassNode)
@@ -296,8 +289,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 				// Add the relationship to the view.
 				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
 				view.add(rel, "external");
-				//rel.addMouseListener(m_relationshipDragController);
-				//rel.addMouseMotionListener(m_relationshipDragController);
 				rel.addMouseListener(RelationshipDragListener.getRelationshipListener(this));
 				rel.addMouseMotionListener(RelationshipDragListener.getRelationshipListener(this));
 
@@ -327,7 +318,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 			// Remove the view.
 			Relationship r = rm.getRelationship();
 			r.removeMouseListener(RelationshipDragListener.getRelationshipListener(this));
-			//r.removeMouseListener(m_relationshipDragController);
 			view.remove(r);
 
 		}
@@ -408,7 +398,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 		TabComponent tabComponent = (TabComponent) containingTabbedPane.getTabComponentAt(containingTabbedPane
 				.getSelectedIndex());
 		tabComponent.setTitle(title);
-		// containingTabbedPane.setTitleAt(containingTabbedPane.getSelectedIndex(), title);
 	}
 
 	public void copyNode()
@@ -448,6 +437,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Handle diagram-specific key events
+	 */
 	@Override
 	public void keyPressed(KeyEvent event)
 	{
@@ -458,11 +450,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 		else if (event.getKeyCode() == KeyEvent.VK_N && !event.isControlDown())
 		{
 			parentEditor.enableAddNewClassMode();
-		}
-		else if (event.getKeyCode() == KeyEvent.VK_V && event.isControlDown())
-		{
-			// Point mouseLocation = arg0.getComponent().getMousePosition();
-			// pasteNode(mouseLocation);
 		}
 		else if (event.getKeyCode() == KeyEvent.VK_E && currentlySelectedObject instanceof ClassNode)
 		{
@@ -483,11 +470,17 @@ public class ClassDiagram implements KeyListener, FocusListener
 		// do nothing
 	}
 
+	/**
+	 * Moves a NodePanel in the UML Diagram. Called when the NodeDragListener gets a dragged event for a node panel.
+	 * 
+	 * @param nodePanelToMove
+	 *            - panel whose position in the diagram should be changed
+	 * @param movePoint
+	 *            - place to move the panel's upper left-hand corner to
+	 */
 	public void movePanel(NodePanel nodePanelToMove, Point movePoint)
 	{
 		this.setSelectedObject(nodePanelToMove.getClassNode());
-
-		// view.remove(nodePanelToMove);
 
 		int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
 		int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
