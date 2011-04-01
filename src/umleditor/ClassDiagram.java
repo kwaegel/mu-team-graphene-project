@@ -77,7 +77,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		view.addMouseListener(new MouseClickListener());
 	}
 
-	public void initAfterLoadFromFile(UMLEditor parent, JScrollPane scrollPane)
+	public void initAfterLoadFromFile(UMLEditor parent, JScrollPane scrollPane, File fileLoadedFrom)
 	{
 		parentEditor = parent;
 
@@ -91,6 +91,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		// Add the view to the scroll pane.
 		scrollPane.setViewportView(view);
 
+		fileSavedTo = fileLoadedFrom;
 		changedSinceSaved = false;
 
 		// Create listeners on the view.
@@ -101,7 +102,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		for (ClassNode node : listOfNodes)
 		{
 			Point addPoint = node.getLocation();
-			initExistingNode(addPoint, node);
+			initNodePanel(addPoint, node);
 		}
 		for (RelationshipModel rm : m_relationships)
 		{
@@ -125,8 +126,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private void createNode(Point addLocation)
 	{
 		ClassNode newClassNode = new ClassNode();
-		initNode(addLocation, newClassNode);
-		this.markAsChanged();
+		initNodePanel(addLocation, newClassNode);
+		attachNode(newClassNode);
 	}
 
 	/**
@@ -137,34 +138,22 @@ public class ClassDiagram implements KeyListener, FocusListener
 	 * @param newClassNode
 	 *            - node to add
 	 */
-	private void initNode(Point addLocation, ClassNode newClassNode)
+	private void initNodePanel(Point addLocation, ClassNode newClassNode)
 	{
 		NodePanel newNodePanel = new NodePanel(this, newClassNode);
 		newNodePanel.attachToView(view);
 		newNodePanel.resetBounds(addLocation);
+	}
 
+	/**
+	 * Adds the class node to this diagram. Called whenever a new node is constructed.
+	 * @param newClassNode
+	 */
+	private void attachNode(ClassNode newClassNode)
+	{
 		listOfNodes.add(newClassNode);
-
 		this.setSelectedObject(newClassNode);
-		view.revalidate();
-	}
-
-	/**
-	 * Adds new node to the list of nodes. Also add it's {@link NodePanel} to the view.
-	 * 
-	 * @param addLocation
-	 *            - location to add node
-	 * @param newClassNode
-	 *            - node to add
-	 */
-	private void initExistingNode(Point addLocation, ClassNode newClassNode)
-	{
-		NodePanel newNodePanel = new NodePanel(this, newClassNode);
-		newNodePanel.attachToView(view);
-		newNodePanel.resetBounds(addLocation);
-
-		this.setSelectedObject(newClassNode);
-		view.revalidate();
+		this.markAsChanged();
 	}
 
 	/**
@@ -360,6 +349,14 @@ public class ClassDiagram implements KeyListener, FocusListener
 			if (userChoice == JFileChooser.APPROVE_OPTION)
 			{
 				fileSavedTo = fileSaveChooser.getSelectedFile();
+				// add appropriate extension, if there the path does not have one already
+				String absoluteFilePath = fileSavedTo.getAbsolutePath();
+				String acceptedExtension = FileExtensionFilter.ACCEPTED_FILE_EXTENSION;
+				if (!absoluteFilePath.endsWith(acceptedExtension))
+				{
+					absoluteFilePath += acceptedExtension;
+					fileSavedTo = new File(absoluteFilePath);
+				}
 			}
 		}
 		if (fileSavedTo != null && (changedSinceSaved || chooseNewFile))
@@ -368,7 +365,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 			BufferedWriter buffOutStream;
 			try
 			{
-				// code to save to file goes here
 				XStream xmlStream = new XStream();
 
 				fileOutStream = new FileWriter(fileSavedTo);
@@ -443,9 +439,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 			{
 				pastePosition = new Point((parentEditor.getWidth() - 100) / 2, (parentEditor.getHeight() - 140) / 2);
 			}
-			System.out.println(pastePosition);
 			ClassNode nodeCopy = new ClassNode(copy);
-			initNode(pastePosition, nodeCopy);
+			initNodePanel(pastePosition, nodeCopy);
+			attachNode(nodeCopy);
 		}
 	}
 
@@ -456,7 +452,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			this.deleteSelectedObject();
 		}
-		else if (event.getKeyCode() == KeyEvent.VK_N)
+		else if (event.getKeyCode() == KeyEvent.VK_N && !event.isControlDown())
 		{
 			parentEditor.enableAddNewClassMode();
 		}
