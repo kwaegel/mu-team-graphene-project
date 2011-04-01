@@ -12,15 +12,27 @@ import javax.swing.SwingUtilities;
 public class RelationshipDragListener extends MouseAdapter
 {
 	private ClassDiagram m_diagram;
+	
+	private static RelationshipDragListener m_instance = null;
 
 	/**
 	 * Cache of the last selected relationship for faster intersection testing.
 	 */
 	private Relationship m_lastSelectedRelationship;
 
-	public RelationshipDragListener(ClassDiagram diagram)
+	private RelationshipDragListener(ClassDiagram diagram)
 	{
 		m_diagram = diagram;
+	}
+	
+	public static RelationshipDragListener getRelationshipListener(ClassDiagram diagram)
+	{
+		
+		if(m_instance == null)
+		{
+			m_instance = new RelationshipDragListener(diagram);
+		}
+		return (m_instance);
 	}
 
 	/* Mouse adapter methods */
