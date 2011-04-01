@@ -278,7 +278,6 @@ public class UMLEditor extends JFrame implements ActionListener
 				FileReader fileInStream;
 				BufferedReader buffInStream;
 
-				// code to save to file goes here
 				XStream xmlStream = new XStream();
 
 				fileInStream = new FileReader(f);
@@ -295,17 +294,17 @@ public class UMLEditor extends JFrame implements ActionListener
 			finally
 			{
 				JScrollPane scrollPane = new JScrollPane();
-				loadedDiagram.initAfterLoadFromFile(this, scrollPane);
+				loadedDiagram.initAfterLoadFromFile(this, scrollPane, f);
 				classDiagrams.add(loadedDiagram);
 				tabbedPane.add(scrollPane);
 				if (!classDiagrams.isEmpty())
 				{
 					tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+					addClassButton.setEnabled(true);
+					loadedDiagram.requestFocusOnView();
 				}
 				tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, tabbedPane,
-						"Unsaved Diagram"));
-				addClassButton.setEnabled(true);
-				loadedDiagram.requestFocusOnView();
+						f.getName()));
 			}
 		}
 
@@ -324,11 +323,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		if (!classDiagrams.isEmpty())
 		{
 			tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+			addClassButton.setEnabled(true);
+			initialDiagram.requestFocusOnView();
 		}
 		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, tabbedPane,
 				"Unsaved Diagram"));
-		addClassButton.setEnabled(true);
-		initialDiagram.requestFocusOnView();
 	}
 
 	private void setUpHelpPanel()

@@ -8,16 +8,19 @@ import java.io.File;
  */
 class FileExtensionFilter extends javax.swing.filechooser.FileFilter
 {
+	
+	public static final String ACCEPTED_FILE_EXTENSION = ".xuml";
+	
 	@Override
 	public boolean accept(File file)
 	{
 		String filename = file.getName();
-		return filename.endsWith(".xuml");
+		return filename.endsWith(ACCEPTED_FILE_EXTENSION);
 	}
 
 	@Override
 	public String getDescription()
 	{
-		return "*.xuml (XML formatted UML diagram)";
+		return ("*" + ACCEPTED_FILE_EXTENSION + " (XML formatted UML diagram)");
 	}
 }

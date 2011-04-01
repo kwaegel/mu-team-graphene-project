@@ -178,13 +178,6 @@ public class NodePanel extends JPanel
 		this.add(spacer);
 	}
 
-	@Override
-	public void setBounds(int x, int y, int width, int height)
-	{
-		super.setBounds(x, y, width, height);
-		associatedNode.saveLocation(new Point(x, y));
-	}
-
 	public void resetBounds(Point position)
 	{
 		int x = (position == null) ? this.getX() : position.x;
@@ -192,6 +185,7 @@ public class NodePanel extends JPanel
 		int width = this.getPreferredSize().width;
 		int height = this.getPreferredSize().height;
 		this.setBounds(x, y, width, height);
+		associatedNode.saveLocation(new Point(x, y));
 	}
 
 	public void attachToView(JLayeredPane view)
