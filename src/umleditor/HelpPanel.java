@@ -46,8 +46,8 @@ public class HelpPanel extends JDialog
 	}
 
 	/**
-	 * Sets up and attaches the Contents tab. Contents tab will contain the description of how to use the UML Editor
-	 * found in the HelpContents.html file located in the project. This description is placed inside a JScrollPane.
+	 * Sets up and attaches the Contents tab. Contents tab will contain the description of how to use the UML Editor.
+	 * Found in the HelpContents.html file located in the project. This description is placed inside a JScrollPane.
 	 */
 	private void addHelpContentsTab()
 	{
@@ -106,5 +106,4 @@ public class HelpPanel extends JDialog
 	{
 		tabbedPane.setSelectedIndex(1);
 	}
-
 }

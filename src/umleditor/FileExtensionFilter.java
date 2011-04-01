@@ -8,9 +8,11 @@ import java.io.File;
  */
 class FileExtensionFilter extends javax.swing.filechooser.FileFilter
 {
-	
+	/**
+	 * The file extension accepted by this file filter
+	 */
 	public static final String ACCEPTED_FILE_EXTENSION = ".xuml";
-	
+
 	@Override
 	public boolean accept(File file)
 	{
