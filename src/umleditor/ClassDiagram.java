@@ -360,6 +360,14 @@ public class ClassDiagram implements KeyListener, FocusListener
 			if (userChoice == JFileChooser.APPROVE_OPTION)
 			{
 				fileSavedTo = fileSaveChooser.getSelectedFile();
+				// add appropriate extension, if there the path does not have one already
+				String absoluteFilePath = fileSavedTo.getAbsolutePath();
+				String acceptedExtension = FileExtensionFilter.ACCEPTED_FILE_EXTENSION;
+				if (!absoluteFilePath.endsWith(acceptedExtension))
+				{
+					absoluteFilePath += acceptedExtension;
+					fileSavedTo = new File(absoluteFilePath);
+				}
 			}
 		}
 		if (fileSavedTo != null && (changedSinceSaved || chooseNewFile))
@@ -368,7 +376,6 @@ public class ClassDiagram implements KeyListener, FocusListener
 			BufferedWriter buffOutStream;
 			try
 			{
-				// code to save to file goes here
 				XStream xmlStream = new XStream();
 
 				fileOutStream = new FileWriter(fileSavedTo);
