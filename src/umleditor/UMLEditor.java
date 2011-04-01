@@ -34,7 +34,9 @@ import javax.swing.KeyStroke;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * 
+ * Displays the UML editing application and contains all major GUI items (menu bar, tabbed pane, tool bar, and add-class
+ * and delete buttons). Is responsible for things that are global to the application, such as maintaining add class mode
+ * and copied classes. Creates new UML ClassDiagrams, closes them, and loads them from files.
  */
 public class UMLEditor extends JFrame implements ActionListener
 {
@@ -59,6 +61,9 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private boolean addNewClassModeEnabled;
 
+	/**
+	 * Constructs and opens a new UMLEditor application.
+	 */
 	public UMLEditor()
 	{
 		super("UML Editor");
@@ -112,7 +117,10 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Enables Delete Button. The delete button becomes clickable.
+	 * Sets the state of the delete button
+	 * 
+	 * @param enabled
+	 *            - whether to enable or disable the delete button
 	 */
 	public void setDeleteButtonState(boolean enabled)
 	{
@@ -120,12 +128,27 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Sets up the File and Help menu bars File menu contains New, Load, Close, Save, Save As, and Exit
+	 * Sets up the menu bar and menus
 	 */
 	private void setUpMenuBar()
 	{
 		menuBar = new JMenuBar();
 
+		createFileMenu();
+
+		createEditMenu();
+
+		createHelpMenu();
+
+		this.add(menuBar, BorderLayout.NORTH);
+
+	}
+
+	/**
+	 * Sets up and attaches the file menu. File menu contains New, Load, Close, Save, Save As, and Exit
+	 */
+	private void createFileMenu()
+	{
 		JMenu fileMenu = new JMenu("File");
 
 		JMenuItem newOption = new JMenuItem("New");
@@ -173,14 +196,14 @@ public class UMLEditor extends JFrame implements ActionListener
 		fileMenu.add(exitOption);
 
 		menuBar.add(fileMenu);
+	}
 
+	/**
+	 * Sets up and attaches the edit menu. Edit menu contains Cut, Copy and Paste
+	 */
+	private void createEditMenu()
+	{
 		JMenu editMenu = new JMenu("Edit");
-
-		/*
-		 * JMenuItem pasteOption = new JMenuItem("Paste"); pasteOption.setActionCommand("PASTE");
-		 * pasteOption.addActionListener(this); pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
-		 * InputEvent.CTRL_DOWN_MASK)); editMenu.add(pasteOption);
-		 */
 
 		JMenuItem cutOption = new JMenuItem("Cut");
 		cutOption.setActionCommand("CUT");
@@ -201,7 +224,10 @@ public class UMLEditor extends JFrame implements ActionListener
 		editMenu.add(pasteOption);
 
 		menuBar.add(editMenu);
+	}
 
+	private void createHelpMenu()
+	{
 		JMenu helpMenu = new JMenu("Help");
 
 		JMenuItem helpOption = new JMenuItem("Help Contents  ");
@@ -217,9 +243,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		helpMenu.add(aboutOption);
 
 		menuBar.add(helpMenu);
-
-		this.add(menuBar, BorderLayout.NORTH);
-
 	}
 
 	/**
@@ -250,7 +273,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Sets up a scroll pane.
+	 * Sets up state of the JTabbedPane that will be used to display diagrams.
 	 */
 	private void setUpTabbedPane()
 	{
@@ -260,7 +283,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		this.add(tabbedPane, BorderLayout.CENTER);
 	}
 
-	private ClassDiagram loadClassFromFile()
+	/**
+	 * Prompts the user for a file to load from, then reconstructs the class diagram from that file and displays it in a
+	 * new tab.
+	 */
+	private void loadDiagramFromFile()
 	{
 		JFileChooser fileLoadChooser = new JFileChooser();
 		fileLoadChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -303,12 +330,10 @@ public class UMLEditor extends JFrame implements ActionListener
 					addClassButton.setEnabled(true);
 					loadedDiagram.requestFocusOnView();
 				}
-				tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabComponent(this, tabbedPane,
-						f.getName()));
+				tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(),
+						new TabComponent(this, tabbedPane, f.getName()));
 			}
 		}
-
-		return loadedDiagram;
 	}
 
 	/**
@@ -330,12 +355,18 @@ public class UMLEditor extends JFrame implements ActionListener
 				"Unsaved Diagram"));
 	}
 
+	/**
+	 * Initializes the HelpPanel to be used on this editor. Sets it to be not displayed.
+	 */
 	private void setUpHelpPanel()
 	{
 		helpPanel = new HelpPanel();
 		helpPanel.setVisible(false);
 	}
 
+	/**
+	 * Handles when user selects menu options (or uses their associated accelerators).
+	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
@@ -365,7 +396,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "LOAD")
 		{
 			disableAddNewClassMode();
-			loadClassFromFile();
+			loadDiagramFromFile();
 			this.validate();
 		}
 		else if (arg0.getActionCommand() == "SAVE")
@@ -413,6 +444,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 	}
 
+	/**
+	 * Goes through every opened tab and, if there are changes, asks the user if they want to save before closing. If
+	 * the user either saves or discards all diagrams without canceling, will close the editor, otherwise will not
+	 * close.
+	 */
 	private void closeEditor()
 	{
 		int numOpenTabs = tabbedPane.getTabCount();
@@ -479,6 +515,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		return (false);
 	}
 
+	/**
+	 * Convenience method for use inside ClassDiagram. Gets the diagram that is currently displayed in the tabbed pane.
+	 * 
+	 * @return - the currently open class diagram
+	 */
 	private ClassDiagram getCurrentDiagram()
 	{
 		int currentIndex = tabbedPane.getSelectedIndex();
@@ -486,14 +527,25 @@ public class UMLEditor extends JFrame implements ActionListener
 		return (openDiagram);
 	}
 
+	/**
+	 * Returns the most recently copied node. Can be from any diagram, and may be null if no nodes were copied yet.
+	 * 
+	 * @return - the node that was copied
+	 */
 	public ClassNode getCopyNode()
 	{
 		return (copyNode);
 	}
 
-	public void setCopyNode(ClassNode coppiedNode)
+	/**
+	 * Copies a particular node, so it will be available to paste.
+	 * 
+	 * @param nodeToCopy
+	 *            - the node to make a copy of
+	 */
+	public void setCopyNode(ClassNode nodeToCopy)
 	{
-		copyNode = new ClassNode(coppiedNode);
+		copyNode = new ClassNode(nodeToCopy);
 	}
 
 	/**
@@ -506,6 +558,11 @@ public class UMLEditor extends JFrame implements ActionListener
 		new UMLEditor();
 	}
 
+	/**
+	 * Listens for Window Closing events (on the UML editor) and calls the close routine when they occur. Window Adapter
+	 * provides an empty implementation of all Window listening methods, extending it is preferable to implementing
+	 * WindowListener because that requires implementation of unnecessary methods.
+	 */
 	private class WindowCloseListener extends WindowAdapter
 	{
 		@Override

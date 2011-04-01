@@ -13,7 +13,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * The component that is attached to each tab on the tabbedPane. Displays the title of the tab and the close button for
- * the tab.
+ * the UML Diagram displayed in that tab.
  */
 public class TabComponent extends JPanel implements ActionListener
 {
