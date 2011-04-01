@@ -34,9 +34,9 @@ import javax.swing.KeyStroke;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * Displays the UML editing application and contains all major GUI items (menu bar, tabbed pane, tool bar, and add-class
- * and delete buttons). Is responsible for things that are global to the application, such as maintaining add class mode
- * and copied classes. Creates new UML ClassDiagrams, closes them, and loads them from files.
+ * Displays the UML editing application and contains all major GUI items (menu bar, tabbed pane, tool bar, add-class
+ * and delete buttons, etc.). Is responsible for things that are global to the application, such as maintaining add class mode
+ * and copied classes. Creates new UML Class Diagrams, closes them, and loads them from files.
  */
 public class UMLEditor extends JFrame implements ActionListener
 {
