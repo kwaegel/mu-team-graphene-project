@@ -400,8 +400,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		{
 			associatedNode.setMethod(componentIndex, ntf.getText());
 		}
-		else
-		// type == FieldType.ClassName
+		else // type == FieldType.ClassName
 		{
 			associatedNode.setName(ntf.getText());
 		}
@@ -416,6 +415,8 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	{
 		if (!associatedNode.propertiesEqual(copyOfOriginalNode))
 		{
+			// check if the user has changed the class and if they have, notify its
+			// node panel's parent diagram that changes have been made.
 			associatedNode.getNodePanel().getParentDiagram().markAsChanged();
 		}
 	}
