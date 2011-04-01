@@ -47,10 +47,16 @@ public class NodePanel extends JPanel
 	private ClassNode associatedNode;
 
 	/**
-	 * 
+	 * ClassDiagram of which this NodePanel's associated node is part, and to whose view this NodePanel is attached.
 	 */
 	private ClassDiagram parentDiagram;
 
+	/**
+	 * Constructs a new NodePanel which displays the given ClassNode which is part of the given ClassDiagram.
+	 * 
+	 * @param parent
+	 * @param node
+	 */
 	public NodePanel(ClassDiagram parent, ClassNode node)
 	{
 		super();
@@ -68,16 +74,31 @@ public class NodePanel extends JPanel
 		this.addMouseListener(new NodeSelectionListener());
 	}
 
+	/**
+	 * Returns the ClassNode associated with this NodePanel.
+	 * 
+	 * @return - this panel's class node
+	 */
 	public ClassNode getClassNode()
 	{
 		return associatedNode;
 	}
 
+	/**
+	 * Returns this panel's parent diagram. Used in classes such as the {@link NodeDragListener} and {@link EditPanel}
+	 * which maintain a reference to the node panel and may occasionally need to interact with the panel's parent
+	 * diagram.
+	 * 
+	 * @return - the {@link ClassDiagram} to which this node panel belongs
+	 */
 	public ClassDiagram getParentDiagram()
 	{
 		return parentDiagram;
 	}
 
+	/**
+	 * Constructs an EditPanel so user can edit this panel's associated ClassNode.
+	 */
 	public void displayEditPanel()
 	{
 		EditPanel editPanel = new EditPanel(this.associatedNode);
@@ -85,7 +106,7 @@ public class NodePanel extends JPanel
 	}
 
 	/**
-	 * recreated display from values in classNode
+	 * Recreates display from values in classNode
 	 */
 	public void createDisplay()
 	{
@@ -155,6 +176,8 @@ public class NodePanel extends JPanel
 		// add an empty JLabel, workaround for a bug in MigLayout
 		// where using direction docking causes the last component
 		// in the container to not have the normal gap after it
+		// adding this empty JLabel causes last method to have
+		// appropriate spacing
 		this.add(new JLabel());
 	}
 
@@ -178,6 +201,13 @@ public class NodePanel extends JPanel
 		this.add(spacer);
 	}
 
+	/**
+	 * Moves the NodePanel to position (if position is not null) and ensures its size reflects the contents of it's
+	 * ClassNode. Updates the ClassNode's location field.
+	 * 
+	 * @param position
+	 *            - new location for the panel, or <code>null</code>, if the panel is not being moved.
+	 */
 	public void resetBounds(Point position)
 	{
 		int x = (position == null) ? this.getX() : position.x;
@@ -188,9 +218,17 @@ public class NodePanel extends JPanel
 		associatedNode.saveLocation(new Point(x, y));
 	}
 
+	/**
+	 * Attaches this node panel to the given view. Node panel is added at the default layer. When the ClassNode
+	 * associated with this node panel is selected (which happens automatically if class is added by user instead of
+	 * being constructed from a file), the node panel will be elevated to the Drag_Layer.
+	 * 
+	 * @param view
+	 *            - View to attach to so will be displayed.
+	 */
 	public void attachToView(JLayeredPane view)
 	{
-		view.add(this, "external", JLayeredPane.DRAG_LAYER);
+		view.add(this, "external", JLayeredPane.DEFAULT_LAYER);
 	}
 
 	/**
@@ -199,6 +237,9 @@ public class NodePanel extends JPanel
 	private class NodeSelectionListener extends MouseAdapter
 	{
 
+		/**
+		 * One click selects this panel's node Two clicks opens the edit panel.
+		 */
 		@Override
 		public void mouseClicked(MouseEvent e)
 		{
@@ -213,15 +254,23 @@ public class NodePanel extends JPanel
 			}
 		}
 
+		/**
+		 * Selects this panel's node
+		 */
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
 			parentDiagram.setSelectedObject(associatedNode);
 		}
 
+		/**
+		 * Tells the parent diagram to create a relationship between this node and whichever one was previously
+		 * selected.
+		 */
 		@Override
 		public void mouseReleased(MouseEvent e)
 		{
+			// necessary because of error in swing.
 			Component comp = parentDiagram.getComponentUnder(e);
 
 			if (comp instanceof NodePanel)
