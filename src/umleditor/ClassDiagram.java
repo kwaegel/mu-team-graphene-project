@@ -41,6 +41,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private List<ClassNode> listOfNodes;
 	private List<RelationshipModel> listOfRelationships;
 
+	// transient fields that will not be encoded when diagram is saved
 	private transient ISelectable currentlySelectedObject;
 
 	private transient UMLEditor parentEditor;
@@ -49,46 +50,43 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private transient File fileSavedTo;
 	private transient boolean changedSinceSaved;
 
+	/**
+	 * Constructs a new ClassDiagram with the given parent, whose view is inside the given scroll pane.
+	 * 
+	 * @param parent
+	 *            - UML Editor of which this ClassDIagram is part
+	 * @param scrollPane
+	 */
 	public ClassDiagram(UMLEditor parent, JScrollPane scrollPane)
 	{
 		parentEditor = parent;
 
-		view = new JLayeredPane();
-		// view.addMouseListener(this);
-		view.setFocusable(true);
-		view.addKeyListener(this);
-		view.setLayout(new MigLayout("", "", ""));
-		view.addFocusListener(this);
-
-		// Add the view to the scroll pane.
-		scrollPane.setViewportView(view);
+		setUpView(scrollPane);
 
 		changedSinceSaved = true;
 
 		listOfNodes = new LinkedList<ClassNode>();
 		listOfRelationships = new LinkedList<RelationshipModel>();
-
-		view.addMouseListener(new MouseClickListener());
 	}
 
+	/**
+	 * Completes setup of ClassDiagram after it has been initialized from a file.
+	 * 
+	 * @param parent
+	 *            - {@link UMLEditor} to which this ClassDiagram belongs
+	 * @param scrollPane
+	 *            - scroll pane to which it's view should be attached
+	 * @param fileLoadedFrom
+	 *            - file this diagram was loaded from
+	 */
 	public void initAfterLoadFromFile(UMLEditor parent, JScrollPane scrollPane, File fileLoadedFrom)
 	{
 		parentEditor = parent;
 
-		view = new JLayeredPane();
-		// view.addMouseListener(this);
-		view.setFocusable(true);
-		view.addKeyListener(this);
-		view.setLayout(new MigLayout("", "", ""));
-		view.addFocusListener(this);
-
-		// Add the view to the scroll pane.
-		scrollPane.setViewportView(view);
+		setUpView(scrollPane);
 
 		fileSavedTo = fileLoadedFrom;
 		changedSinceSaved = false;
-
-		view.addMouseListener(new MouseClickListener());
 
 		// Create views for models.
 		for (ClassNode node : listOfNodes)
@@ -101,6 +99,24 @@ public class ClassDiagram implements KeyListener, FocusListener
 			Relationship r = new Relationship(rm);
 			view.add(r);
 		}
+	}
+
+	/**
+	 * Creates and sets state of this ClassDiagram's view, and attached it to the given scroll pane.
+	 * 
+	 * @param scrollPane
+	 */
+	private void setUpView(JScrollPane scrollPane)
+	{
+		view = new JLayeredPane();
+		view.setFocusable(true);
+		view.addKeyListener(this);
+		view.setLayout(new MigLayout("", "", ""));
+		view.addFocusListener(this);
+		view.addMouseListener(new MouseClickListener());
+
+		// Add the view to the scroll pane.
+		scrollPane.setViewportView(view);
 	}
 
 	/**
@@ -119,7 +135,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	{
 		ClassNode newClassNode = new ClassNode();
 		initNodePanel(addLocation, newClassNode);
-		attachNode(newClassNode);
+		attachNodeToDiagram(newClassNode);
 	}
 
 	/**
@@ -142,7 +158,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	 * 
 	 * @param newClassNode
 	 */
-	private void attachNode(ClassNode newClassNode)
+	private void attachNodeToDiagram(ClassNode newClassNode)
 	{
 		listOfNodes.add(newClassNode);
 		this.setSelectedObject(newClassNode);
@@ -377,6 +393,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Record that this Diagram has been changed since it was last saved. Useful for knowing if need to save. Marks the
+	 * title of the diagram in the tabbed pane to indicate to the user that it has been modified.
+	 */
 	public void markAsChanged()
 	{
 		if (fileSavedTo != null)
@@ -386,12 +406,24 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Returns whether or not the diagram has unsaved changes. Empty, unmodified diagrams do not have unsaved changes.
+	 * 
+	 * @return - <code>true</code> if the diagram has been modified and is not saved, otherwise <code>false</code>
+	 */
 	public boolean isUnsaved()
 	{
 		boolean diagramBlank = (fileSavedTo == null && listOfNodes.isEmpty());
 		return (!diagramBlank && changedSinceSaved);
 	}
 
+	/**
+	 * Sets the title on the tab that contains this diagram. Counts on the fact that it will be called only when this
+	 * diagram is the currently displayed diagram.
+	 * 
+	 * @param title
+	 *            - new title for the tab.
+	 */
 	private void setTabTitle(String title)
 	{
 		JTabbedPane containingTabbedPane = (JTabbedPane) (view.getParent().getParent().getParent());
@@ -400,6 +432,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 		tabComponent.setTitle(title);
 	}
 
+	/**
+	 * Save a copy of the currently selected node (if there is one) to the parent UMLEditor. Since the copy constructor
+	 * is used, only the name, attributes and methods will be copied.
+	 */
 	public void copyNode()
 	{
 		if (currentlySelectedObject instanceof ClassNode)
@@ -408,6 +444,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Copies currently selected node and then deletes it.
+	 */
 	public void cutNode()
 	{
 		if (currentlySelectedObject instanceof ClassNode)
@@ -417,6 +456,13 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 	}
 
+	/**
+	 * Gets the most recently copied node from the UMLEditor and adds it to this class diagram. If the user is
+	 * positioning the mouse in the diagram where they want the class added, attach it there. If they are accessing the
+	 * paste option from a menu, put the pasted class in the (more or less) center of the screen. To get exactly the
+	 * center would have added complications that were not justified for something the user will most likely want to
+	 * move anyway. Newly pasted nodes will be selected.
+	 */
 	public void pasteNode()
 	{
 		ClassNode copy = parentEditor.getCopyNode();
@@ -433,7 +479,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 			}
 			ClassNode nodeCopy = new ClassNode(copy);
 			initNodePanel(pastePosition, nodeCopy);
-			attachNode(nodeCopy);
+			attachNodeToDiagram(nodeCopy);
 		}
 	}
 
@@ -547,5 +593,4 @@ public class ClassDiagram implements KeyListener, FocusListener
 			}
 		}
 	}
-
 }
