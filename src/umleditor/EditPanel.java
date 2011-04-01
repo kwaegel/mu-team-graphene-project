@@ -405,8 +405,6 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		{
 			associatedNode.setName(ntf.getText());
 		}
-
-		associatedNode.getNodePanel().resetBounds(null);
 	}
 
 	/**
