@@ -101,7 +101,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		for (ClassNode node : listOfNodes)
 		{
 			Point addPoint = node.getLocation();
-			initExistingNode(addPoint, node);
+			initNodePanel(addPoint, node);
 		}
 		for (RelationshipModel rm : m_relationships)
 		{
@@ -125,8 +125,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private void createNode(Point addLocation)
 	{
 		ClassNode newClassNode = new ClassNode();
-		initNode(addLocation, newClassNode);
-		this.markAsChanged();
+		initNodePanel(addLocation, newClassNode);
+		attachNode(newClassNode);
 	}
 
 	/**
@@ -137,34 +137,18 @@ public class ClassDiagram implements KeyListener, FocusListener
 	 * @param newClassNode
 	 *            - node to add
 	 */
-	private void initNode(Point addLocation, ClassNode newClassNode)
+	private void initNodePanel(Point addLocation, ClassNode newClassNode)
 	{
 		NodePanel newNodePanel = new NodePanel(this, newClassNode);
 		newNodePanel.attachToView(view);
 		newNodePanel.resetBounds(addLocation);
+	}
 
+	private void attachNode(ClassNode newClassNode)
+	{
 		listOfNodes.add(newClassNode);
-
 		this.setSelectedObject(newClassNode);
-		view.revalidate();
-	}
-
-	/**
-	 * Adds new node to the list of nodes. Also add it's {@link NodePanel} to the view.
-	 * 
-	 * @param addLocation
-	 *            - location to add node
-	 * @param newClassNode
-	 *            - node to add
-	 */
-	private void initExistingNode(Point addLocation, ClassNode newClassNode)
-	{
-		NodePanel newNodePanel = new NodePanel(this, newClassNode);
-		newNodePanel.attachToView(view);
-		newNodePanel.resetBounds(addLocation);
-
-		this.setSelectedObject(newClassNode);
-		view.revalidate();
+		this.markAsChanged();
 	}
 
 	/**
@@ -450,9 +434,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 			{
 				pastePosition = new Point((parentEditor.getWidth() - 100) / 2, (parentEditor.getHeight() - 140) / 2);
 			}
-			System.out.println(pastePosition);
 			ClassNode nodeCopy = new ClassNode(copy);
-			initNode(pastePosition, nodeCopy);
+			initNodePanel(pastePosition, nodeCopy);
 		}
 	}
 
