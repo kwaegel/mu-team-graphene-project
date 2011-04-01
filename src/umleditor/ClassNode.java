@@ -17,6 +17,7 @@ public class ClassNode implements ISelectable
 	private static int nodesCreated = 0;
 
 	private transient NodePanel nodePanel;
+
 	private String className;
 	private ArrayList<String> listOfAttributes;
 	private ArrayList<String> listOfMethods;
@@ -113,6 +114,9 @@ public class ClassNode implements ISelectable
 		updateNodePanel();
 	}
 
+	/**
+	 * Makes this ClassNode's associated node panel appear selected or unselected, as appropriate
+	 */
 	@Override
 	public void setSelected(boolean selected)
 	{
@@ -308,13 +312,13 @@ public class ClassNode implements ISelectable
 	/**
 	 * @return - the bounds of this node's panel
 	 */
-	public Rectangle getBounds()
+	public Rectangle getPanelBounds()
 	{
 		return nodePanel.getBounds();
 	}
 
 	/**
-	 * Ensures the NodePanel will reflect changes in the ClassNode Called whenever the class node changes.
+	 * Ensures the NodePanel will reflect changes in the ClassNode. Called whenever the class node changes.
 	 */
 	public void updateNodePanel()
 	{
@@ -323,11 +327,23 @@ public class ClassNode implements ISelectable
 		nodePanel.revalidate();
 	}
 
+	/**
+	 * Updates the ClassNode's location field. Ensures the ClassNode always knows the location of its graphical
+	 * representation in the Diagram.
+	 * 
+	 * @param loc
+	 *            - new location of the node panel's upper LH corner.
+	 */
 	public void saveLocation(Point loc)
 	{
 		m_location = loc;
 	}
 
+	/**
+	 * Gets the last known location of the graphical class representation in the diagram.
+	 * 
+	 * @return - NodePanel's location.
+	 */
 	public Point getLocation()
 	{
 		return m_location;

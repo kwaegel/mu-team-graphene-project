@@ -379,7 +379,7 @@ public class Relationship extends JComponent implements ISelectable
 
 			if (m_selectedControlPointIndex == 0)
 			{
-				Rectangle bounds = m_model.getFirstNode().getBounds();
+				Rectangle bounds = m_model.getFirstNode().getPanelBounds();
 				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
 				m_points.set(m_selectedControlPointIndex, closestPoint);
 
@@ -388,7 +388,7 @@ public class Relationship extends JComponent implements ISelectable
 			}
 			else if (m_selectedControlPointIndex == m_points.size() - 1)
 			{
-				Rectangle bounds = m_model.getSecondNode().getBounds();
+				Rectangle bounds = m_model.getSecondNode().getPanelBounds();
 				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
 				m_points.set(m_selectedControlPointIndex, closestPoint);
 

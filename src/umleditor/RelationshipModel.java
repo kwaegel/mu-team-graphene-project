@@ -63,8 +63,8 @@ public class RelationshipModel
 		calculateDefaultPathControlPoints();
 
 		// Calculate the default offsets.
-		m_firstNodeOffset = calculateOffset(m_points.get(0), m_firstNode.getBounds());
-		m_secondNodeOffset = calculateOffset(m_points.get(m_points.size() - 1), m_secondNode.getBounds());
+		m_firstNodeOffset = calculateOffset(m_points.get(0), m_firstNode.getPanelBounds());
+		m_secondNodeOffset = calculateOffset(m_points.get(m_points.size() - 1), m_secondNode.getPanelBounds());
 	}
 
 	/** Private Helper Methods **/
@@ -75,8 +75,8 @@ public class RelationshipModel
 	 */
 	private void calculateDefaultPathControlPoints()
 	{
-		Rectangle firstBounds = m_firstNode.getBounds();
-		Rectangle secondBounds = m_secondNode.getBounds();
+		Rectangle firstBounds = m_firstNode.getPanelBounds();
+		Rectangle secondBounds = m_secondNode.getPanelBounds();
 
 		// Find the center points of each edge for the first node.
 		Point[] startEdges = new Point[4];
@@ -120,8 +120,8 @@ public class RelationshipModel
 	 */
 	public void recalculateEndPoints()
 	{
-		Rectangle firstBounds = m_firstNode.getBounds();
-		Rectangle secondBounds = m_secondNode.getBounds();
+		Rectangle firstBounds = m_firstNode.getPanelBounds();
+		Rectangle secondBounds = m_secondNode.getPanelBounds();
 
 		m_points.get(0).x = firstBounds.x + m_firstNodeOffset.x;
 		m_points.get(0).y = firstBounds.y + m_firstNodeOffset.y;
