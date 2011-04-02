@@ -41,6 +41,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private List<ClassNode> listOfNodes;
 	private List<RelationshipModel> listOfRelationships;
 
+	// Listeners for mouse events on the diagram
+	private transient RelationshipDragListener m_relationshipDragController;
+
 	// transient fields that will not be encoded when diagram is saved
 	private transient ISelectable currentlySelectedObject;
 
@@ -65,6 +68,9 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 		changedSinceSaved = true;
 
+		// Create listeners on the view.
+		m_relationshipDragController = new RelationshipDragListener(this);
+
 		listOfNodes = new LinkedList<ClassNode>();
 		listOfRelationships = new LinkedList<RelationshipModel>();
 	}
@@ -88,6 +94,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 		fileSavedTo = fileLoadedFrom;
 		changedSinceSaved = false;
 
+		m_relationshipDragController = new RelationshipDragListener(this);
+
 		// Create views for models.
 		for (ClassNode node : listOfNodes)
 		{
@@ -98,8 +106,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			Relationship r = new Relationship(rm);
 			view.add(r);
-			r.addMouseListener(RelationshipDragListener.getInstance(this));
-			r.addMouseMotionListener(RelationshipDragListener.getInstance(this));
+			r.addMouseListener(m_relationshipDragController);
+			r.addMouseMotionListener(m_relationshipDragController);
 		}
 	}
 
@@ -307,8 +315,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 				// Add the relationship to the view.
 				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
 				view.add(rel, "external");
-				rel.addMouseListener(RelationshipDragListener.getInstance(this));
-				rel.addMouseMotionListener(RelationshipDragListener.getInstance(this));
+				rel.addMouseListener(m_relationshipDragController);
+				rel.addMouseMotionListener(m_relationshipDragController);
 
 				rel.repaint();
 			}
@@ -335,7 +343,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 			// Remove the view.
 			Relationship r = rm.getRelationship();
-			r.removeMouseListener(RelationshipDragListener.getInstance(this));
+			r.removeMouseListener(m_relationshipDragController);
 			view.remove(r);
 
 		}
