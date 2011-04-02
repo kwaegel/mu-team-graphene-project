@@ -384,7 +384,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 			BufferedWriter buffOutStream;
 			try
 			{
-				XStream xmlStream = new XStream();
+				XStream xmlStream = FileUtils.getXmlReaderWriter();
 
 				fileOutStream = new FileWriter(fileSavedTo);
 				buffOutStream = new BufferedWriter(fileOutStream);
@@ -437,8 +437,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private void setTabTitle(String title)
 	{
 		JTabbedPane containingTabbedPane = (JTabbedPane) (view.getParent().getParent().getParent());
-		TabTitleComponent tabComponent = (TabTitleComponent) containingTabbedPane.getTabComponentAt(containingTabbedPane
-				.getSelectedIndex());
+		TabTitleComponent tabComponent = (TabTitleComponent) containingTabbedPane
+				.getTabComponentAt(containingTabbedPane.getSelectedIndex());
 		tabComponent.setTitle(title);
 	}
 

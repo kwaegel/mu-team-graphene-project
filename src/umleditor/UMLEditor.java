@@ -305,7 +305,7 @@ public class UMLEditor extends JFrame implements ActionListener
 				FileReader fileInStream;
 				BufferedReader buffInStream;
 
-				XStream xmlStream = new XStream();
+				XStream xmlStream = FileUtils.getXmlReaderWriter();
 
 				fileInStream = new FileReader(f);
 				buffInStream = new BufferedReader(fileInStream);
@@ -334,8 +334,8 @@ public class UMLEditor extends JFrame implements ActionListener
 						addClassButton.setEnabled(true);
 						loadedDiagram.requestFocusOnView();
 					}
-					tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(),
-							new TabTitleComponent(this, tabbedPane, f.getName()));
+					tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(this, tabbedPane,
+							f.getName()));
 				}
 			}
 		}
