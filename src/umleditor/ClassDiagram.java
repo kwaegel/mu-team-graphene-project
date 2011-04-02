@@ -98,6 +98,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 		{
 			Relationship r = new Relationship(rm);
 			view.add(r);
+			r.addMouseListener(RelationshipDragListener.getInstance(this));
+			r.addMouseMotionListener(RelationshipDragListener.getInstance(this));
 		}
 	}
 
@@ -305,8 +307,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 				// Add the relationship to the view.
 				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
 				view.add(rel, "external");
-				rel.addMouseListener(RelationshipDragListener.getRelationshipListener(this));
-				rel.addMouseMotionListener(RelationshipDragListener.getRelationshipListener(this));
+				rel.addMouseListener(RelationshipDragListener.getInstance(this));
+				rel.addMouseMotionListener(RelationshipDragListener.getInstance(this));
 
 				rel.repaint();
 			}
@@ -333,7 +335,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 
 			// Remove the view.
 			Relationship r = rm.getRelationship();
-			r.removeMouseListener(RelationshipDragListener.getRelationshipListener(this));
+			r.removeMouseListener(RelationshipDragListener.getInstance(this));
 			view.remove(r);
 
 		}
