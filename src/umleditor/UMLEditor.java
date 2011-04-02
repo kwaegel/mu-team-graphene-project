@@ -496,10 +496,11 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		ClassDiagram currentDiagram = getCurrentDiagram();
 		int userOption = JOptionPane.NO_OPTION;
-		if (currentDiagram.isUnsaved())
+		if (currentDiagram.hasUnsavedChanges())
 		{
-			userOption = JOptionPane.showConfirmDialog(this,
-					"There are unsaved changes to the current diagram. \nDo you want to save before closing?");
+			String name = currentDiagram.getName();
+			userOption = JOptionPane.showConfirmDialog(this, "There are unsaved changes to \"" + name
+					+ "\". \nDo you want to save before closing?");
 		}
 
 		if (userOption == JOptionPane.YES_OPTION)
