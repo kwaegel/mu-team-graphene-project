@@ -15,7 +15,7 @@ import net.miginfocom.swing.MigLayout;
  * The component that is attached to each tab on the tabbedPane in the {@link UMLEditor}. Displays the title of the tab and the close button for
  * the {@link ClassDiagram} displayed in that tab.
  */
-public class TabComponent extends JPanel implements ActionListener
+public class TabTitleComponent extends JPanel implements ActionListener
 {
 	/**
 	 * Generated id, recommended for all GUI components
@@ -28,14 +28,14 @@ public class TabComponent extends JPanel implements ActionListener
 	private JButton closeButton;
 
 	/**
-	 * Creates a new {@link TabComponent} which displays the tab titles and delete buttons for parentTabbedPane in
+	 * Creates a new {@link TabTitleComponent} which displays the tab titles and delete buttons for parentTabbedPane in
 	 * parentEditor.
 	 * 
 	 * @param parentEditor
 	 * @param parentTabbedPane
 	 * @param title
 	 */
-	public TabComponent(UMLEditor parentEditor, JTabbedPane parentTabbedPane, String title)
+	public TabTitleComponent(UMLEditor parentEditor, JTabbedPane parentTabbedPane, String title)
 	{
 		super();
 		this.setLayout(new MigLayout());

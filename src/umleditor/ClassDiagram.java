@@ -437,7 +437,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	private void setTabTitle(String title)
 	{
 		JTabbedPane containingTabbedPane = (JTabbedPane) (view.getParent().getParent().getParent());
-		TabComponent tabComponent = (TabComponent) containingTabbedPane.getTabComponentAt(containingTabbedPane
+		TabTitleComponent tabComponent = (TabTitleComponent) containingTabbedPane.getTabComponentAt(containingTabbedPane
 				.getSelectedIndex());
 		tabComponent.setTitle(title);
 	}
