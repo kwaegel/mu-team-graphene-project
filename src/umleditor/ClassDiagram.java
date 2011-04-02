@@ -421,7 +421,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	 * 
 	 * @return - <code>true</code> if the diagram has been modified and is not saved, otherwise <code>false</code>
 	 */
-	public boolean isUnsaved()
+	public boolean hasUnsavedChanges()
 	{
 		boolean diagramBlank = (fileSavedTo == null && listOfNodes.isEmpty());
 		return (!diagramBlank && changedSinceSaved);
@@ -440,6 +440,21 @@ public class ClassDiagram implements KeyListener, FocusListener
 		TabComponent tabComponent = (TabComponent) containingTabbedPane.getTabComponentAt(containingTabbedPane
 				.getSelectedIndex());
 		tabComponent.setTitle(title);
+	}
+
+	/**
+	 * @return the name of this class diagram, or "Untitled document" if the diagarm has not been saved yet.
+	 */
+	public String getName()
+	{
+		if (fileSavedTo != null)
+		{
+			return fileSavedTo.getName();
+		}
+		else
+		{
+			return "Untitled document";
+		}
 	}
 
 	/**
