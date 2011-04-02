@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
 public class RelationshipDragListener extends MouseAdapter
 {
 	private ClassDiagram m_diagram;
-	
+
 	private static RelationshipDragListener m_instance = null;
 
 	/**
@@ -24,11 +24,10 @@ public class RelationshipDragListener extends MouseAdapter
 	{
 		m_diagram = diagram;
 	}
-	
-	public static RelationshipDragListener getRelationshipListener(ClassDiagram diagram)
+
+	public static RelationshipDragListener getInstance(ClassDiagram diagram)
 	{
-		
-		if(m_instance == null)
+		if (m_instance == null)
 		{
 			m_instance = new RelationshipDragListener(diagram);
 		}
