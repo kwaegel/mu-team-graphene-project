@@ -34,9 +34,9 @@ import javax.swing.KeyStroke;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * Displays the UML editing application and contains all major GUI items (menu bar, tabbed pane, tool bar, add-class
- * and delete buttons, etc.). Is responsible for things that are global to the application, such as maintaining add class mode
- * and copied classes. Creates new UML Class Diagrams, closes them, and loads them from files.
+ * Displays the UML editing application and contains all major GUI items (menu bar, tabbed pane, tool bar, add-class and
+ * delete buttons, etc.). Is responsible for things that are global to the application, such as maintaining add class
+ * mode and copied classes. Creates new UML Class Diagrams, closes them, and loads them from files.
  */
 public class UMLEditor extends JFrame implements ActionListener
 {
@@ -316,22 +316,27 @@ public class UMLEditor extends JFrame implements ActionListener
 			}
 			catch (IOException e)
 			{
-				// Do nothing.
+				System.err.println("Could not open file: " + e.getMessage());
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error loading file", JOptionPane.WARNING_MESSAGE);
 			}
 			finally
 			{
-				JScrollPane scrollPane = new JScrollPane();
-				loadedDiagram.initAfterLoadFromFile(this, scrollPane, f);
-				classDiagrams.add(loadedDiagram);
-				tabbedPane.add(scrollPane);
-				if (!classDiagrams.isEmpty())
+				// If the diagram has been loaded correctly, finish initialization.
+				if (loadedDiagram != null)
 				{
-					tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
-					addClassButton.setEnabled(true);
-					loadedDiagram.requestFocusOnView();
+					JScrollPane scrollPane = new JScrollPane();
+					loadedDiagram.initAfterLoadFromFile(this, scrollPane, f);
+					classDiagrams.add(loadedDiagram);
+					tabbedPane.add(scrollPane);
+					if (!classDiagrams.isEmpty())
+					{
+						tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
+						addClassButton.setEnabled(true);
+						loadedDiagram.requestFocusOnView();
+					}
+					tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(),
+							new TabComponent(this, tabbedPane, f.getName()));
 				}
-				tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(),
-						new TabComponent(this, tabbedPane, f.getName()));
 			}
 		}
 	}
