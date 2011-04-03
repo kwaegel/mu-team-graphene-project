@@ -105,7 +105,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		for (RelationshipModel rm : listOfRelationships)
 		{
 			Relationship r = new Relationship(rm);
-			view.add(r);
+			view.add(r, "external");
 			r.addMouseListener(m_relationshipDragController);
 			r.addMouseMotionListener(m_relationshipDragController);
 		}
