@@ -39,6 +39,7 @@ public class RelationshipDragListener extends MouseAdapter
 		{
 			source.addControlPoint(clickPoint);
 			source.repaint();
+			m_diagram.markAsChanged();
 		}
 	}
 
@@ -69,5 +70,6 @@ public class RelationshipDragListener extends MouseAdapter
 	{
 		Relationship source = (Relationship) e.getSource();
 		source.mouseDragged(e);
+		m_diagram.markAsChanged();
 	}
 }
