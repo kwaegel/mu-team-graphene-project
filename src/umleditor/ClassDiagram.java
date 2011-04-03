@@ -241,7 +241,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 			{
 				// Remove the entire relationship.
 				r.removeFromLinkedNodes();
-				listOfRelationships.remove(r);
+				listOfRelationships.remove(r.getModel());
 				view.remove(r);
 			}
 			view.repaint(r.getBounds());
@@ -363,7 +363,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 			JFileChooser fileSaveChooser = new JFileChooser();
 			fileSaveChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			fileSaveChooser.setMultiSelectionEnabled(false);
-			fileSaveChooser.setAcceptAllFileFilterUsed (false);
+			fileSaveChooser.setAcceptAllFileFilterUsed(false);
 			fileSaveChooser.setFileFilter(new FileExtensionFilter());
 			int userChoice = fileSaveChooser.showSaveDialog(parentEditor);
 			if (userChoice == JFileChooser.APPROVE_OPTION)
