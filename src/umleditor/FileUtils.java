@@ -24,11 +24,11 @@ public class FileUtils
 		// Alias names for class nodes
 		xmlStream.processAnnotations(ClassNode.class);
 		xmlStream.alias("class", ClassNode.class);
+		xmlStream.addImplicitCollection(ClassNode.class, "listOfAttributes", "attribute", String.class);
+		xmlStream.addImplicitCollection(ClassNode.class, "listOfMethods", "method", String.class);
+		xmlStream.addImplicitCollection(ClassNode.class, "m_relationships", Relationship.class);
 		xmlStream.aliasField("name", ClassNode.class, "className");
 		xmlStream.useAttributeFor(ClassNode.class, "className");
-		xmlStream.aliasField("attributes", ClassNode.class, "listOfAttributes");
-		xmlStream.aliasField("methods", ClassNode.class, "listOfMethods");
-		xmlStream.aliasField("relationships", ClassNode.class, "m_relationships");
 		xmlStream.aliasField("location", ClassNode.class, "m_location");
 
 		// Alias for relationship data

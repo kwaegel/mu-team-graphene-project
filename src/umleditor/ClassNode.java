@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.swing.JLayeredPane;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 /**
  * Model of a class in the UML Diagram.
  */
@@ -21,14 +19,8 @@ public class ClassNode implements ISelectable
 	private transient NodePanel nodePanel;
 
 	private String className;
-
-	@XStreamImplicit(itemFieldName = "attribute")
 	private ArrayList<String> listOfAttributes;
-
-	@XStreamImplicit(itemFieldName = "method")
 	private ArrayList<String> listOfMethods;
-
-	@XStreamImplicit()
 	private ArrayList<RelationshipModel> m_relationships;
 	private Point m_location;
 
