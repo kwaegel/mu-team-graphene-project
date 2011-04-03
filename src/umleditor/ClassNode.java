@@ -57,6 +57,26 @@ public class ClassNode implements ISelectable
 	}
 
 	/**
+	 * Used for XStream deserialization. This ensures that empty lists are rebuilt when the class is reconstructed.
+	 */
+	private Object readResolve()
+	{
+		if (m_relationships == null)
+		{
+			m_relationships = new ArrayList<RelationshipModel>();
+		}
+		if (listOfAttributes == null)
+		{
+			listOfAttributes = new ArrayList<String>();
+		}
+		if (listOfMethods == null)
+		{
+			listOfMethods = new ArrayList<String>();
+		}
+		return this;
+	}
+
+	/**
 	 * Attaches the given node panel to this node. Called in NodePanel's constructor.
 	 */
 	public void attachPanel(NodePanel panel)
