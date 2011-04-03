@@ -292,7 +292,8 @@ public class UMLEditor extends JFrame implements ActionListener
 		JFileChooser fileLoadChooser = new JFileChooser();
 		fileLoadChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileLoadChooser.setMultiSelectionEnabled(false);
-		fileLoadChooser.addChoosableFileFilter(new FileExtensionFilter());
+		fileLoadChooser.setAcceptAllFileFilterUsed (false);
+		fileLoadChooser.setFileFilter(new FileExtensionFilter());
 		int userChoice = fileLoadChooser.showOpenDialog(this);
 
 		ClassDiagram loadedDiagram = null;

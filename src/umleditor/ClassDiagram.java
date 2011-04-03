@@ -363,7 +363,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 			JFileChooser fileSaveChooser = new JFileChooser();
 			fileSaveChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			fileSaveChooser.setMultiSelectionEnabled(false);
-			fileSaveChooser.addChoosableFileFilter(new FileExtensionFilter());
+			fileSaveChooser.setAcceptAllFileFilterUsed (false);
+			fileSaveChooser.setFileFilter(new FileExtensionFilter());
 			int userChoice = fileSaveChooser.showSaveDialog(parentEditor);
 			if (userChoice == JFileChooser.APPROVE_OPTION)
 			{
