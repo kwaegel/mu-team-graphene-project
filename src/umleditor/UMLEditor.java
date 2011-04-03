@@ -30,6 +30,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -292,7 +295,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		JFileChooser fileLoadChooser = new JFileChooser();
 		fileLoadChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileLoadChooser.setMultiSelectionEnabled(false);
-		fileLoadChooser.setAcceptAllFileFilterUsed (false);
+		fileLoadChooser.setAcceptAllFileFilterUsed(false);
 		fileLoadChooser.setFileFilter(new FileExtensionFilter());
 		int userChoice = fileLoadChooser.showOpenDialog(this);
 
@@ -562,7 +565,52 @@ public class UMLEditor extends JFrame implements ActionListener
 	 */
 	public static void main(String[] args)
 	{
+		setLookAndFeel();
 		new UMLEditor();
+	}
+
+	/**
+	 * Set the default look and feel for the application.
+	 */
+	private static void setLookAndFeel()
+	{
+		try
+		{
+			// Try to set the Nimbus look and feal
+			try
+			{
+				// Search through the available L&Fs to see if nimbus is available
+				for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels())
+				{
+					if ("Nimbus".equals(info.getName()))
+					{
+						UIManager.setLookAndFeel(info.getClassName());
+						break;
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				// If Nimbus is not available, use the system default look and feel
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
+		}
+		catch (UnsupportedLookAndFeelException e)
+		{
+			// handle exception
+		}
+		catch (ClassNotFoundException e)
+		{
+			// handle exception
+		}
+		catch (InstantiationException e)
+		{
+			// handle exception
+		}
+		catch (IllegalAccessException e)
+		{
+			// handle exception
+		}
 	}
 
 	/**
