@@ -272,18 +272,6 @@ public class ClassNode implements ISelectable
 	 * @param relationship
 	 *            -Relationship to be removed from the ArrayList
 	 */
-	public void removeRelationship(Relationship relationship)
-	{
-		m_relationships.remove(relationship);
-	}
-
-	/**
-	 * Removes the Relationship from the relationships ArrayList Method is called when the other class removes the
-	 * relationship
-	 * 
-	 * @param relationship
-	 *            -Relationship to be removed from the ArrayList
-	 */
 	public void removeRelationship(RelationshipModel relationship)
 	{
 		m_relationships.remove(relationship);

@@ -139,7 +139,10 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Create a new node and initializes it.
+	 * Creates and initializes a new ClassNode with NodePanel
+	 * 
+	 * @param addLocation
+	 *            - place new class will be added
 	 */
 	private void createNode(Point addLocation)
 	{
@@ -149,7 +152,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Adds new node to the list of nodes. Also add it's {@link NodePanel} to the view.
+	 * Initializes the new node's {@link NodePanel} and adds it to the view.
 	 * 
 	 * @param addLocation
 	 *            - location to add node
@@ -410,7 +413,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	 */
 	public void markAsChanged()
 	{
-		if (fileSavedTo != null)
+		if (fileSavedTo != null && !changedSinceSaved)
 		{
 			changedSinceSaved = true;
 			this.setTabTitle(fileSavedTo.getName() + "*");
