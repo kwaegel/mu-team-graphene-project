@@ -139,6 +139,7 @@ public class Relationship extends JComponent implements ISelectable
 		rebuildAfterModelChange();
 	}
 
+	//TODO: comments
 	public Relationship(RelationshipModel model)
 	{
 		m_model = model;
@@ -147,6 +148,7 @@ public class Relationship extends JComponent implements ISelectable
 
 	/***** Methods *****/
 
+	//TODO: comments
 	private void rebuildAfterModelChange()
 	{
 		m_model.setRelationship(this);
@@ -535,7 +537,7 @@ public class Relationship extends JComponent implements ISelectable
 	}
 
 	/**
-	 * This tests if the mouse has been clicked on a relationship line or arrow.
+	 * This tests if the mouse has clicked on a relationship line or arrow.
 	 * 
 	 * {@inheritDoc}
 	 */
