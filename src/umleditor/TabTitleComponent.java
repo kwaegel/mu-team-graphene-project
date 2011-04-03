@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -22,17 +21,16 @@ public class TabTitleComponent extends JPanel// implements ActionListener
 	private static final long serialVersionUID = -6628241342810672413L;
 
 	private JLabel titleLabel;
-	private JButton closeButton;
 
 	/**
-	 * Creates a new {@link TabTitleComponent} which displays the tab titles and delete buttons for parentTabbedPane in
-	 * parentEditor.
+	 * Creates a new {@link TabTitleComponent} which displays tab titles and delete buttons.
 	 * 
-	 * @param parentEditor
-	 * @param parentTabbedPane
+	 * @param closeListener
+	 *            - {@link ActionListener} that is invoked when the close button is pressed.
 	 * @param title
+	 *            - title to display for this tab
 	 */
-	public TabTitleComponent(ActionListener closeListener, JTabbedPane parentTabbedPane, String title)
+	public TabTitleComponent(ActionListener closeListener, String title)
 	{
 		super();
 		this.setLayout(new MigLayout());
@@ -41,8 +39,7 @@ public class TabTitleComponent extends JPanel// implements ActionListener
 		titleLabel.setFont(titleLabel.getFont().deriveFont(10.0f));
 		this.add(titleLabel, "dock west, gapx 0 5, gapy 3");
 
-		// editor = parentEditor;
-		closeButton = new JButton("X");
+		JButton closeButton = new JButton("X");
 		closeButton.setFont(closeButton.getFont().deriveFont(8.0f));
 		closeButton.setMargin(new Insets(0, 0, 0, 0));
 		closeButton.setFocusable(false);
