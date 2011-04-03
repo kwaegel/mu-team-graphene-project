@@ -22,6 +22,7 @@ public class FileUtils
 		xmlStream.aliasField("relationships", ClassDiagram.class, "m_relationships");
 
 		// Alias names for class nodes
+		xmlStream.processAnnotations(ClassNode.class);
 		xmlStream.alias("class", ClassNode.class);
 		xmlStream.aliasField("name", ClassNode.class, "className");
 		xmlStream.useAttributeFor(ClassNode.class, "className");

@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 import umleditor.Relationship.RelationshipType;
 
 public class RelationshipModel
@@ -20,6 +22,7 @@ public class RelationshipModel
 	/**
 	 * Contains a list of class nodes to draw between.
 	 */
+	@XStreamImplicit()
 	private List<Point> m_points;
 
 	/**
