@@ -64,6 +64,8 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private boolean addNewClassModeEnabled;
 
+	private TabCloseListener tabCloseListener;
+
 	/**
 	 * Constructs and opens a new UMLEditor application.
 	 */
@@ -77,6 +79,8 @@ public class UMLEditor extends JFrame implements ActionListener
 		this.addWindowListener(new WindowCloseListener());
 
 		classDiagrams = new ArrayList<ClassDiagram>();
+
+		tabCloseListener = new TabCloseListener();
 
 		setUpMenuBar();
 		setUpToolBar();
@@ -338,8 +342,8 @@ public class UMLEditor extends JFrame implements ActionListener
 						addClassButton.setEnabled(true);
 						loadedDiagram.requestFocusOnView();
 					}
-					tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(this, tabbedPane,
-							f.getName()));
+					tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener,
+							tabbedPane, f.getName()));
 				}
 			}
 		}
@@ -360,7 +364,7 @@ public class UMLEditor extends JFrame implements ActionListener
 			addClassButton.setEnabled(true);
 			initialDiagram.requestFocusOnView();
 		}
-		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(this, tabbedPane,
+		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener, tabbedPane,
 				"Unsaved Diagram"));
 	}
 
@@ -626,4 +630,25 @@ public class UMLEditor extends JFrame implements ActionListener
 			closeEditor();
 		}
 	}
+
+	/**
+	 * Class to listen for requests to close a tab.
+	 */
+	private class TabCloseListener implements ActionListener
+	{
+
+		/**
+		 * Called when user clicks on close button. Gets the current index and tells the {@link UMLEditor} to delete the
+		 * {@link ClassDiagram} at that index.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			JButton source = (JButton) e.getSource();
+			TabTitleComponent tab = (TabTitleComponent) source.getParent();
+			int index = tabbedPane.indexOfTabComponent(tab);
+			UMLEditor.this.closeTab(index);
+		}
+	}
+
 }

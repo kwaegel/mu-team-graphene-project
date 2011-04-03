@@ -101,7 +101,7 @@ public class NodePanel extends JPanel
 	 */
 	public void displayEditPanel()
 	{
-		EditPanel editPanel = new EditPanel(this.associatedNode);
+		EditPanel editPanel = new EditPanel(this.associatedNode, this.parentDiagram);
 		editPanel.setVisible(true);
 	}
 
