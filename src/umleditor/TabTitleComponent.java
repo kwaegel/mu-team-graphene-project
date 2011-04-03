@@ -13,7 +13,7 @@ import net.miginfocom.swing.MigLayout;
  * The component that is attached to each tab on the tabbedPane in the {@link UMLEditor}. Displays the title of the tab
  * and the close button for the {@link ClassDiagram} displayed in that tab.
  */
-public class TabTitleComponent extends JPanel// implements ActionListener
+public class TabTitleComponent extends JPanel
 {
 	/**
 	 * Generated id, recommended for all GUI components
