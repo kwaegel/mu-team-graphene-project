@@ -343,7 +343,7 @@ public class UMLEditor extends JFrame implements ActionListener
 						loadedDiagram.requestFocusOnView();
 					}
 					tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener,
-							tabbedPane, f.getName()));
+							f.getName()));
 				}
 			}
 		}
@@ -364,7 +364,7 @@ public class UMLEditor extends JFrame implements ActionListener
 			addClassButton.setEnabled(true);
 			initialDiagram.requestFocusOnView();
 		}
-		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener, tabbedPane,
+		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener,
 				"Unsaved Diagram"));
 	}
 
