@@ -521,7 +521,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 		}
 		else if (event.getKeyCode() == KeyEvent.VK_N && !event.isControlDown())
 		{
-			parentEditor.enableAddNewClassMode();
+			parentEditor.toggleAddNewClassMode();
 		}
 		else if (event.getKeyCode() == KeyEvent.VK_E && currentlySelectedObject instanceof ClassNode)
 		{

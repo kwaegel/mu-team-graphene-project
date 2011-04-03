@@ -124,6 +124,23 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
+	 * Enables mode if was disabled, or disables if was enabled.
+	 */
+	public void toggleAddNewClassMode()
+	{
+		if (!addNewClassModeEnabled)
+		{
+			// Add-Class mode was not enabled, so enable it
+			enableAddNewClassMode();
+		}
+		else
+		{
+			// Add-Class mode was already selected, this click disables it
+			disableAddNewClassMode();
+		}
+	}
+
+	/**
 	 * Sets the state of the delete button
 	 * 
 	 * @param enabled
@@ -385,16 +402,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		if (arg0.getActionCommand() == "ADD")
 		{
-			if (!addNewClassModeEnabled)
-			{
-				// Add-Class mode was not enabled, so enable it
-				enableAddNewClassMode();
-			}
-			else
-			{
-				// Add-Class mode was already selected, this click disables it
-				disableAddNewClassMode();
-			}
+			toggleAddNewClassMode();
 		}
 		else if (arg0.getActionCommand() == "DELETE")
 		{
@@ -636,7 +644,6 @@ public class UMLEditor extends JFrame implements ActionListener
 	 */
 	private class TabCloseListener implements ActionListener
 	{
-
 		/**
 		 * Called when user clicks on close button. Gets the current index and tells the {@link UMLEditor} to delete the
 		 * {@link ClassDiagram} at that index.
