@@ -26,7 +26,7 @@ public class FileUtils
 		xmlStream.alias("class", ClassNode.class);
 		xmlStream.addImplicitCollection(ClassNode.class, "listOfAttributes", "attribute", String.class);
 		xmlStream.addImplicitCollection(ClassNode.class, "listOfMethods", "method", String.class);
-		xmlStream.addImplicitCollection(ClassNode.class, "m_relationships", Relationship.class);
+		xmlStream.addImplicitCollection(ClassNode.class, "m_relationships");
 		xmlStream.aliasField("name", ClassNode.class, "className");
 		xmlStream.useAttributeFor(ClassNode.class, "className");
 		xmlStream.aliasField("location", ClassNode.class, "m_location");
