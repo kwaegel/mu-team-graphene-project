@@ -13,7 +13,9 @@ class FileExtensionFilter extends javax.swing.filechooser.FileFilter
 	 */
 	public static final String ACCEPTED_FILE_EXTENSION = ".xuml";
 
-	@Override
+	/**
+	 * Returns whether the file the file should be displayed or not
+	 */
 	public boolean accept(File file)
 	{
 		if (file.isDirectory ())
@@ -24,7 +26,9 @@ class FileExtensionFilter extends javax.swing.filechooser.FileFilter
 		return filename.endsWith(ACCEPTED_FILE_EXTENSION);
 	}
 
-	@Override
+	/**
+	 * Returns the string to be displayed in the JFileChooser
+	 */
 	public String getDescription()
 	{
 		return ("*" + ACCEPTED_FILE_EXTENSION + " (XML formatted UML diagram)");
