@@ -72,13 +72,18 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	 */
 	private JTextField newMethodTextField;
 
+	/**
+	 * The ClassDiagram to which the ClassNode being edited belongs.
+	 */
 	private ClassDiagram parentDiagram;
 
 	/**
-	 * Constructs a new EditPanel that allows user to modify a particular class in the UML diagram.
+	 * Constructs a new {@link EditPanel} that allows user to modify a particular {@link ClassNode} in the UML diagram.
 	 * 
 	 * @param nodeToModify
-	 *            - the class this EditPanel will modify
+	 *            - the {@link ClassNode} this EditPanel will modify
+	 * @param parentDiagram
+	 *            - the {@link ClassDiagram} to which the {@link ClassNode} being edited belongs.
 	 */
 	public EditPanel(ClassNode nodeToModify, ClassDiagram parentDiagram)
 	{
@@ -247,6 +252,19 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		revertButton.addActionListener(this);
 		everythingPanel.add(revertButton, "align center");
 	}
+	
+	/**
+	 * Marks the parent {@link ClassDiagram} as changed if the node has been modified, and closes the {@link EditPanel}. 
+	 */
+	private void closeEditPanel()
+	{
+		if (!associatedNode.propertiesEqual(copyOfOriginalNode))
+		{
+			parentDiagram.markAsChanged();
+		}
+		// get rid of JDialog
+		super.dispose();
+	}
 
 	@Override
 	public void focusGained(FocusEvent e)
@@ -302,12 +320,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 
 		if (actionCommand == "Exit")
 		{
-			if (!associatedNode.propertiesEqual(copyOfOriginalNode))
-			{
-				parentDiagram.markAsChanged();
-			}
-			// get rid of JDialog
-			super.dispose();
+			closeEditPanel();
 		}
 		else if (actionCommand == "Discard")
 		{
@@ -384,11 +397,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	{
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
-			if (!associatedNode.propertiesEqual(copyOfOriginalNode))
-			{
-				parentDiagram.markAsChanged();
-			}
-			super.dispose();
+			closeEditPanel();
 		}
 
 		NumberedTextField ntf = (NumberedTextField) e.getComponent();
