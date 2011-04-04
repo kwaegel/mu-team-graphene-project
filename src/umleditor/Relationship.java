@@ -12,6 +12,7 @@ import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
@@ -139,7 +140,7 @@ public class Relationship extends JComponent implements ISelectable
 		rebuildAfterModelChange();
 	}
 
-	//TODO: comments
+	// TODO: comments
 	public Relationship(RelationshipModel model)
 	{
 		m_model = model;
@@ -148,7 +149,7 @@ public class Relationship extends JComponent implements ISelectable
 
 	/***** Methods *****/
 
-	//TODO: comments
+	// TODO: comments
 	private void rebuildAfterModelChange()
 	{
 		m_model.setRelationship(this);
@@ -554,7 +555,29 @@ public class Relationship extends JComponent implements ISelectable
 		Rectangle2D clickArea = new Rectangle2D.Float(x - m_clickDelta, y - m_clickDelta, m_clickDelta * 2,
 				m_clickDelta * 2);
 
-		return getBounds().contains(x, y) && (m_line.intersects(clickArea) || m_arrow.intersects(clickArea));
+		boolean inBounds = getBounds().contains(x, y);
+		boolean intersectsLine = false;
+		boolean intersectsArrow = m_arrow.intersects(clickArea);
+
+		/*
+		 * Need to check line intersections by hand, as the intersects() method only checks shape containment, not line
+		 * intersection. TODO: Find a more elegant way to do this.
+		 */
+		PathIterator lineItr = m_line.getPathIterator(null);
+		float[] nextPoints = new float[6];
+		float[] lastPoints = new float[6];
+		while (!lineItr.isDone() && !intersectsLine)
+		{
+			int segmentType = lineItr.currentSegment(nextPoints);
+			if (segmentType == PathIterator.SEG_LINETO)
+			{
+				intersectsLine = clickArea.intersectsLine(lastPoints[0], lastPoints[1], nextPoints[0], nextPoints[1]);
+			}
+			System.arraycopy(nextPoints, 0, lastPoints, 0, 6);
+			lineItr.next();
+		}
+
+		return inBounds && (intersectsLine || intersectsArrow);
 	}
 
 	/**
@@ -606,19 +629,20 @@ public class Relationship extends JComponent implements ISelectable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill) {
-		case Solid:
-			g2d.fillPolygon(m_arrow);
-			break;
-		case Outline: {
-			g2d.setColor(Color.white);
-			g2d.fillPolygon(m_arrow);
-			g2d.setColor(Color.black);
-			g2d.drawPolygon(m_arrow);
-		}
-			break;
-		case None:// Do not draw an arrow.
-			break;
+		switch (m_endFill)
+		{
+			case Solid:
+				g2d.fillPolygon(m_arrow);
+				break;
+			case Outline: {
+				g2d.setColor(Color.white);
+				g2d.fillPolygon(m_arrow);
+				g2d.setColor(Color.black);
+				g2d.drawPolygon(m_arrow);
+			}
+				break;
+			case None:// Do not draw an arrow.
+				break;
 		}
 
 		// If the relationship is selected, draw a handle at each control node

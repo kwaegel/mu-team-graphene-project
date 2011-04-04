@@ -57,7 +57,7 @@ public class ClassNode implements ISelectable
 	}
 
 	/**
-	 * Used for XStream deserialization. This ensures that empty lists are rebuilt when the class is reconstructed.
+	 * Used by XStream. This ensures that empty lists are rebuilt when the class is deserialized.
 	 */
 	private Object readResolve()
 	{
