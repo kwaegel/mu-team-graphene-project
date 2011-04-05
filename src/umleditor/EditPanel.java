@@ -27,7 +27,7 @@ import net.miginfocom.swing.MigLayout;
 import umleditor.NumberedTextField.FieldType;
 
 /**
- * Allows user to edit values for a particular ClassNode in the UML diagram. The ClassNode will be changed automatically
+ * Allows user to edit values for a particular {@link ClassNode} in the UML diagram. The {@link ClassNode} will be changed automatically
  * as it is edited -- there is no "cancel" option because editing a value through the EditPanel already changed that
  * value in the class. There is a "revert" option which changes all values back to the point when the edit panel was
  * opened. Choosing this option and then closing the dialog has the effect of "cancel"
@@ -73,7 +73,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	private JTextField newMethodTextField;
 
 	/**
-	 * The ClassDiagram to which the ClassNode being edited belongs.
+	 * The ClassDiagram to which the {@link ClassNode} being edited belongs.
 	 */
 	private ClassDiagram parentDiagram;
 

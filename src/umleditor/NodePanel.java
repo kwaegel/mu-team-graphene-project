@@ -18,7 +18,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * This is the visible representation of a class that appears in the UML Editor. Contains no information about the class
- * itself, but has a link to the ClassNode that does. Displays the information in this ClassNode in the appropriate
+ * itself, but has a link to the {@link ClassNode} that does. Displays the information in this {@link ClassNode} in the appropriate
  * format. Handles interactions between the user and the class.
  * 
  */
@@ -41,7 +41,7 @@ public class NodePanel extends JPanel
 	private static int DEFAULT_FIELD_HEIGHT = 16;
 
 	/**
-	 * ClassNode associated with this NodePanel. The NodePanel will display this ClassNode's name, methods and
+	 * {@link ClassNode} associated with this NodePanel. The NodePanel will display this {@link ClassNode}'s name, methods and
 	 * attributes.
 	 */
 	private ClassNode associatedNode;
@@ -52,7 +52,7 @@ public class NodePanel extends JPanel
 	private ClassDiagram parentDiagram;
 
 	/**
-	 * Constructs a new NodePanel which displays the given ClassNode which is part of the given ClassDiagram.
+	 * Constructs a new NodePanel which displays the given {@link ClassNode} which is part of the given ClassDiagram.
 	 * 
 	 * @param parent
 	 * @param node
@@ -75,7 +75,7 @@ public class NodePanel extends JPanel
 	}
 
 	/**
-	 * Returns the ClassNode associated with this NodePanel.
+	 * Returns the {@link ClassNode} associated with this NodePanel.
 	 * 
 	 * @return - this panel's class node
 	 */
@@ -97,7 +97,7 @@ public class NodePanel extends JPanel
 	}
 
 	/**
-	 * Constructs an EditPanel so user can edit this panel's associated ClassNode.
+	 * Constructs an EditPanel so user can edit this panel's associated {@link ClassNode}.
 	 */
 	public void displayEditPanel()
 	{
@@ -182,7 +182,7 @@ public class NodePanel extends JPanel
 	}
 
 	/**
-	 * Adds a separator to the ClassNode
+	 * Adds a separator to the {@link ClassNode}
 	 */
 	private void addSeparator()
 	{
@@ -203,7 +203,7 @@ public class NodePanel extends JPanel
 
 	/**
 	 * Moves the NodePanel to position (if position is not null) and ensures its size reflects the contents of it's
-	 * ClassNode. Updates the ClassNode's location field.
+	 * {@link ClassNode}. Updates the {@link ClassNode}'s location field.
 	 * 
 	 * @param position
 	 *            - new location for the panel, or <code>null</code>, if the panel is not being moved.
@@ -219,7 +219,7 @@ public class NodePanel extends JPanel
 	}
 
 	/**
-	 * Attaches this node panel to the given view. Node panel is added at the default layer. When the ClassNode
+	 * Attaches this node panel to the given view. Node panel is added at the default layer. When the {@link ClassNode}
 	 * associated with this node panel is selected (which happens automatically if class is added by user instead of
 	 * being constructed from a file), the node panel will be elevated to the Drag_Layer.
 	 * 
@@ -232,7 +232,7 @@ public class NodePanel extends JPanel
 	}
 
 	/**
-	 * Class to handle ClassNode selection and adding relationships.
+	 * Class to handle {@link ClassNode} selection and adding relationships.
 	 */
 	private class NodeSelectionListener extends MouseAdapter
 	{
