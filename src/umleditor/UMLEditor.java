@@ -10,6 +10,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,9 +32,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -206,12 +205,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		saveAsOption.addActionListener(this);
 		fileMenu.add(saveAsOption);
 
-//		fileMenu.addSeparator();
-//
-//		JMenuItem printOption = new JMenuItem("Print...");
-//		printOption.setActionCommand("PRINT");
-//		printOption.addActionListener(this);
-//		fileMenu.add(printOption);
+		fileMenu.addSeparator();
+
+		JMenuItem printOption = new JMenuItem("Print...");
+		printOption.setActionCommand("PRINT");
+		printOption.addActionListener(this);
+		fileMenu.add(printOption);
 
 		fileMenu.addSeparator();
 
@@ -434,6 +433,21 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "PRINT")
 		{
+			PrinterJob printJob = PrinterJob.getPrinterJob();
+			printJob.setPrintable(getCurrentDiagram());
+			boolean print = printJob.printDialog();
+			if (print)
+			{
+				try
+				{
+					printJob.print();
+				}
+				catch (PrinterException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
@@ -584,7 +598,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		new UMLEditor();
 	}
-	
+
 	/**
 	 * Listens for Window Closing events (on the UML editor) and calls the close routine when they occur. Window Adapter
 	 * provides an empty implementation of all Window listening methods, extending it is preferable to implementing

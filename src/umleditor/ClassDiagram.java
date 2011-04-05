@@ -1,6 +1,8 @@
 package umleditor;
 
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -8,6 +10,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -35,7 +40,7 @@ import com.thoughtworks.xstream.XStream;
  * classes from, and pasting classes to itself. It knows what file it was saved to, and keeps track of whether or not it
  * was saved or changed since it was saved.
  */
-public class ClassDiagram implements KeyListener, FocusListener
+public class ClassDiagram implements KeyListener, FocusListener, Printable
 {
 	// Lists of objects in the diagram
 	private List<ClassNode> listOfNodes;
@@ -596,8 +601,8 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * This class listens for clicks to an empty part of the class diagram and creates a new {@link ClassNode} if the new node
-	 * button is enabled.
+	 * This class listens for clicks to an empty part of the class diagram and creates a new {@link ClassNode} if the
+	 * new node button is enabled.
 	 */
 	private class MouseClickListener extends MouseAdapter
 	{
@@ -621,5 +626,19 @@ public class ClassDiagram implements KeyListener, FocusListener
 				unselectCurrentObject();
 			}
 		}
+	}
+
+	@Override
+	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException
+	{
+		Graphics2D g2d = (Graphics2D) arg0;
+		g2d.translate(arg1.getImageableX(), arg1.getImageableY());
+
+		int numPagesWide = view.getWidth() / (int) arg1.getImageableWidth();
+		if (arg2 > numPagesWide)
+			return NO_SUCH_PAGE;
+		view.printAll(arg0);
+
+		return PAGE_EXISTS;
 	}
 }
