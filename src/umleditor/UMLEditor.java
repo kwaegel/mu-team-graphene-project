@@ -30,9 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -206,12 +203,12 @@ public class UMLEditor extends JFrame implements ActionListener
 		saveAsOption.addActionListener(this);
 		fileMenu.add(saveAsOption);
 
-//		fileMenu.addSeparator();
-//
-//		JMenuItem printOption = new JMenuItem("Print...");
-//		printOption.setActionCommand("PRINT");
-//		printOption.addActionListener(this);
-//		fileMenu.add(printOption);
+		// fileMenu.addSeparator();
+		//
+		// JMenuItem printOption = new JMenuItem("Print...");
+		// printOption.setActionCommand("PRINT");
+		// printOption.addActionListener(this);
+		// fileMenu.add(printOption);
 
 		fileMenu.addSeparator();
 
@@ -584,7 +581,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		new UMLEditor();
 	}
-	
+
 	/**
 	 * Listens for Window Closing events (on the UML editor) and calls the close routine when they occur. Window Adapter
 	 * provides an empty implementation of all Window listening methods, extending it is preferable to implementing

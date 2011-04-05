@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 import umleditor.Relationship.RelationshipType;
+
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 public class RelationshipModel
 {
@@ -228,6 +228,8 @@ public class RelationshipModel
 	/** Static methods **/
 	/**
 	 * Calculate the offset between the given point and the origin of the given rectangle.
+	 * 
+	 * NOTE: move to utils class.
 	 * 
 	 * @param p
 	 * @param r
