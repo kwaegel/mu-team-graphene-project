@@ -26,12 +26,12 @@ public class RelationshipModel
 	private List<Point> m_points;
 
 	/**
-	 * Contains a reference to the first ClassNode (relationship comes ‘from’ this one).
+	 * Contains a reference to the first {@link ClassNode} (relationship comes ‘from’ this one).
 	 */
 	private ClassNode m_firstNode;
 
 	/**
-	 * Contains a reference to the second ClassNode (relationship goes ‘to’ this one).
+	 * Contains a reference to the second {@link ClassNode} (relationship goes ‘to’ this one).
 	 */
 	private ClassNode m_secondNode;
 

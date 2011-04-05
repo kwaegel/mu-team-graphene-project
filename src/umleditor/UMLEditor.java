@@ -582,54 +582,9 @@ public class UMLEditor extends JFrame implements ActionListener
 	 */
 	public static void main(String[] args)
 	{
-		setLookAndFeel();
 		new UMLEditor();
 	}
-
-	/**
-	 * Set the default look and feel for the application.
-	 */
-	private static void setLookAndFeel()
-	{
-		try
-		{
-			// Try to set the Nimbus look and feal
-			try
-			{
-				// Search through the available L&Fs to see if nimbus is available
-				for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels())
-				{
-					if ("Nimbus".equals(info.getName()))
-					{
-						UIManager.setLookAndFeel(info.getClassName());
-						break;
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				// If Nimbus is not available, use the system default look and feel
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			}
-		}
-		catch (UnsupportedLookAndFeelException e)
-		{
-			// handle exception
-		}
-		catch (ClassNotFoundException e)
-		{
-			// handle exception
-		}
-		catch (InstantiationException e)
-		{
-			// handle exception
-		}
-		catch (IllegalAccessException e)
-		{
-			// handle exception
-		}
-	}
-
+	
 	/**
 	 * Listens for Window Closing events (on the UML editor) and calls the close routine when they occur. Window Adapter
 	 * provides an empty implementation of all Window listening methods, extending it is preferable to implementing

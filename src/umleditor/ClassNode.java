@@ -103,7 +103,7 @@ public class ClassNode implements ISelectable
 	 * attribute list and method list.
 	 * 
 	 * @param otherNode
-	 *            - ClassNode to compare this one to.
+	 *            - {@link ClassNode} to compare this one to.
 	 * @return - <code>true</code> if properties are equal, <code>false</code> if they are not
 	 */
 	public boolean propertiesEqual(ClassNode otherNode)
@@ -135,7 +135,7 @@ public class ClassNode implements ISelectable
 	}
 
 	/**
-	 * Makes this ClassNode's associated node panel appear selected or unselected, as appropriate
+	 * Makes this {@link ClassNode}'s associated node panel appear selected or unselected, as appropriate
 	 */
 	@Override
 	public void setSelected(boolean selected)
@@ -326,7 +326,7 @@ public class ClassNode implements ISelectable
 	}
 
 	/**
-	 * Ensures the NodePanel will reflect changes in the ClassNode. Called whenever the class node changes.
+	 * Ensures the NodePanel will reflect changes in the {@link ClassNode}. Called whenever the class node changes.
 	 */
 	public void updateNodePanel()
 	{
@@ -336,7 +336,7 @@ public class ClassNode implements ISelectable
 	}
 
 	/**
-	 * Updates the ClassNode's location field. Ensures the ClassNode always knows the location of its graphical
+	 * Updates the {@link ClassNode}'s location field. Ensures the ClassNode always knows the location of its graphical
 	 * representation in the Diagram.
 	 * 
 	 * @param loc

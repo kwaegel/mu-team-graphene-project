@@ -3,6 +3,7 @@ package unitTesting;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Point;
 import java.util.Collection;
 
 import javax.swing.JLayeredPane;
@@ -42,25 +43,37 @@ public class JUnitTests
 	}
 
 	/**
-	 * create a ClassDiagram,ClassNode, and NodePanel. Then delete new node
+	 * create a new ClassNode, pass it to the NodePanel's constructor, and attach the panel to it, them make sure
+	 * everything's connected properly.
 	 */
-	// TODO: Need to either remove or fix method
 	@Test
-	public void testDelete()
+	public void testClassAndPanelConnection()
 	{
-		UMLEditor editor = new UMLEditor();
-		ClassDiagram testDiagram = new ClassDiagram(editor, new JScrollPane());
+		ClassDiagram testDiagram = new ClassDiagram(new UMLEditor(), new JScrollPane());
 		ClassNode testNode = new ClassNode();
 		NodePanel np = new NodePanel(testDiagram, testNode);
-		np.attachToView(new JLayeredPane());
 		testNode.attachPanel(np);
 
-		// testDiagram.setSelectedObject(testNode);
-		// testDiagram.deleteSelectedObject();
-
-		// assertNotNull(testDiagram.getView());
-		// assertTrue("Error: panel not removed when node deleted", testDiagram.getView().getComponentCount() == 0);
+		assertTrue("Error: panel returns wrong node", np.getClassNode().equals(testNode));
+		assertTrue("Error: node returns wrong panel", testNode.getNodePanel().equals(np));
 	}
+	
+	/**
+	 * Tests the save and get location functions
+	 */
+	@Test
+	public void testLocation()
+	{
+		ClassNode testNode = new ClassNode();
+		Point loc = new Point(554, 39);
+		testNode.saveLocation(loc);
+		assertTrue("Error, either saveLocation or getLocation does not work correctly", testNode.getLocation().equals(loc));
+		Point loc2 = new Point(33, 4);
+		testNode.saveLocation(loc2);
+		assertTrue("Error, did not set to new location", testNode.getLocation().equals(loc2));
+		assertFalse("Error, still equals original loc", testNode.getLocation().equals(loc));
+	}
+	
 
 	/**
 	 * create several methods, add them, remove them
@@ -304,9 +317,10 @@ public class JUnitTests
 
 		assertTrue("Error: node2 should have 1 relationship", node2.getRelationships().size() == 1);
 		assertTrue("Error: relationship was removed from wrong node", node3.getRelationships().size() == 1);
-		assertTrue("Error: relationships with node1 was not removed", node2.getRelationships().get(0).equals(rel2.getModel()));
+		assertTrue("Error: relationships with node1 was not removed",
+				node2.getRelationships().get(0).equals(rel2.getModel()));
 
-		//Delete relationship between node2 and node3
+		// Delete relationship between node2 and node3
 		testDiagram.setSelectedObject(rel2);
 		testDiagram.deleteSelectedObject();
 

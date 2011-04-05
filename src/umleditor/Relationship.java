@@ -22,7 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 /**
- * Relationship defines a connection between two ClassNodes. Relationships will be maintained by the individual classes
+ * Relationship defines a connection between two {@link ClassNode}s. Relationships will be maintained by the individual classes
  * they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics, and will
  * do so when there are changes to the view panel.
  */

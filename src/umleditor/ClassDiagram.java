@@ -139,7 +139,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Creates and initializes a new ClassNode with NodePanel
+	 * Creates and initializes a new {@link ClassNode} with NodePanel
 	 * 
 	 * @param addLocation
 	 *            - place new class will be added
@@ -212,7 +212,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Deletes the selected object. The selected object can either be a ClassNode or Relationship.
+	 * Deletes the selected object. The selected object can either be a {@link ClassNode} or Relationship.
 	 */
 	public void deleteSelectedObject()
 	{
@@ -271,7 +271,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Adds the relationship to the ClassDiagram's currently selected object, if that object is a ClassNode
+	 * Adds the relationship to the ClassDiagram's currently selected object, if that object is a {@link ClassNode}
 	 * 
 	 * @param secondNode
 	 *            - the node that relationship will end on.
@@ -329,7 +329,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * Removes a list of relationships from the diagram. Called from a ClassNode whenever it gets deleted.
+	 * Removes a list of relationships from the diagram. Called from a {@link ClassNode} whenever it gets deleted.
 	 * 
 	 * @param relationshipList
 	 */
@@ -596,7 +596,7 @@ public class ClassDiagram implements KeyListener, FocusListener
 	}
 
 	/**
-	 * This class listens for clicks to an empty part of the class diagram and creates a new ClassNode if the new node
+	 * This class listens for clicks to an empty part of the class diagram and creates a new {@link ClassNode} if the new node
 	 * button is enabled.
 	 */
 	private class MouseClickListener extends MouseAdapter
