@@ -57,7 +57,7 @@ public class JUnitTests
 		assertTrue("Error: panel returns wrong node", np.getClassNode().equals(testNode));
 		assertTrue("Error: node returns wrong panel", testNode.getNodePanel().equals(np));
 	}
-	
+
 	/**
 	 * Tests the save and get location functions
 	 */
@@ -67,13 +67,13 @@ public class JUnitTests
 		ClassNode testNode = new ClassNode();
 		Point loc = new Point(554, 39);
 		testNode.saveLocation(loc);
-		assertTrue("Error, either saveLocation or getLocation does not work correctly", testNode.getLocation().equals(loc));
+		assertTrue("Error, either saveLocation or getLocation does not work correctly",
+				testNode.getLocation().equals(loc));
 		Point loc2 = new Point(33, 4);
 		testNode.saveLocation(loc2);
 		assertTrue("Error, did not set to new location", testNode.getLocation().equals(loc2));
 		assertFalse("Error, still equals original loc", testNode.getLocation().equals(loc));
 	}
-	
 
 	/**
 	 * create several methods, add them, remove them
@@ -299,7 +299,7 @@ public class JUnitTests
 		node3.addRelationship(rel2);
 
 		// Test relationship construction and getting nodes
-		Collection<ClassNode> nodes = rel2.getClassNodes();
+		Collection<ClassNode> nodes = rel2.getModel().getClassNodes();
 		assertFalse("Error: node1 should not be in this relationship", nodes.contains(node1));
 		assertTrue("Error: nodes are not properly stored", nodes.contains(node2));
 		assertTrue("Error: nodes are not properly stored", nodes.contains(node3));
