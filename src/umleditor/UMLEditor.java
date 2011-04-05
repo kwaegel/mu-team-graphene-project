@@ -205,11 +205,13 @@ public class UMLEditor extends JFrame implements ActionListener
 		saveAsOption.setActionCommand("SAVEAS");
 		saveAsOption.addActionListener(this);
 		fileMenu.add(saveAsOption);
-		//
-		// fileMenu.addSeparator();
-		//
-		// JMenuItem printOption = new JMenuItem("Print...");
-		// fileMenu.add(printOption);
+
+//		fileMenu.addSeparator();
+//
+//		JMenuItem printOption = new JMenuItem("Print...");
+//		printOption.setActionCommand("PRINT");
+//		printOption.addActionListener(this);
+//		fileMenu.add(printOption);
 
 		fileMenu.addSeparator();
 
@@ -429,6 +431,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		{
 			ClassDiagram currentDiagram = getCurrentDiagram();
 			currentDiagram.saveToFile(true);
+		}
+		else if (arg0.getActionCommand() == "PRINT")
+		{
 		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
