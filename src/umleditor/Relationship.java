@@ -15,16 +15,15 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 /**
- * Relationship defines a connection between two {@link ClassNode}s. Relationships will be maintained by the individual classes
- * they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics, and will
- * do so when there are changes to the view panel.
+ * Relationship defines a connection between two {@link ClassNode}s. Relationships will be maintained by the individual
+ * classes they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics,
+ * and will do so when there are changes to the view panel.
  */
 public class Relationship extends JComponent implements ISelectable
 {
@@ -149,7 +148,9 @@ public class Relationship extends JComponent implements ISelectable
 
 	/***** Methods *****/
 
-	// TODO: comments
+	/**
+	 * Rebuild the needed drawing components when the model updated.
+	 */
 	private void rebuildAfterModelChange()
 	{
 		m_model.setRelationship(this);
@@ -179,15 +180,6 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		m_model = model;
 		rebuildAfterModelChange();
-	}
-
-	/**
-	 * Return a {@link java.util.Collection collection} containing the {@link ClassNode ClassNodes} this relationship is
-	 * linked to.
-	 */
-	public Collection<ClassNode> getClassNodes()
-	{
-		return m_model.getClassNodes();
 	}
 
 	/**
@@ -629,20 +621,19 @@ public class Relationship extends JComponent implements ISelectable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill)
-		{
-			case Solid:
-				g2d.fillPolygon(m_arrow);
-				break;
-			case Outline: {
-				g2d.setColor(Color.white);
-				g2d.fillPolygon(m_arrow);
-				g2d.setColor(Color.black);
-				g2d.drawPolygon(m_arrow);
-			}
-				break;
-			case None:// Do not draw an arrow.
-				break;
+		switch (m_endFill) {
+		case Solid:
+			g2d.fillPolygon(m_arrow);
+			break;
+		case Outline: {
+			g2d.setColor(Color.white);
+			g2d.fillPolygon(m_arrow);
+			g2d.setColor(Color.black);
+			g2d.drawPolygon(m_arrow);
+		}
+			break;
+		case None:// Do not draw an arrow.
+			break;
 		}
 
 		// If the relationship is selected, draw a handle at each control node
