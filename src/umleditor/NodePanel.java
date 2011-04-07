@@ -250,7 +250,9 @@ public class NodePanel extends JPanel
 			}
 			else
 			{
-				parentDiagram.setSelectedObject(associatedNode);
+				boolean deselectOthers = (e.isShiftDown()) ? false : true;
+				System.out.println(deselectOthers);
+				parentDiagram.setSelectedObject(associatedNode, deselectOthers);
 			}
 		}
 
@@ -260,7 +262,9 @@ public class NodePanel extends JPanel
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
-			parentDiagram.setSelectedObject(associatedNode);
+			boolean deselectOthers = (e.isShiftDown()) ? false : true;
+			System.out.println(deselectOthers);
+			parentDiagram.setSelectedObject(associatedNode, deselectOthers);
 		}
 
 		/**
