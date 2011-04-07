@@ -210,6 +210,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		JMenuItem printOption = new JMenuItem("Print...");
 		printOption.setActionCommand("PRINT");
 		printOption.addActionListener(this);
+		printOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
 		fileMenu.add(printOption);
 
 		fileMenu.addSeparator();
