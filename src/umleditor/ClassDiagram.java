@@ -231,31 +231,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void deleteSelectedObjects()
 	{
-		if (currentlySelectedObjects.size() > 1)
+		for (int i = 0; i < currentlySelectedObjects.size(); ++i)
 		{
-			for (int i = 0; i < currentlySelectedObjects.size(); ++i)
-			{
-				ClassNode currentlySelectedObject = (ClassNode) currentlySelectedObjects.get(i);
-
-				ClassNode node = (ClassNode) currentlySelectedObject;
-				removeRelationships(node.getRelationships());
-
-				// Remove the view part
-				NodePanel panelToRemove = node.getNodePanel();
-				view.remove(panelToRemove);
-
-				// need this call so deleting nodes not at edges of screen works properly
-				view.repaint();
-
-				// need this call so deleting nodes at edges of screen works properly
-				view.revalidate();
-
-				listOfNodes.remove(node);
-			}
-			currentlySelectedObjects.clear();
-		}
-		else {
-			ISelectable currentlySelectedObject = currentlySelectedObjects.get(0);
+			ISelectable currentlySelectedObject = currentlySelectedObjects.get(i);
 			if (currentlySelectedObject instanceof ClassNode)
 			{
 				ClassNode node = (ClassNode) currentlySelectedObject;
@@ -290,6 +268,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 				view.repaint(r.getBounds());
 			}
 		}
+		currentlySelectedObjects.clear();
 		parentEditor.setDeleteButtonState(false);
 		this.markAsChanged();
 	}
