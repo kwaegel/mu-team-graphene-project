@@ -50,7 +50,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	private transient RelationshipDragListener m_relationshipDragController;
 
 	// transient fields that will not be encoded when diagram is saved
-	private transient ISelectable currentlySelectedObject;
+	private transient List<ISelectable> currentlySelectedObjects;
 
 	private transient UMLEditor parentEditor;
 	private transient JLayeredPane view;
@@ -78,6 +78,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 
 		listOfNodes = new LinkedList<ClassNode>();
 		listOfRelationships = new LinkedList<RelationshipModel>();
+
+		currentlySelectedObjects = new LinkedList<ISelectable>();
 	}
 
 	/**
@@ -114,6 +116,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			r.addMouseListener(m_relationshipDragController);
 			r.addMouseMotionListener(m_relationshipDragController);
 		}
+
+		currentlySelectedObjects = new LinkedList<ISelectable>();
 	}
 
 	/**
@@ -179,19 +183,23 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	private void attachNodeToDiagram(ClassNode newClassNode)
 	{
 		listOfNodes.add(newClassNode);
-		this.setSelectedObject(newClassNode);
+		this.setSelectedObject(newClassNode, true);
 		this.markAsChanged();
 	}
 
 	/**
 	 * Deselect the currently selected object and disable the delete button.
 	 */
-	private void unselectCurrentObject()
+	private void unselectCurrentObjects()
 	{
-		if (currentlySelectedObject != null)
+		if (currentlySelectedObjects.size() != 0)
 		{
-			currentlySelectedObject.setSelected(false);
-			currentlySelectedObject = null;
+			for (int i = 0; i < currentlySelectedObjects.size(); ++i)
+			{
+				ISelectable currentlySelectedObject = currentlySelectedObjects.get(i);
+				currentlySelectedObject.setSelected(false);
+			}
+			currentlySelectedObjects.clear();
 			parentEditor.setDeleteButtonState(false);
 		}
 	}
@@ -201,14 +209,16 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 * 
 	 * @param selected
 	 */
-	public void setSelectedObject(ISelectable selected)
+	public void setSelectedObject(ISelectable selected, boolean deselectOthers)
 	{
-		if (selected != currentlySelectedObject)
+		if (deselectOthers)
+			unselectCurrentObjects();
+
+		if (!currentlySelectedObjects.contains(selected))
 		{
-			unselectCurrentObject();
-			selected.setSelected(true);
+			currentlySelectedObjects.add(selected);
 		}
-		currentlySelectedObject = selected;
+		selected.setSelected(true);
 
 		// Turn the delete button on if something non-null was selected.
 		parentEditor.setDeleteButtonState(selected != null ? true : false);
@@ -217,46 +227,48 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	}
 
 	/**
-	 * Deletes the selected object. The selected object can either be a {@link ClassNode} or Relationship.
+	 * Deletes the selected objects. The selected object can either be a {@link ClassNode} or Relationship.
 	 */
-	public void deleteSelectedObject()
+	public void deleteSelectedObjects()
 	{
-		if (currentlySelectedObject instanceof ClassNode)
+		for (int i = 0; i < currentlySelectedObjects.size(); ++i)
 		{
-			ClassNode node = (ClassNode) currentlySelectedObject;
-			removeRelationships(node.getRelationships());
-
-			// Remove the view part
-			NodePanel panelToRemove = node.getNodePanel();
-			view.remove(panelToRemove);
-
-			// need this call so deleting nodes not at edges of screen works properly
-			view.repaint();
-
-			// need this call so deleting nodes at edges of screen works properly
-			view.revalidate();
-
-			listOfNodes.remove(node);
-		}
-		else if (currentlySelectedObject instanceof Relationship)
-		{
-			Relationship r = (Relationship) currentlySelectedObject;
-			if (r.isControlPointSelected())
+			ISelectable currentlySelectedObject = currentlySelectedObjects.get(i);
+			if (currentlySelectedObject instanceof ClassNode)
 			{
-				r.removeSelectedControlPoint();
+				ClassNode node = (ClassNode) currentlySelectedObject;
+				removeRelationships(node.getRelationships());
+
+				// Remove the view part
+				NodePanel panelToRemove = node.getNodePanel();
+				view.remove(panelToRemove);
+
+				// need this call so deleting nodes not at edges of screen works properly
+				view.repaint();
+
+				// need this call so deleting nodes at edges of screen works properly
+				view.revalidate();
+
+				listOfNodes.remove(node);
 			}
-			else
+			else if (currentlySelectedObject instanceof Relationship)
 			{
-				// Remove the entire relationship.
-				r.removeFromLinkedNodes();
-				listOfRelationships.remove(r.getModel());
-				view.remove(r);
+				Relationship r = (Relationship) currentlySelectedObject;
+				if (r.isControlPointSelected())
+				{
+					r.removeSelectedControlPoint();
+				}
+				else
+				{
+					// Remove the entire relationship.
+					r.removeFromLinkedNodes();
+					listOfRelationships.remove(r.getModel());
+					view.remove(r);
+				}
+				view.repaint(r.getBounds());
 			}
-			view.repaint(r.getBounds());
 		}
-
-		currentlySelectedObject = null;
-
+		currentlySelectedObjects.clear();
 		parentEditor.setDeleteButtonState(false);
 		this.markAsChanged();
 	}
@@ -283,9 +295,13 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void addRelationship(ClassNode secondNode)
 	{
-		if (currentlySelectedObject instanceof ClassNode)
+		if (currentlySelectedObjects.size() == 1)
 		{
-			addRelationship((ClassNode) currentlySelectedObject, secondNode);
+			ISelectable currentlySelectedObject = currentlySelectedObjects.get(0);
+			if (currentlySelectedObject instanceof ClassNode)
+			{
+				addRelationship((ClassNode) currentlySelectedObject, secondNode);
+			}
 		}
 	}
 
@@ -472,9 +488,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void copyNode()
 	{
-		if (currentlySelectedObject instanceof ClassNode)
+		if (currentlySelectedObjects.size() == 1 && currentlySelectedObjects.get(0) instanceof ClassNode)
 		{
-			parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
+			parentEditor.setCopyNode((ClassNode) currentlySelectedObjects.get(0));
 		}
 	}
 
@@ -483,10 +499,10 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void cutNode()
 	{
-		if (currentlySelectedObject instanceof ClassNode)
+		if (currentlySelectedObjects.size() == 1 && currentlySelectedObjects.get(0) instanceof ClassNode)
 		{
-			parentEditor.setCopyNode((ClassNode) currentlySelectedObject);
-			this.deleteSelectedObject();
+			parentEditor.setCopyNode((ClassNode) currentlySelectedObjects.get(0));
+			this.deleteSelectedObjects();
 		}
 	}
 
@@ -523,17 +539,18 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	@Override
 	public void keyPressed(KeyEvent event)
 	{
-		if (event.getKeyCode() == KeyEvent.VK_DELETE && currentlySelectedObject != null)
+		if (event.getKeyCode() == KeyEvent.VK_DELETE)
 		{
-			this.deleteSelectedObject();
+			this.deleteSelectedObjects();
 		}
 		else if (event.getKeyCode() == KeyEvent.VK_N && !event.isControlDown())
 		{
 			parentEditor.toggleAddNewClassMode();
 		}
-		else if (event.getKeyCode() == KeyEvent.VK_E && currentlySelectedObject instanceof ClassNode)
+		else if (event.getKeyCode() == KeyEvent.VK_E && currentlySelectedObjects.size() == 1
+				&& currentlySelectedObjects.get(0) instanceof ClassNode)
 		{
-			ClassNode node = (ClassNode) currentlySelectedObject;
+			ClassNode node = (ClassNode) currentlySelectedObjects.get(0);
 			node.getNodePanel().displayEditPanel();
 		}
 	}
@@ -558,13 +575,15 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 * @param movePoint
 	 *            - place to move the panel's upper left-hand corner to
 	 */
-	public void movePanel(NodePanel nodePanelToMove, Point movePoint)
+	public void moveSelectedNodes(Point movePoint)
 	{
-		this.setSelectedObject(nodePanelToMove.getClassNode());
-
-		int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
-		int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
-		nodePanelToMove.resetBounds(new Point(newPosX, newPosY));
+		for (int i = 0; i < currentlySelectedObjects.size(); ++i)
+		{
+			NodePanel nodePanelToMove = ((ClassNode) currentlySelectedObjects.get(i)).getNodePanel();
+			int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
+			int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
+			nodePanelToMove.resetBounds(new Point(newPosX, newPosY));
+		}
 
 		// call to revalidate makes node redraw.
 		view.revalidate();
@@ -584,7 +603,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	@Override
 	public void focusGained(FocusEvent e)
 	{
-		if (currentlySelectedObject != null)
+		if (!currentlySelectedObjects.isEmpty())
 		{
 			parentEditor.setDeleteButtonState(true);
 		}
@@ -623,7 +642,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			}
 			else
 			{
-				unselectCurrentObject();
+				unselectCurrentObjects();
 			}
 		}
 	}
