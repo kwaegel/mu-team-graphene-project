@@ -13,11 +13,6 @@ public class RelationshipDragListener extends MouseAdapter
 {
 	private ClassDiagram m_diagram;
 
-	/**
-	 * Cache of the last selected relationship for faster intersection testing.
-	 */
-	private Relationship m_lastSelectedRelationship;
-
 	RelationshipDragListener(ClassDiagram diagram)
 	{
 		m_diagram = diagram;
@@ -52,17 +47,9 @@ public class RelationshipDragListener extends MouseAdapter
 		Point clickPoint = e.getPoint();
 		clickPoint = SwingUtilities.convertPoint(source, clickPoint, source.getParent());
 
-		if (m_lastSelectedRelationship != null && m_lastSelectedRelationship != source)
-		{
-			m_lastSelectedRelationship.setSelected(false, null);
-			m_lastSelectedRelationship.repaint();
-		}
-
+		m_diagram.setSelectedObject(source, true);
 		source.setSelected(true, clickPoint);
 		source.repaint();
-		m_diagram.setSelectedObject(source);
-
-		m_lastSelectedRelationship = source;
 	}
 
 	@Override
