@@ -312,8 +312,8 @@ public class JUnitTests
 				.equals(rel.getModel()));
 
 		// Delete node1
-		testDiagram.setSelectedObject(node1);
-		testDiagram.deleteSelectedObject();
+		testDiagram.setSelectedObject(node1, true);
+		testDiagram.deleteSelectedObjects();
 
 		assertTrue("Error: node2 should have 1 relationship", node2.getRelationships().size() == 1);
 		assertTrue("Error: relationship was removed from wrong node", node3.getRelationships().size() == 1);
@@ -321,8 +321,8 @@ public class JUnitTests
 				node2.getRelationships().get(0).equals(rel2.getModel()));
 
 		// Delete relationship between node2 and node3
-		testDiagram.setSelectedObject(rel2);
-		testDiagram.deleteSelectedObject();
+		testDiagram.setSelectedObject(rel2, true);
+		testDiagram.deleteSelectedObjects();
 
 		assertTrue("Error: relationship 2 was not deleted from node2", node2.getRelationships().size() == 0);
 		assertTrue("Error: relationship 2 was not deleted from node3", node3.getRelationships().size() == 0);
