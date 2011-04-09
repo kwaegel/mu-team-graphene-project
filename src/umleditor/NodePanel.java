@@ -4,13 +4,17 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
@@ -18,8 +22,8 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * This is the visible representation of a class that appears in the UML Editor. Contains no information about the class
- * itself, but has a link to the {@link ClassNode} that does. Displays the information in this {@link ClassNode} in the appropriate
- * format. Handles interactions between the user and the class.
+ * itself, but has a link to the {@link ClassNode} that does. Displays the information in this {@link ClassNode} in the
+ * appropriate format. Handles interactions between the user and the class.
  * 
  */
 public class NodePanel extends JPanel
@@ -41,8 +45,8 @@ public class NodePanel extends JPanel
 	private static int DEFAULT_FIELD_HEIGHT = 16;
 
 	/**
-	 * {@link ClassNode} associated with this NodePanel. The NodePanel will display this {@link ClassNode}'s name, methods and
-	 * attributes.
+	 * {@link ClassNode} associated with this NodePanel. The NodePanel will display this {@link ClassNode}'s name,
+	 * methods and attributes.
 	 */
 	private ClassNode associatedNode;
 
@@ -230,9 +234,10 @@ public class NodePanel extends JPanel
 	{
 		view.add(this, "external", JLayeredPane.DEFAULT_LAYER);
 	}
-	
+
 	/**
 	 * Returns whether or not this panel was is selected
+	 * 
 	 * @return <code>true</code> if is selected, <code>false</code> if not.
 	 */
 	public boolean isSelected()
@@ -282,8 +287,75 @@ public class NodePanel extends JPanel
 			if (comp instanceof NodePanel)
 			{
 				ClassNode targetNode = ((NodePanel) comp).getClassNode();
-				parentDiagram.addRelationship(targetNode);
+				if (e.isPopupTrigger())
+				{
+					JPopupMenu nodePopup = new NodePanelPopup();
+					NodePanel selectedPanel = targetNode.getNodePanel();
+					nodePopup.show(selectedPanel, (int)selectedPanel.getMousePosition().getX(), (int) selectedPanel.getMousePosition().getY());
+				}
+				else
+				{
+					parentDiagram.addRelationship(targetNode);
+				}
 			}
 		}
 	}
+
+	private class NodePanelPopup extends JPopupMenu implements ActionListener
+	{
+		private static final long serialVersionUID = 8918402885332092962L;
+
+		public NodePanelPopup()
+		{
+			super();
+			// set up
+			JMenuItem cutOption = new JMenuItem("Cut");
+			cutOption.addActionListener(this);
+			cutOption.setActionCommand("Cut");
+			this.add(cutOption);
+
+			JMenuItem copyOption = new JMenuItem("Copy");
+			copyOption.addActionListener(this);
+			copyOption.setActionCommand("Copy");
+			this.add(copyOption);
+
+			JMenuItem editOption = new JMenuItem("Edit");
+			editOption.addActionListener(this);
+			editOption.setActionCommand("Edit");
+			this.add(editOption);
+
+			JMenuItem deleteOption = new JMenuItem("Delete");
+			deleteOption.addActionListener(this);
+			deleteOption.setActionCommand("Delete");
+			this.add(deleteOption);
+		}
+
+		@Override
+		public void show(Component invoker, int x, int y)
+		{
+			super.show(invoker, x, y);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getActionCommand() == "Cut")
+			{
+				parentDiagram.cutNode();
+			}
+			else if (e.getActionCommand() == "Copy")
+			{
+				parentDiagram.copyNode();
+			}
+			else if (e.getActionCommand() == "Edit")
+			{
+				displayEditPanel();
+			}
+			else if (e.getActionCommand() == "Delete")
+			{
+				parentDiagram.deleteSelectedObjects();
+			}
+		}
+	}
+
 }
