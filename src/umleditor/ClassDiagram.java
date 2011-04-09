@@ -231,12 +231,14 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void deleteSelectedObjects()
 	{
-		for (int i = 0; i < currentlySelectedObjects.size(); ++i)
+
+		ISelectable firstSelectedObject = currentlySelectedObjects.get(0);
+		if (firstSelectedObject instanceof ClassNode)
 		{
-			ISelectable currentlySelectedObject = currentlySelectedObjects.get(i);
-			if (currentlySelectedObject instanceof ClassNode)
+			// multiple nodes may be selected
+			for (int i = 0; i < currentlySelectedObjects.size(); ++i)
 			{
-				ClassNode node = (ClassNode) currentlySelectedObject;
+				ClassNode node = (ClassNode) currentlySelectedObjects.get(i);
 				removeRelationships(node.getRelationships());
 
 				// Remove the view part
@@ -251,25 +253,28 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 
 				listOfNodes.remove(node);
 			}
-			else if (currentlySelectedObject instanceof Relationship)
-			{
-				Relationship r = (Relationship) currentlySelectedObject;
-				if (r.isControlPointSelected())
-				{
-					r.removeSelectedControlPoint();
-				}
-				else
-				{
-					// Remove the entire relationship.
-					r.removeFromLinkedNodes();
-					listOfRelationships.remove(r.getModel());
-					view.remove(r);
-				}
-				view.repaint(r.getBounds());
-			}
+			currentlySelectedObjects.clear();
+			parentEditor.setDeleteButtonState(false);
 		}
-		currentlySelectedObjects.clear();
-		parentEditor.setDeleteButtonState(false);
+		else if (firstSelectedObject instanceof Relationship)
+		{
+			Relationship r = (Relationship) firstSelectedObject;
+			if (r.isControlPointSelected())
+			{
+				r.removeSelectedControlPoint();
+			}
+			else
+			{
+				// Remove the entire relationship.
+				r.removeFromLinkedNodes();
+				listOfRelationships.remove(r.getModel());
+				view.remove(r);
+				// remove the selected object
+				currentlySelectedObjects.clear();
+				parentEditor.setDeleteButtonState(false);
+			}
+			view.repaint(r.getBounds());
+		}
 		this.markAsChanged();
 	}
 
@@ -300,7 +305,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			ISelectable currentlySelectedObject = currentlySelectedObjects.get(0);
 			if (currentlySelectedObject instanceof ClassNode)
 			{
+				System.out.println("Adding relationship between selected " + ((ClassNode) currentlySelectedObject).getName() + " and other "  + secondNode.getName());
 				addRelationship((ClassNode) currentlySelectedObject, secondNode);
+				
 			}
 		}
 	}

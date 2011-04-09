@@ -1,5 +1,6 @@
 package umleditor;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -53,14 +54,34 @@ public class NodeDragListener extends MouseInputAdapter
 	public void mousePressed(MouseEvent e)
 	{
 		// forward event to node panel
-		panel.dispatchEvent(e);
+		if (panel.isSelected())
+		{
+			// ensure that dragging an already selected nodes works as expected
+			MouseEvent e2 = new MouseEvent((Component) e.getSource(), e.getID(), e.getWhen(),
+					MouseEvent.SHIFT_DOWN_MASK, e.getX(), e.getY(), e.getClickCount(), e.isPopupTrigger());
+			panel.dispatchEvent(e2);
+		}
+		else
+		{
+			panel.dispatchEvent(e);
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
+		// this prevents bug where releasing a nodePanel after dragging creates a relationship
+		// with any node in the upper left-hand corner, if one happens to be there.
+		// this bug occurred because the getComponentUnder method in class diagram
+		// (itself a workaround for a swing bug) depends on the location of the released-event's source,
+		// but source was different if released event came from drag label (here) or the
+		// NodePanel itself.
+		// The following line ensures the panel is always the source while preserving
+		// all other info about the event
+		MouseEvent e2 = new MouseEvent(panel, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(),
+				e.getClickCount(), e.isPopupTrigger());
 		// forward event to node panel
-		panel.dispatchEvent(e);
+		panel.dispatchEvent(e2);
 	}
 
 	@Override
