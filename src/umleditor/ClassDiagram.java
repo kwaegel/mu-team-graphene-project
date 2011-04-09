@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -23,7 +25,9 @@ import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
@@ -520,18 +524,30 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void pasteNode()
 	{
+		Point pastePosition;
+		if (view.hasFocus())
+		{
+			pastePosition = view.getMousePosition();
+		}
+		else
+		{
+			pastePosition = new Point((parentEditor.getWidth() - 100) / 2, (parentEditor.getHeight() - 140) / 2);
+		}
+		pasteAtLoc(pastePosition);
+	}
+
+	/**
+	 * Pastes a copy of the given node at the given location. Internal convenience method also useful for pasting from
+	 * popup menu
+	 * 
+	 * @param copy
+	 * @param pastePosition
+	 */
+	private void pasteAtLoc(Point pastePosition)
+	{
 		ClassNode copy = parentEditor.getCopyNode();
 		if (copy != null)
 		{
-			Point pastePosition;
-			if (view.hasFocus())
-			{
-				pastePosition = view.getMousePosition();
-			}
-			else
-			{
-				pastePosition = new Point((parentEditor.getWidth() - 100) / 2, (parentEditor.getHeight() - 140) / 2);
-			}
 			ClassNode nodeCopy = new ClassNode(copy);
 			initNodePanel(pastePosition, nodeCopy);
 			attachNodeToDiagram(nodeCopy);
@@ -624,34 +640,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		// do nothing
 	}
 
-	/**
-	 * This class listens for clicks to an empty part of the class diagram and creates a new {@link ClassNode} if the
-	 * new node button is enabled.
-	 */
-	private class MouseClickListener extends MouseAdapter
-	{
-
-		@Override
-		public void mouseReleased(MouseEvent arg0)
-		{
-			// mouse clicked in the view, not on any node
-			// check to see if adding a class is enabled
-			if (parentEditor.isAddNewClassModeEnabled())
-			{
-				// add new class mode enabled, so add a new class
-				createNode(arg0.getPoint());
-				if (arg0.isShiftDown())
-				{
-					parentEditor.enableAddNewClassMode();
-				}
-			}
-			else
-			{
-				unselectCurrentObjects();
-			}
-		}
-	}
-
 	@Override
 	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException
 	{
@@ -665,4 +653,91 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 
 		return PAGE_EXISTS;
 	}
+
+	/**
+	 * This class listens for clicks to an empty part of the class diagram and creates a new {@link ClassNode} if the
+	 * new node button is enabled.
+	 */
+	private class MouseClickListener extends MouseAdapter
+	{
+		@Override
+		public void mouseReleased(MouseEvent arg0)
+		{
+			if (arg0.isPopupTrigger())
+			{
+				JPopupMenu diagramPopup = new DiagramBackgroundPopup();
+				diagramPopup.show(arg0.getComponent(), arg0.getX(), arg0.getY());
+			}
+			else
+			{
+				// mouse clicked in the view, not on any node
+				// check to see if adding a class is enabled
+				if (parentEditor.isAddNewClassModeEnabled())
+				{
+					// add new class mode enabled, so add a new class
+					createNode(arg0.getPoint());
+					if (arg0.isShiftDown())
+					{
+						parentEditor.enableAddNewClassMode();
+					}
+				}
+				else
+				{
+					unselectCurrentObjects();
+				}
+			}
+		}
+	}
+
+	private class DiagramBackgroundPopup extends JPopupMenu implements ActionListener
+	{
+		private static final long serialVersionUID = 8918402885332092962L;
+
+		private Point originalClickLocation;
+
+		public DiagramBackgroundPopup()
+		{
+			super();
+			// set up
+			JMenuItem addClassOption = new JMenuItem("Add Class");
+			addClassOption.addActionListener(this);
+			addClassOption.setActionCommand("Add Class");
+			this.add(addClassOption);
+
+			JMenuItem pasteOption = new JMenuItem("Paste");
+			pasteOption.addActionListener(this);
+			pasteOption.setActionCommand("Paste");
+			this.add(pasteOption);
+
+			JMenuItem closeOption = new JMenuItem("Close");
+			closeOption.addActionListener(this);
+			closeOption.setActionCommand("Close");
+			this.add(closeOption);
+		}
+
+		@Override
+		public void show(Component invoker, int x, int y)
+		{
+			super.show(invoker, x, y);
+			originalClickLocation = new Point(x, y);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getActionCommand() == "Add Class")
+			{
+				createNode(originalClickLocation);
+			}
+			else if (e.getActionCommand() == "Paste")
+			{
+				pasteAtLoc(originalClickLocation);
+			}
+			else if (e.getActionCommand() == "Close")
+			{
+				parentEditor.closeCurrentTab();
+			}
+		}
+	}
+
 }
