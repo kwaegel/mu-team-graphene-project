@@ -257,12 +257,6 @@ public class NodePanel extends JPanel
 			{
 				displayEditPanel();
 			}
-			/*else
-			{
-				boolean deselectOthers = (e.isShiftDown()) ? false : true;
-				System.out.println(deselectOthers);
-				parentDiagram.setSelectedObject(associatedNode, deselectOthers);
-			}*/
 		}
 
 		/**
@@ -272,7 +266,6 @@ public class NodePanel extends JPanel
 		public void mousePressed(MouseEvent e)
 		{
 			boolean deselectOthers = (e.isShiftDown()) ? false : true;
-			System.out.println(deselectOthers);
 			parentDiagram.setSelectedObject(associatedNode, deselectOthers);
 		}
 
@@ -289,7 +282,6 @@ public class NodePanel extends JPanel
 			if (comp instanceof NodePanel)
 			{
 				ClassNode targetNode = ((NodePanel) comp).getClassNode();
-				System.out.println("target node is " + targetNode.getName());
 				parentDiagram.addRelationship(targetNode);
 			}
 		}

@@ -305,9 +305,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			ISelectable currentlySelectedObject = currentlySelectedObjects.get(0);
 			if (currentlySelectedObject instanceof ClassNode)
 			{
-				System.out.println("Adding relationship between selected " + ((ClassNode) currentlySelectedObject).getName() + " and other "  + secondNode.getName());
 				addRelationship((ClassNode) currentlySelectedObject, secondNode);
-				
 			}
 		}
 	}
