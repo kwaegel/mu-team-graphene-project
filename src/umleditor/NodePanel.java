@@ -230,6 +230,15 @@ public class NodePanel extends JPanel
 	{
 		view.add(this, "external", JLayeredPane.DEFAULT_LAYER);
 	}
+	
+	/**
+	 * Returns whether or not this panel was is selected
+	 * @return <code>true</code> if is selected, <code>false</code> if not.
+	 */
+	public boolean isSelected()
+	{
+		return (this.getBackground().equals(Color.pink));
+	}
 
 	/**
 	 * Class to handle {@link ClassNode} selection and adding relationships.
@@ -248,12 +257,12 @@ public class NodePanel extends JPanel
 			{
 				displayEditPanel();
 			}
-			else
+			/*else
 			{
 				boolean deselectOthers = (e.isShiftDown()) ? false : true;
 				System.out.println(deselectOthers);
 				parentDiagram.setSelectedObject(associatedNode, deselectOthers);
-			}
+			}*/
 		}
 
 		/**
@@ -280,6 +289,7 @@ public class NodePanel extends JPanel
 			if (comp instanceof NodePanel)
 			{
 				ClassNode targetNode = ((NodePanel) comp).getClassNode();
+				System.out.println("target node is " + targetNode.getName());
 				parentDiagram.addRelationship(targetNode);
 			}
 		}
