@@ -8,7 +8,6 @@ import com.thoughtworks.xstream.XStream;
  */
 public class FileUtils
 {
-
 	/**
 	 * 
 	 * @return an {@link XStream} object to be used of reading and writing.

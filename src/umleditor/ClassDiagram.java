@@ -589,10 +589,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	}
 
 	/**
-	 * Moves a NodePanel in the UML Diagram. Called when the NodeDragListener gets a dragged event for a node panel.
+	 * Moves NodePanel(s) in the UML Diagram. Called when the NodeDragListener gets a dragged event for a node panel.
 	 * 
-	 * @param nodePanelToMove
-	 *            - panel whose position in the diagram should be changed
 	 * @param movePoint
 	 *            - place to move the panel's upper left-hand corner to
 	 */
@@ -640,7 +638,10 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		// do nothing
 	}
 
-	@Override
+	/**
+	 * Prints the current visible screen. If part of the
+	 * diagram is offscreen, it will not be printed. 
+	 */
 	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException
 	{
 		Graphics2D g2d = (Graphics2D) arg0;
@@ -689,6 +690,10 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		}
 	}
 
+	/**
+	 * Creates a popup menu when the user right-clicks on the background
+	 * of a class diagram
+	 */
 	private class DiagramBackgroundPopup extends JPopupMenu implements ActionListener
 	{
 		private static final long serialVersionUID = 8918402885332092962L;
