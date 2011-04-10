@@ -236,7 +236,7 @@ public class NodePanel extends JPanel
 	}
 
 	/**
-	 * Returns whether or not this panel was is selected
+	 * Returns whether or not this panel is selected
 	 * 
 	 * @return <code>true</code> if is selected, <code>false</code> if not.
 	 */
@@ -301,6 +301,9 @@ public class NodePanel extends JPanel
 		}
 	}
 
+	/**
+	 * Creates a popup menu when the user right-clicks on the node panel
+	 */
 	private class NodePanelPopup extends JPopupMenu implements ActionListener
 	{
 		private static final long serialVersionUID = 8918402885332092962L;
