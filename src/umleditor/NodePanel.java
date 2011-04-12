@@ -270,7 +270,7 @@ public class NodePanel extends JPanel
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
-			boolean deselectOthers = (e.isShiftDown()) ? false : true;
+			boolean deselectOthers = (e.isControlDown()) ? false : true;
 			parentDiagram.setSelectedObject(associatedNode, deselectOthers);
 		}
 
