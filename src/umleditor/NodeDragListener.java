@@ -58,7 +58,7 @@ public class NodeDragListener extends MouseInputAdapter
 		{
 			// ensure that dragging an already selected nodes works as expected
 			MouseEvent e2 = new MouseEvent((Component) e.getSource(), e.getID(), e.getWhen(),
-					MouseEvent.SHIFT_DOWN_MASK, e.getX(), e.getY(), e.getClickCount(), e.isPopupTrigger());
+					MouseEvent.CTRL_DOWN_MASK, e.getX(), e.getY(), e.getClickCount(), e.isPopupTrigger());
 			panel.dispatchEvent(e2);
 		}
 		else
