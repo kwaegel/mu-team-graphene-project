@@ -6,8 +6,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.print.PrinterException;
@@ -24,14 +22,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -49,7 +43,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	private HelpPanel helpPanel;
 
-	private JMenuBar menuBar;
+	private EditorMenuBar menuBar;
 	private JToolBar toolBar;
 
 	private JButton deleteButton;
@@ -145,130 +139,19 @@ public class UMLEditor extends JFrame implements ActionListener
 	 * @param enabled
 	 *            - whether to enable or disable the delete button
 	 */
-	public void setDeleteButtonState(boolean enabled)
+	public void reflectSelectedState(boolean enabled)
 	{
 		deleteButton.setEnabled(enabled);
+		menuBar.toggleCopyCutMode(enabled);
 	}
 
 	/**
-	 * Sets up the menu bar and menus
+	 * Sets up the menu bar
 	 */
 	private void setUpMenuBar()
 	{
-		menuBar = new JMenuBar();
-
-		createFileMenu();
-
-		createEditMenu();
-
-		createHelpMenu();
-
+		menuBar = new EditorMenuBar(this);
 		this.add(menuBar, BorderLayout.NORTH);
-
-	}
-
-	/**
-	 * Sets up and attaches the file menu. File menu contains New, Load, Close, Save, Save As, and Exit
-	 */
-	private void createFileMenu()
-	{
-		JMenu fileMenu = new JMenu("File");
-
-		JMenuItem newOption = new JMenuItem("New");
-		newOption.setActionCommand("NEW");
-		newOption.addActionListener(this);
-		newOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-		fileMenu.add(newOption);
-
-		JMenuItem loadOption = new JMenuItem("Load...");
-		loadOption.setActionCommand("LOAD");
-		loadOption.addActionListener(this);
-		loadOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
-		fileMenu.add(loadOption);
-
-		JMenuItem closeOption = new JMenuItem("Close");
-		closeOption.setActionCommand("CLOSE");
-		closeOption.addActionListener(this);
-		closeOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
-		fileMenu.add(closeOption);
-
-		fileMenu.addSeparator();
-
-		JMenuItem saveOption = new JMenuItem("Save");
-		saveOption.setActionCommand("SAVE");
-		saveOption.addActionListener(this);
-		saveOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-		fileMenu.add(saveOption);
-
-		JMenuItem saveAsOption = new JMenuItem("Save As...");
-		saveAsOption.setActionCommand("SAVEAS");
-		saveAsOption.addActionListener(this);
-		fileMenu.add(saveAsOption);
-
-		fileMenu.addSeparator();
-
-		JMenuItem printOption = new JMenuItem("Print...");
-		printOption.setActionCommand("PRINT");
-		printOption.addActionListener(this);
-		printOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
-		fileMenu.add(printOption);
-
-		fileMenu.addSeparator();
-
-		JMenuItem exitOption = new JMenuItem("Exit");
-		exitOption.setActionCommand("EXIT");
-		exitOption.addActionListener(this);
-		exitOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
-		fileMenu.add(exitOption);
-
-		menuBar.add(fileMenu);
-	}
-
-	/**
-	 * Sets up and attaches the edit menu. Edit menu contains Cut, Copy and Paste
-	 */
-	private void createEditMenu()
-	{
-		JMenu editMenu = new JMenu("Edit");
-
-		JMenuItem cutOption = new JMenuItem("Cut");
-		cutOption.setActionCommand("CUT");
-		cutOption.addActionListener(this);
-		cutOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
-		editMenu.add(cutOption);
-
-		JMenuItem copyOption = new JMenuItem("Copy");
-		copyOption.setActionCommand("COPY");
-		copyOption.addActionListener(this);
-		copyOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
-		editMenu.add(copyOption);
-
-		JMenuItem pasteOption = new JMenuItem("Paste");
-		pasteOption.setActionCommand("PASTE");
-		pasteOption.addActionListener(this);
-		pasteOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
-		editMenu.add(pasteOption);
-
-		menuBar.add(editMenu);
-	}
-
-	private void createHelpMenu()
-	{
-		JMenu helpMenu = new JMenu("Help");
-
-		JMenuItem helpOption = new JMenuItem("Help Contents  ");
-		helpOption.setActionCommand("HELP");
-		helpOption.addActionListener(this);
-		helpOption.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-		helpMenu.add(helpOption);
-		helpMenu.addSeparator();
-
-		JMenuItem aboutOption = new JMenuItem("About");
-		aboutOption.setActionCommand("ABOUT");
-		aboutOption.addActionListener(this);
-		helpMenu.add(aboutOption);
-
-		menuBar.add(helpMenu);
 	}
 
 	/**
@@ -383,6 +266,7 @@ public class UMLEditor extends JFrame implements ActionListener
 			addClassButton.setEnabled(true);
 			initialDiagram.requestFocusOnView();
 		}
+		menuBar.toggleDiagramBasedMenuItems(true);
 		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener,
 				"Unsaved Diagram"));
 	}
@@ -409,7 +293,8 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "DELETE")
 		{
 			ClassDiagram currentDiagram = getCurrentDiagram();
-			currentDiagram.deleteSelectedObjects();
+			if (currentDiagram != null)
+				currentDiagram.deleteSelectedObjects();
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{
@@ -551,6 +436,8 @@ public class UMLEditor extends JFrame implements ActionListener
 			if (classDiagrams.isEmpty())
 			{
 				addClassButton.setEnabled(false);
+				deleteButton.setEnabled(false);
+				menuBar.toggleDiagramBasedMenuItems(false);
 			}
 			return (true);
 		}
@@ -565,8 +452,12 @@ public class UMLEditor extends JFrame implements ActionListener
 	private ClassDiagram getCurrentDiagram()
 	{
 		int currentIndex = tabbedPane.getSelectedIndex();
-		ClassDiagram openDiagram = classDiagrams.get(currentIndex);
-		return (openDiagram);
+		if (!classDiagrams.isEmpty())
+		{
+			ClassDiagram openDiagram = classDiagrams.get(currentIndex);
+			return (openDiagram);
+		}
+		return (null);
 	}
 
 	/**
@@ -588,6 +479,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	public void setCopyNode(ClassNode nodeToCopy)
 	{
 		copyNode = new ClassNode(nodeToCopy);
+		menuBar.enablePaste();
 	}
 
 	/**

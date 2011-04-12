@@ -62,6 +62,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	private transient File fileSavedTo;
 	private transient boolean changedSinceSaved;
 
+	private transient DiagramBackgroundPopup m_diagramPopup;
+
 	/**
 	 * Constructs a new ClassDiagram with the given parent, whose view is inside the given scroll pane.
 	 * 
@@ -84,6 +86,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		listOfRelationships = new LinkedList<RelationshipModel>();
 
 		currentlySelectedObjects = new LinkedList<ISelectable>();
+
+		m_diagramPopup = new DiagramBackgroundPopup();
+		m_diagramPopup.setPasteOptionState(false);
 	}
 
 	/**
@@ -122,6 +127,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		}
 
 		currentlySelectedObjects = new LinkedList<ISelectable>();
+
+		m_diagramPopup = new DiagramBackgroundPopup();
+		m_diagramPopup.setPasteOptionState(false);
 	}
 
 	/**
@@ -204,7 +212,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 				currentlySelectedObject.setSelected(false);
 			}
 			currentlySelectedObjects.clear();
-			parentEditor.setDeleteButtonState(false);
+			parentEditor.reflectSelectedState(false);
 		}
 	}
 
@@ -225,7 +233,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		selected.setSelected(true);
 
 		// Turn the delete button on if something non-null was selected.
-		parentEditor.setDeleteButtonState(selected != null ? true : false);
+		parentEditor.reflectSelectedState(selected != null ? true : false);
 
 		parentEditor.disableAddNewClassMode();
 	}
@@ -235,51 +243,53 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void deleteSelectedObjects()
 	{
-
-		ISelectable firstSelectedObject = currentlySelectedObjects.get(0);
-		if (firstSelectedObject instanceof ClassNode)
+		if (!currentlySelectedObjects.isEmpty())
 		{
-			// multiple nodes may be selected
-			for (int i = 0; i < currentlySelectedObjects.size(); ++i)
+			ISelectable firstSelectedObject = currentlySelectedObjects.get(0);
+			if (firstSelectedObject instanceof ClassNode)
 			{
-				ClassNode node = (ClassNode) currentlySelectedObjects.get(i);
-				removeRelationships(node.getRelationships());
+				// multiple nodes may be selected
+				for (int i = 0; i < currentlySelectedObjects.size(); ++i)
+				{
+					ClassNode node = (ClassNode) currentlySelectedObjects.get(i);
+					removeRelationships(node.getRelationships());
 
-				// Remove the view part
-				NodePanel panelToRemove = node.getNodePanel();
-				view.remove(panelToRemove);
+					// Remove the view part
+					NodePanel panelToRemove = node.getNodePanel();
+					view.remove(panelToRemove);
 
-				// need this call so deleting nodes not at edges of screen works properly
-				view.repaint();
+					// need this call so deleting nodes not at edges of screen works properly
+					view.repaint();
 
-				// need this call so deleting nodes at edges of screen works properly
-				view.revalidate();
+					// need this call so deleting nodes at edges of screen works properly
+					view.revalidate();
 
-				listOfNodes.remove(node);
-			}
-			currentlySelectedObjects.clear();
-			parentEditor.setDeleteButtonState(false);
-		}
-		else if (firstSelectedObject instanceof Relationship)
-		{
-			Relationship r = (Relationship) firstSelectedObject;
-			if (r.isControlPointSelected())
-			{
-				r.removeSelectedControlPoint();
-			}
-			else
-			{
-				// Remove the entire relationship.
-				r.removeFromLinkedNodes();
-				listOfRelationships.remove(r.getModel());
-				view.remove(r);
-				// remove the selected object
+					listOfNodes.remove(node);
+				}
 				currentlySelectedObjects.clear();
-				parentEditor.setDeleteButtonState(false);
+				parentEditor.reflectSelectedState(false);
 			}
-			view.repaint(r.getBounds());
+			else if (firstSelectedObject instanceof Relationship)
+			{
+				Relationship r = (Relationship) firstSelectedObject;
+				if (r.isControlPointSelected())
+				{
+					r.removeSelectedControlPoint();
+				}
+				else
+				{
+					// Remove the entire relationship.
+					r.removeFromLinkedNodes();
+					listOfRelationships.remove(r.getModel());
+					view.remove(r);
+					// remove the selected object
+					currentlySelectedObjects.clear();
+					parentEditor.reflectSelectedState(false);
+				}
+				view.repaint(r.getBounds());
+			}
+			this.markAsChanged();
 		}
-		this.markAsChanged();
 	}
 
 	/**
@@ -497,9 +507,10 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void copyNode()
 	{
-		if (currentlySelectedObjects.size() == 1 && currentlySelectedObjects.get(0) instanceof ClassNode)
+		if (canCopy())
 		{
 			parentEditor.setCopyNode((ClassNode) currentlySelectedObjects.get(0));
+			m_diagramPopup.setPasteOptionState(true);
 		}
 	}
 
@@ -508,11 +519,16 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void cutNode()
 	{
-		if (currentlySelectedObjects.size() == 1 && currentlySelectedObjects.get(0) instanceof ClassNode)
+		copyNode();
+		if (canCopy())
 		{
-			parentEditor.setCopyNode((ClassNode) currentlySelectedObjects.get(0));
 			this.deleteSelectedObjects();
 		}
+	}
+
+	private boolean canCopy()
+	{
+		return (currentlySelectedObjects.size() == 1 && currentlySelectedObjects.get(0) instanceof ClassNode);
 	}
 
 	/**
@@ -624,11 +640,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	{
 		if (!currentlySelectedObjects.isEmpty())
 		{
-			parentEditor.setDeleteButtonState(true);
+			parentEditor.reflectSelectedState(true);
 		}
 		else
 		{
-			parentEditor.setDeleteButtonState(false);
+			parentEditor.reflectSelectedState(false);
 		}
 	}
 
@@ -639,8 +655,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	}
 
 	/**
-	 * Prints the current visible screen. If part of the
-	 * diagram is offscreen, it will not be printed. 
+	 * Prints the current visible screen. If part of the diagram is offscreen, it will not be printed.
 	 */
 	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException
 	{
@@ -666,8 +681,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		{
 			if (arg0.isPopupTrigger())
 			{
-				JPopupMenu diagramPopup = new DiagramBackgroundPopup();
-				diagramPopup.show(arg0.getComponent(), arg0.getX(), arg0.getY());
+				m_diagramPopup.show(arg0.getComponent(), arg0.getX(), arg0.getY());
 			}
 			else
 			{
@@ -691,14 +705,15 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	}
 
 	/**
-	 * Creates a popup menu when the user right-clicks on the background
-	 * of a class diagram
+	 * Creates a popup menu when the user right-clicks on the background of a class diagram
 	 */
 	private class DiagramBackgroundPopup extends JPopupMenu implements ActionListener
 	{
 		private static final long serialVersionUID = 8918402885332092962L;
 
 		private Point originalClickLocation;
+
+		private JMenuItem pasteOption;
 
 		public DiagramBackgroundPopup()
 		{
@@ -709,7 +724,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			addClassOption.setActionCommand("Add Class");
 			this.add(addClassOption);
 
-			JMenuItem pasteOption = new JMenuItem("Paste");
+			pasteOption = new JMenuItem("Paste");
 			pasteOption.addActionListener(this);
 			pasteOption.setActionCommand("Paste");
 			this.add(pasteOption);
@@ -718,6 +733,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			closeOption.addActionListener(this);
 			closeOption.setActionCommand("Close");
 			this.add(closeOption);
+		}
+
+		public void setPasteOptionState(boolean enabled)
+		{
+			pasteOption.setEnabled(enabled);
 		}
 
 		@Override
