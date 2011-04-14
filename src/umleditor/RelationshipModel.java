@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import umleditor.Relationship.RelationshipType;
@@ -70,6 +71,16 @@ public class RelationshipModel
 		m_secondNodeOffset = calculateOffset(m_points.get(m_points.size() - 1), m_secondNode.getPanelBounds());
 	}
 
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param otherModel
+	 */
+	public RelationshipModel(RelationshipModel otherModel)
+	{
+		setModelState(otherModel);
+	}
+
 	/** Private Helper Methods **/
 
 	/**
@@ -115,6 +126,41 @@ public class RelationshipModel
 	}
 
 	/** Public Methods **/
+
+	/**
+	 * Identical to the copy constructor, but can be used on an existing model.
+	 */
+	public void setModelState(RelationshipModel otherModel)
+	{
+		m_type = otherModel.m_type;
+
+		m_firstNode = otherModel.m_firstNode;
+		m_secondNode = otherModel.m_secondNode;
+		m_relationship = otherModel.m_relationship;
+
+		m_firstNodeOffset = new Point(otherModel.m_firstNodeOffset);
+		m_secondNodeOffset = new Point(otherModel.m_secondNodeOffset);
+		m_points = new ArrayList<Point>(otherModel.m_points);
+
+		m_relationship.rebuildAfterModelChange();
+	}
+
+	/**
+	 * Switch the direction of the arrow.
+	 */
+	public void reverse()
+	{
+		Collections.reverse(m_points);
+		ClassNode temp = m_firstNode;
+		m_firstNode = m_secondNode;
+		m_secondNode = temp;
+
+		Point tempOffset = m_firstNodeOffset;
+		m_firstNodeOffset = m_secondNodeOffset;
+		m_secondNodeOffset = tempOffset;
+
+		m_relationship.rebuildAfterModelChange();
+	}
 
 	/**
 	 * Recalculate the end points of the relationship path, based on the previously stored offsets. This allows the
@@ -172,7 +218,8 @@ public class RelationshipModel
 
 	public void setType(RelationshipType type)
 	{
-		this.m_type = type;
+		m_type = type;
+		m_relationship.rebuildAfterModelChange();
 	}
 
 	public List<Point> getPoints()

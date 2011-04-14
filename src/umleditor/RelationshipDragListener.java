@@ -32,7 +32,7 @@ public class RelationshipDragListener extends MouseAdapter
 		// Edit relationship on single click
 		if (e.getClickCount() == 2)
 		{
-			source.openEditDialog();
+			source.openEditDialog(clickPoint);
 		}
 		// Add control point on control-click
 		else if (e.getClickCount() == 1 && e.isControlDown())
