@@ -220,6 +220,7 @@ public class RelationshipModel
 	{
 		m_type = type;
 		m_relationship.rebuildAfterModelChange();
+		m_relationship.repaint();
 	}
 
 	public List<Point> getPoints()
