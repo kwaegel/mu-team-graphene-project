@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -339,20 +341,36 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "PRINT")
 		{
 			PrinterJob printJob = PrinterJob.getPrinterJob();
+			PrintRequestAttributeSet attributeSet = new HashPrintRequestAttributeSet();
 			printJob.setPrintable(getCurrentDiagram());
-			boolean print = printJob.printDialog();
+			boolean print = printJob.printDialog(attributeSet);
 			if (print)
 			{
 				try
 				{
-					printJob.print();
+					printJob.print(attributeSet);
 				}
 				catch (PrinterException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+			
+//			PrinterJob printJob = PrinterJob.getPrinterJob();
+//			printJob.setPrintable(getCurrentDiagram());
+//			boolean print = printJob.printDialog();
+//			if (print)
+//			{
+//				try
+//				{
+//					printJob.print();
+//				}
+//				catch (PrinterException e)
+//				{
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
 		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
