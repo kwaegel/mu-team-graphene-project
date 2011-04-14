@@ -138,7 +138,7 @@ public class NodePanel extends JPanel
 			// ensure that blank fields don't make node panel smaller
 			// will never have a blank attribute except while editing,
 			// but while editing, don't want strange effects where making
-			// a field empty causes node lenght to shrink
+			// a field empty causes node length to shrink
 			if (attributeName.isEmpty())
 			{
 				attributeLabel.setMinimumSize(new Dimension(0, 16));
@@ -291,7 +291,8 @@ public class NodePanel extends JPanel
 				{
 					JPopupMenu nodePopup = new NodePanelPopup();
 					NodePanel selectedPanel = targetNode.getNodePanel();
-					nodePopup.show(selectedPanel, (int)selectedPanel.getMousePosition().getX(), (int) selectedPanel.getMousePosition().getY());
+					nodePopup.show(selectedPanel, (int) selectedPanel.getMousePosition().getX(), (int) selectedPanel
+							.getMousePosition().getY());
 				}
 				else
 				{
