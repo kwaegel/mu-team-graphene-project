@@ -266,6 +266,10 @@ public class UMLEditor extends JFrame implements ActionListener
 		addDiagramToEditor(initialDiagram, "Unsaved Diagram");
 	}
 
+	/**
+	 * Adds a either a new Class Diagram or a loaded Class Diagram to the
+	 * UML Editor
+	 */
 	private void addDiagramToEditor(ClassDiagram newDiagram, String diagramName)
 	{
 		classDiagrams.add(newDiagram);
@@ -291,6 +295,10 @@ public class UMLEditor extends JFrame implements ActionListener
 		helpPanel.setVisible(false);
 	}
 
+	/**
+	 * Checks to see if the file is already open. If it is open, returns the index 
+	 * of the Class Diagram.
+	 */
 	private int wasAlreadyOpen(File file)
 	{
 		for (int i = 0; i < classDiagrams.size(); ++i)
