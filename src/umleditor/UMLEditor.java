@@ -209,43 +209,45 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		if (userChoice == JFileChooser.APPROVE_OPTION)
 		{
-			File f = fileLoadChooser.getSelectedFile();
-			try
+			File fileToOpen = fileLoadChooser.getSelectedFile();
+			int loadedIndex = wasAlreadyOpen(fileToOpen);
+
+			if (loadedIndex > -1)
 			{
-				FileReader fileInStream;
-				BufferedReader buffInStream;
-
-				XStream xmlStream = FileUtils.getXmlReaderWriter();
-
-				fileInStream = new FileReader(f);
-				buffInStream = new BufferedReader(fileInStream);
-
-				loadedDiagram = (ClassDiagram) xmlStream.fromXML(buffInStream);
-
-				buffInStream.close();
+				tabbedPane.setSelectedIndex(loadedIndex);
 			}
-			catch (IOException e)
+			else
 			{
-				System.err.println("Could not open file: " + e.getMessage());
-				JOptionPane.showMessageDialog(null, e.getMessage(), "Error loading file", JOptionPane.WARNING_MESSAGE);
-			}
-			finally
-			{
-				// If the diagram has been loaded correctly, finish initialization.
-				if (loadedDiagram != null)
+				try
 				{
-					JScrollPane scrollPane = new JScrollPane();
-					loadedDiagram.initAfterLoadFromFile(this, scrollPane, f);
-					classDiagrams.add(loadedDiagram);
-					tabbedPane.add(scrollPane);
-					if (!classDiagrams.isEmpty())
+					FileReader fileInStream;
+					BufferedReader buffInStream;
+
+					XStream xmlStream = FileUtils.getXmlReaderWriter();
+
+					fileInStream = new FileReader(fileToOpen);
+					buffInStream = new BufferedReader(fileInStream);
+
+					loadedDiagram = (ClassDiagram) xmlStream.fromXML(buffInStream);
+
+					buffInStream.close();
+				}
+				catch (IOException e)
+				{
+					System.err.println("Could not open file: " + e.getMessage());
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Error loading file",
+							JOptionPane.WARNING_MESSAGE);
+				}
+				finally
+				{
+					// If the diagram has been loaded correctly, finish initialization.
+					if (loadedDiagram != null)
 					{
-						tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
-						addClassButton.setEnabled(true);
-						loadedDiagram.requestFocusOnView();
+						JScrollPane scrollPane = new JScrollPane();
+						tabbedPane.add(scrollPane);
+						loadedDiagram.initAfterLoadFromFile(this, scrollPane, fileToOpen);
+						addDiagramToEditor(loadedDiagram, fileToOpen.getName());
 					}
-					tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener,
-							f.getName()));
 				}
 			}
 		}
@@ -257,18 +259,25 @@ public class UMLEditor extends JFrame implements ActionListener
 	private void createNewClassDiagram()
 	{
 		JScrollPane scrollPane = new JScrollPane();
-		ClassDiagram initialDiagram = new ClassDiagram(this, scrollPane);
-		classDiagrams.add(initialDiagram);
 		tabbedPane.add(scrollPane);
+		ClassDiagram initialDiagram = new ClassDiagram(this, scrollPane);
+		addDiagramToEditor(initialDiagram, "Unsaved Diagram");
+	}
+
+	private void addDiagramToEditor(ClassDiagram newDiagram, String diagramName)
+	{
+		classDiagrams.add(newDiagram);
 		if (!classDiagrams.isEmpty())
 		{
 			tabbedPane.setSelectedIndex(classDiagrams.size() - 1);
 			addClassButton.setEnabled(true);
-			initialDiagram.requestFocusOnView();
+			newDiagram.requestFocusOnView();
 		}
+		if (copyNode != null)
+			newDiagram.enablePastePopup();
 		menuBar.toggleDiagramBasedMenuItems(true);
-		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new TabTitleComponent(tabCloseListener,
-				"Unsaved Diagram"));
+		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(),
+				new TabTitleComponent(tabCloseListener, diagramName));
 	}
 
 	/**
@@ -278,6 +287,16 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		helpPanel = new HelpPanel();
 		helpPanel.setVisible(false);
+	}
+
+	private int wasAlreadyOpen(File file)
+	{
+		for (int i = 0; i < classDiagrams.size(); ++i)
+		{
+			if (classDiagrams.get(i).isSavedInFile(file))
+				return (i);
+		}
+		return (-1);
 	}
 
 	/**
@@ -426,7 +445,9 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		if (userOption == JOptionPane.YES_OPTION)
 		{
-			currentDiagram.saveToFile(false);
+			boolean userSaved = currentDiagram.saveToFile(false);
+			if (!userSaved)
+				userOption = JOptionPane.CANCEL_OPTION;
 		}
 
 		if (userOption != JOptionPane.CANCEL_OPTION && userOption != JOptionPane.CLOSED_OPTION)
@@ -471,7 +492,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Copies a particular node, so it will be available to paste.
+	 * Copies a particular node, so it will be available to paste. Notifies all class diagrams to enable paste
 	 * 
 	 * @param nodeToCopy
 	 *            - the node to make a copy of
@@ -480,6 +501,10 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		copyNode = new ClassNode(nodeToCopy);
 		menuBar.enablePaste();
+		for (int i = 0; i < classDiagrams.size(); ++i)
+		{
+			classDiagrams.get(i).enablePastePopup();
+		}
 	}
 
 	/**
