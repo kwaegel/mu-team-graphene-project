@@ -29,8 +29,13 @@ public class RelationshipDragListener extends MouseAdapter
 		Point clickPoint = e.getPoint();
 		clickPoint = SwingUtilities.convertPoint(source, clickPoint, source.getParent());
 
-		// Add control point on double click.
+		// Edit relationship on single click
 		if (e.getClickCount() == 2)
+		{
+			source.openEditDialog(clickPoint);
+		}
+		// Add control point on control-click
+		else if (e.getClickCount() == 1 && e.isControlDown())
 		{
 			source.addControlPoint(clickPoint);
 			source.repaint();
