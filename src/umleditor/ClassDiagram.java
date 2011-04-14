@@ -673,12 +673,25 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException
 	{
+		if (arg2 > 0)
+			return NO_SUCH_PAGE;
+		
+//		if(view.getWidth() > view.getHeight())
+//		{
+//			arg1.setOrientation(PageFormat.LANDSCAPE);
+//			System.out.println("setting to landscape");
+//		}
+		
 		Graphics2D g2d = (Graphics2D) arg0;
 		g2d.translate(arg1.getImageableX(), arg1.getImageableY());
+		
+		double widthScale = arg1.getImageableWidth() / view.getWidth();
+		double heightScale = arg1.getImageableHeight() / view.getHeight();
 
-		int numPagesWide = view.getWidth() / (int) arg1.getImageableWidth();
-		if (arg2 > numPagesWide)
-			return NO_SUCH_PAGE;
+		double uniformScale = Math.min(widthScale, heightScale);
+		
+		g2d.scale(uniformScale, uniformScale);
+		
 		view.printAll(arg0);
 
 		return PAGE_EXISTS;
