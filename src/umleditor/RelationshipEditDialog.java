@@ -41,6 +41,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		setTitle("Edit relationship");
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setModelChanged(false);
+		setResizable(false);
 
 		setLayout(new MigLayout("wrap 1"));
 
@@ -70,6 +71,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		{
 			JRadioButton typeButton = new JRadioButton(type.toString());
 			typeButton.setActionCommand(type.toString());
+			typeButton.addActionListener(this);
 
 			typeButton.setSelected(type == m_model.getType());
 
@@ -112,8 +114,10 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		// TODO Auto-generated method stub
-
+		String typeName = m_buttonGroup.getSelection().getActionCommand();
+		RelationshipType newType = RelationshipType.valueOf(typeName);
+		System.out.println("Selected " + newType);
+		m_model.setType(newType);
 	}
 
 	/** Actions **/
