@@ -88,7 +88,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		currentlySelectedObjects = new LinkedList<ISelectable>();
 
 		m_diagramPopup = new DiagramBackgroundPopup();
-		m_diagramPopup.setPasteOptionState(false);
 	}
 
 	/**
@@ -129,7 +128,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		currentlySelectedObjects = new LinkedList<ISelectable>();
 
 		m_diagramPopup = new DiagramBackgroundPopup();
-		m_diagramPopup.setPasteOptionState(false);
 	}
 
 	/**
@@ -398,9 +396,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 * 
 	 * @param chooseNewFile
 	 *            - whether or not to find a new file before saving.
+	 * @return <code>true</code> if the diagram was saved, <code>false</code> if the save was canceled.
 	 */
-	public void saveToFile(boolean chooseNewFile)
+	public boolean saveToFile(boolean chooseNewFile)
 	{
+		boolean saveCanceled = false;
 		if (fileSavedTo == null || chooseNewFile)
 		{
 			JFileChooser fileSaveChooser = new JFileChooser();
@@ -421,8 +421,12 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 					fileSavedTo = new File(absoluteFilePath);
 				}
 			}
+			else
+			{
+				saveCanceled = true;
+			}
 		}
-		if (fileSavedTo != null && (changedSinceSaved || chooseNewFile))
+		if (!saveCanceled && (changedSinceSaved || chooseNewFile))
 		{
 			FileWriter fileOutStream;
 			BufferedWriter buffOutStream;
@@ -445,6 +449,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			changedSinceSaved = false;
 			this.setTabTitle(fileSavedTo.getName());
 		}
+		return (!saveCanceled);
 	}
 
 	/**
@@ -497,8 +502,13 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		}
 		else
 		{
-			return "Untitled document";
+			return "Untitled Diagram";
 		}
+	}
+	
+	public boolean isSavedInFile(File file)
+	{
+		return (file.equals(fileSavedTo));
 	}
 
 	/**
@@ -510,7 +520,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		if (canCopy())
 		{
 			parentEditor.setCopyNode((ClassNode) currentlySelectedObjects.get(0));
-			m_diagramPopup.setPasteOptionState(true);
 		}
 	}
 
@@ -568,6 +577,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			initNodePanel(pastePosition, nodeCopy);
 			attachNodeToDiagram(nodeCopy);
 		}
+	}
+
+	public void enablePastePopup()
+	{
+		m_diagramPopup.enablePasteOption();
 	}
 
 	/**
@@ -727,6 +741,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			pasteOption = new JMenuItem("Paste");
 			pasteOption.addActionListener(this);
 			pasteOption.setActionCommand("Paste");
+			pasteOption.setEnabled(false);
 			this.add(pasteOption);
 
 			JMenuItem closeOption = new JMenuItem("Close");
@@ -735,9 +750,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			this.add(closeOption);
 		}
 
-		public void setPasteOptionState(boolean enabled)
+		public void enablePasteOption()
 		{
-			pasteOption.setEnabled(enabled);
+			pasteOption.setEnabled(true);
 		}
 
 		@Override
