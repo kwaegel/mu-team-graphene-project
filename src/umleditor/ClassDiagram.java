@@ -506,6 +506,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		}
 	}
 	
+	/**
+	 * Returns a boolean confirming whether the file has been saved or not
+	 */
 	public boolean isSavedInFile(File file)
 	{
 		return (file.equals(fileSavedTo));
@@ -535,6 +538,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		}
 	}
 
+	/**
+	 * Enables the user to use the copy function
+	 */
 	private boolean canCopy()
 	{
 		return (currentlySelectedObjects.size() == 1 && currentlySelectedObjects.get(0) instanceof ClassNode);
@@ -579,6 +585,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		}
 	}
 
+	/**
+	 * Enables the user to use the paste function
+	 */
 	public void enablePastePopup()
 	{
 		m_diagramPopup.enablePasteOption();
