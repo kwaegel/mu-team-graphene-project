@@ -149,9 +149,23 @@ public class Relationship extends JComponent implements ISelectable
 	/***** Methods *****/
 
 	/**
+	 * Opens an edit dialog for this relationship.
+	 */
+	public void openEditDialog(Point dialogLocation)
+	{
+		boolean modelChanged = RelationshipEditDialog.showEditDialog(getModel(), (JComponent) this.getParent(),
+				dialogLocation);
+
+		if (modelChanged)
+		{
+			System.out.println("Model changed!");
+		}
+	}
+
+	/**
 	 * Rebuild the needed drawing components when the model updated.
 	 */
-	private void rebuildAfterModelChange()
+	public void rebuildAfterModelChange()
 	{
 		m_model.setRelationship(this);
 
