@@ -84,6 +84,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		listOfNodes = new LinkedList<ClassNode>();
 		listOfRelationships = new LinkedList<RelationshipModel>();
 
+		m_changePublisher.add(ChangeListener.class, this);
+		m_changePublisher.add(SelectionListener.class, this);
+
 		m_diagramPopup = new DiagramBackgroundPopup();
 	}
 
@@ -131,6 +134,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	{
 		currentlySelectedObjects = new LinkedList<ISelectable>();
 		m_changePublisher = new EventPublisher();
+		m_changePublisher.add(ChangeListener.class, this);
+		m_changePublisher.add(SelectionListener.class, this);
 		return this;
 	}
 
@@ -234,7 +239,13 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		{
 			currentlySelectedObjects.add(selected);
 		}
-		selected.setSelected(true);
+
+		// Prevent infinite loop
+		if (!(selected instanceof Relationship))
+		{
+			// Select objects that do not handle self selection.
+			selected.setSelected(true);
+		}
 
 		// Turn the delete button on if something non-null was selected.
 		parentEditor.reflectSelectedState(selected != null ? true : false);
