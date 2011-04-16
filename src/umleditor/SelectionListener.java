@@ -3,7 +3,9 @@
  */
 package umleditor;
 
-public interface SelectionListener
+import java.util.EventListener;
+
+public interface SelectionListener extends EventListener
 {
 
 	/**

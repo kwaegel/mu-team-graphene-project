@@ -524,7 +524,10 @@ public class Relationship extends JComponent implements ISelectable
 		}
 		repaint();
 
-		fireSelectedEvent();
+		if (selected)
+		{
+			fireSelectedEvent();
+		}
 	}
 
 	/**
