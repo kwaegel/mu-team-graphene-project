@@ -521,13 +521,9 @@ public class Relationship extends JComponent implements ISelectable
 		if (m_selected && clickPoint != null)
 		{
 			m_selectedControlPointIndex = getSelectedControlIndex(clickPoint);
-		}
-		repaint();
-
-		if (selected)
-		{
 			fireSelectedEvent();
 		}
+		repaint();
 	}
 
 	/**
