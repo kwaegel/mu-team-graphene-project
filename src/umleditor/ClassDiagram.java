@@ -30,6 +30,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
@@ -44,23 +46,26 @@ import com.thoughtworks.xstream.XStream;
  * classes from, and pasting classes to itself. It knows what file it was saved to, and keeps track of whether or not it
  * was saved or changed since it was saved.
  */
-public class ClassDiagram implements KeyListener, FocusListener, Printable
+public class ClassDiagram implements KeyListener, FocusListener, Printable, ChangeListener, SelectionListener
 {
 	// Lists of objects in the diagram
-	private List<ClassNode> listOfNodes;
-	private List<RelationshipModel> listOfRelationships;
+	private List<ClassNode> listOfNodes = new LinkedList<ClassNode>();
+	private List<RelationshipModel> listOfRelationships = new LinkedList<RelationshipModel>();
+
+	// Publisher to handle change events
+	private transient EventPublisher m_changePublisher = new EventPublisher();
 
 	// Listeners for mouse events on the diagram
 	private transient RelationshipDragListener m_relationshipDragController;
 
 	// transient fields that will not be encoded when diagram is saved
-	private transient List<ISelectable> currentlySelectedObjects;
+	private final transient List<ISelectable> currentlySelectedObjects = new LinkedList<ISelectable>();
 
 	private transient UMLEditor parentEditor;
 	private transient JLayeredPane view;
 
-	private transient File fileSavedTo;
-	private transient boolean changedSinceSaved;
+	private transient File saveFile;
+	private transient boolean hasUnsavedChanges;
 
 	private transient DiagramBackgroundPopup m_diagramPopup;
 
@@ -77,15 +82,13 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 
 		setUpView(scrollPane);
 
-		changedSinceSaved = true;
+		hasUnsavedChanges = true;
 
 		// Create listeners on the view.
-		m_relationshipDragController = new RelationshipDragListener(this);
+		m_relationshipDragController = new RelationshipDragListener();
 
 		listOfNodes = new LinkedList<ClassNode>();
 		listOfRelationships = new LinkedList<RelationshipModel>();
-
-		currentlySelectedObjects = new LinkedList<ISelectable>();
 
 		m_diagramPopup = new DiagramBackgroundPopup();
 	}
@@ -106,10 +109,10 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 
 		setUpView(scrollPane);
 
-		fileSavedTo = fileLoadedFrom;
-		changedSinceSaved = false;
+		saveFile = fileLoadedFrom;
+		hasUnsavedChanges = false;
 
-		m_relationshipDragController = new RelationshipDragListener(this);
+		m_relationshipDragController = new RelationshipDragListener();
 
 		// Create views for models.
 		for (ClassNode node : listOfNodes)
@@ -124,8 +127,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			r.addMouseListener(m_relationshipDragController);
 			r.addMouseMotionListener(m_relationshipDragController);
 		}
-
-		currentlySelectedObjects = new LinkedList<ISelectable>();
 
 		m_diagramPopup = new DiagramBackgroundPopup();
 	}
@@ -222,7 +223,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	public void setSelectedObject(ISelectable selected, boolean deselectOthers)
 	{
 		if (deselectOthers)
+		{
 			unselectCurrentObjects();
+		}
 
 		if (!currentlySelectedObjects.contains(selected))
 		{
@@ -358,6 +361,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 				view.add(rel, "external");
 				rel.addMouseListener(m_relationshipDragController);
 				rel.addMouseMotionListener(m_relationshipDragController);
+				rel.setEventPublisher(m_changePublisher);
 
 				rel.repaint();
 			}
@@ -401,7 +405,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	public boolean saveToFile(boolean chooseNewFile)
 	{
 		boolean saveCanceled = false;
-		if (fileSavedTo == null || chooseNewFile)
+		if (saveFile == null || chooseNewFile)
 		{
 			JFileChooser fileSaveChooser = new JFileChooser();
 			fileSaveChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -411,14 +415,14 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			int userChoice = fileSaveChooser.showSaveDialog(parentEditor);
 			if (userChoice == JFileChooser.APPROVE_OPTION)
 			{
-				fileSavedTo = fileSaveChooser.getSelectedFile();
+				saveFile = fileSaveChooser.getSelectedFile();
 				// add appropriate extension, if there the path does not have one already
-				String absoluteFilePath = fileSavedTo.getAbsolutePath();
+				String absoluteFilePath = saveFile.getAbsolutePath();
 				String acceptedExtension = FileExtensionFilter.ACCEPTED_FILE_EXTENSION;
 				if (!absoluteFilePath.endsWith(acceptedExtension))
 				{
 					absoluteFilePath += acceptedExtension;
-					fileSavedTo = new File(absoluteFilePath);
+					saveFile = new File(absoluteFilePath);
 				}
 			}
 			else
@@ -426,7 +430,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 				saveCanceled = true;
 			}
 		}
-		if (!saveCanceled && (changedSinceSaved || chooseNewFile))
+		if (!saveCanceled && (hasUnsavedChanges || chooseNewFile))
 		{
 			FileWriter fileOutStream;
 			BufferedWriter buffOutStream;
@@ -434,7 +438,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			{
 				XStream xmlStream = FileUtils.getXmlReaderWriter();
 
-				fileOutStream = new FileWriter(fileSavedTo);
+				fileOutStream = new FileWriter(saveFile);
 				buffOutStream = new BufferedWriter(fileOutStream);
 
 				xmlStream.toXML(this, buffOutStream);
@@ -446,8 +450,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 
 			}
 
-			changedSinceSaved = false;
-			this.setTabTitle(fileSavedTo.getName());
+			hasUnsavedChanges = false;
+			this.setTabTitle(saveFile.getName());
 		}
 		return (!saveCanceled);
 	}
@@ -458,11 +462,17 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void markAsChanged()
 	{
-		if (fileSavedTo != null && !changedSinceSaved)
+		if (saveFile != null && !hasUnsavedChanges)
 		{
-			changedSinceSaved = true;
-			this.setTabTitle(fileSavedTo.getName() + "*");
+			hasUnsavedChanges = true;
+			this.setTabTitle(saveFile.getName() + "*");
 		}
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e)
+	{
+		markAsChanged();
 	}
 
 	/**
@@ -472,8 +482,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public boolean hasUnsavedChanges()
 	{
-		boolean diagramBlank = (fileSavedTo == null && listOfNodes.isEmpty());
-		return (!diagramBlank && changedSinceSaved);
+		boolean diagramBlank = (saveFile == null && listOfNodes.isEmpty());
+		return (!diagramBlank && hasUnsavedChanges);
 	}
 
 	/**
@@ -496,22 +506,22 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public String getName()
 	{
-		if (fileSavedTo != null)
+		if (saveFile != null)
 		{
-			return fileSavedTo.getName();
+			return saveFile.getName();
 		}
 		else
 		{
 			return "Untitled Diagram";
 		}
 	}
-	
+
 	/**
 	 * Returns a boolean confirming whether the file has been saved or not
 	 */
 	public boolean isSavedInFile(File file)
 	{
-		return (file.equals(fileSavedTo));
+		return (file.equals(saveFile));
 	}
 
 	/**
@@ -680,27 +690,30 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	/**
 	 * Prints the current visible screen. If part of the diagram is offscreen, it will not be printed.
 	 */
+	@Override
 	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException
 	{
 		if (arg2 > 0)
+		{
 			return NO_SUCH_PAGE;
-		
-//		if(view.getWidth() > view.getHeight())
-//		{
-//			arg1.setOrientation(PageFormat.LANDSCAPE);
-//			System.out.println("setting to landscape");
-//		}
-		
+		}
+
+		// if(view.getWidth() > view.getHeight())
+		// {
+		// arg1.setOrientation(PageFormat.LANDSCAPE);
+		// System.out.println("setting to landscape");
+		// }
+
 		Graphics2D g2d = (Graphics2D) arg0;
 		g2d.translate(arg1.getImageableX(), arg1.getImageableY());
-		
+
 		double widthScale = arg1.getImageableWidth() / view.getWidth();
 		double heightScale = arg1.getImageableHeight() / view.getHeight();
 
 		double uniformScale = Math.min(widthScale, heightScale);
-		
+
 		g2d.scale(uniformScale, uniformScale);
-		
+
 		view.printAll(arg0);
 
 		return PAGE_EXISTS;
@@ -800,6 +813,12 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 				parentEditor.closeCurrentTab();
 			}
 		}
+	}
+
+	@Override
+	public void objectSelected(SelectionEvent e)
+	{
+		this.setSelectedObject(e.getSource(), true);
 	}
 
 }

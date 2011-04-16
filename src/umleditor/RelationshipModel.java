@@ -142,7 +142,7 @@ public class RelationshipModel
 		m_secondNodeOffset = new Point(otherModel.m_secondNodeOffset);
 		m_points = new ArrayList<Point>(otherModel.m_points);
 
-		m_relationship.rebuildAfterModelChange();
+		m_relationship.rebuildGraphics();
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class RelationshipModel
 		m_firstNodeOffset = m_secondNodeOffset;
 		m_secondNodeOffset = tempOffset;
 
-		m_relationship.rebuildAfterModelChange();
+		m_relationship.rebuildGraphics();
 	}
 
 	/**
@@ -219,7 +219,7 @@ public class RelationshipModel
 	public void setType(RelationshipType type)
 	{
 		m_type = type;
-		m_relationship.rebuildAfterModelChange();
+		m_relationship.rebuildGraphics();
 		m_relationship.repaint();
 	}
 
