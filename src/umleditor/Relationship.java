@@ -176,7 +176,7 @@ public class Relationship extends JComponent implements ISelectable
 
 		createPathFromPoints();
 		createArrow();
-		setArrowFill();
+		determineArrowFill();
 
 		recalculateBounds();
 
@@ -236,7 +236,7 @@ public class Relationship extends JComponent implements ISelectable
 	/**
 	 * Determine type of arrow fill to use.
 	 */
-	private void setArrowFill()
+	private void determineArrowFill()
 	{
 		RelationshipType type = m_model.getType();
 

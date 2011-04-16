@@ -309,7 +309,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	}
 
 	/**
-	 * Workaround for bug with improper MouseReleased event handling in Swing.
+	 * Workaround for bug with undesired MouseReleased event handling in Swing.
 	 * 
 	 * @param evt
 	 *            - the mouse event
