@@ -55,11 +55,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	// Publisher to handle change events
 	private transient EventPublisher m_changePublisher = new EventPublisher();
 
-	// Listeners for mouse events on the diagram
-	private transient RelationshipDragListener m_relationshipDragController;
-
 	// transient fields that will not be encoded when diagram is saved
-	private final transient List<ISelectable> currentlySelectedObjects = new LinkedList<ISelectable>();
+	private transient List<ISelectable> currentlySelectedObjects = new LinkedList<ISelectable>();
 
 	private transient UMLEditor parentEditor;
 	private transient JLayeredPane view;
@@ -83,9 +80,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		setUpView(scrollPane);
 
 		hasUnsavedChanges = true;
-
-		// Create listeners on the view.
-		m_relationshipDragController = new RelationshipDragListener();
 
 		listOfNodes = new LinkedList<ClassNode>();
 		listOfRelationships = new LinkedList<RelationshipModel>();
@@ -112,8 +106,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		saveFile = fileLoadedFrom;
 		hasUnsavedChanges = false;
 
-		m_relationshipDragController = new RelationshipDragListener();
-
 		// Create views for models.
 		for (ClassNode node : listOfNodes)
 		{
@@ -123,12 +115,23 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		for (RelationshipModel rm : listOfRelationships)
 		{
 			Relationship r = new Relationship(rm);
+			r.setEventPublisher(m_changePublisher);
 			view.add(r, "external");
-			r.addMouseListener(m_relationshipDragController);
-			r.addMouseMotionListener(m_relationshipDragController);
 		}
 
 		m_diagramPopup = new DiagramBackgroundPopup();
+	}
+
+	/**
+	 * Used by xStream during deserialization.
+	 * 
+	 * @return
+	 */
+	private Object readResolve()
+	{
+		currentlySelectedObjects = new LinkedList<ISelectable>();
+		m_changePublisher = new EventPublisher();
+		return this;
 	}
 
 	/**
@@ -194,8 +197,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	private void attachNodeToDiagram(ClassNode newClassNode)
 	{
 		listOfNodes.add(newClassNode);
-		this.setSelectedObject(newClassNode, true);
-		this.markAsChanged();
+		setSelectedObject(newClassNode, true);
+		markAsChanged();
 	}
 
 	/**
@@ -289,7 +292,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				}
 				view.repaint(r.getBounds());
 			}
-			this.markAsChanged();
+
+			markAsChanged();
 		}
 	}
 
@@ -359,14 +363,14 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				// Add the relationship to the view.
 				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
 				view.add(rel, "external");
-				rel.addMouseListener(m_relationshipDragController);
-				rel.addMouseMotionListener(m_relationshipDragController);
+				// rel.addMouseListener(m_relationshipDragController);
+				// rel.addMouseMotionListener(m_relationshipDragController);
 				rel.setEventPublisher(m_changePublisher);
 
 				rel.repaint();
 			}
 
-			this.markAsChanged();
+			markAsChanged();
 		}
 	}
 
@@ -388,7 +392,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 
 			// Remove the view.
 			Relationship r = rm.getRelationship();
-			r.removeMouseListener(m_relationshipDragController);
 			view.remove(r);
 
 		}
@@ -651,15 +654,15 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
 			int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
 			nodePanelToMove.resetBounds(new Point(newPosX, newPosY));
+
+			nodePanelToMove.revalidate();
 		}
 
-		// call to revalidate makes node redraw.
-		view.revalidate();
-
-		// call to repaint makes relationships redraw
+		// call to repaint makes relationships redraw.
+		// TODO: rewrite this to only redraw the relationships that have moved.
 		view.repaint();
 
-		this.markAsChanged();
+		markAsChanged();
 	}
 
 	/**
@@ -671,7 +674,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	@Override
 	public void focusGained(FocusEvent e)
 	{
-		if (!currentlySelectedObjects.isEmpty())
+		if (currentlySelectedObjects != null && !currentlySelectedObjects.isEmpty())
 		{
 			parentEditor.reflectSelectedState(true);
 		}
@@ -818,7 +821,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	@Override
 	public void objectSelected(SelectionEvent e)
 	{
-		this.setSelectedObject(e.getSource(), true);
+		setSelectedObject(e.getSource(), e.isSingleSelectionRequested());
 	}
 
 }

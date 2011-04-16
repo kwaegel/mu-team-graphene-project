@@ -102,14 +102,24 @@ public class ClassNode implements ISelectable
 	 * Determines if the properties of otherNode are identical to those of this node. Checks classNames, contents of
 	 * attribute list and method list.
 	 * 
+	 * {@inheritDoc}
+	 * 
 	 * @param otherNode
 	 *            - {@link ClassNode} to compare this one to.
 	 * @return - <code>true</code> if properties are equal, <code>false</code> if they are not
 	 */
-	public boolean propertiesEqual(ClassNode otherNode)
+	@Override
+	public boolean equals(Object other)
 	{
-		return (this.className.equals(otherNode.className) && this.listOfAttributes.equals(otherNode.listOfAttributes) && this.listOfMethods
-				.equals(otherNode.listOfMethods));
+		if (other instanceof ClassNode)
+		{
+			ClassNode otherNode = (ClassNode) other;
+			return (this.className.equals(otherNode.className)
+					&& this.listOfAttributes.equals(otherNode.listOfAttributes) && this.listOfMethods
+					.equals(otherNode.listOfMethods));
+		}
+		return false;
+
 	}
 
 	/**
