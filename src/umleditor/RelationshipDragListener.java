@@ -11,8 +11,18 @@ import javax.swing.SwingUtilities;
  */
 public class RelationshipDragListener extends MouseAdapter
 {
+	private static RelationshipDragListener m_instance = new RelationshipDragListener();
+
 	RelationshipDragListener()
 	{
+	}
+
+	/**
+	 * @return the singleton RelationshipDragListener.
+	 */
+	public static RelationshipDragListener getInstance()
+	{
+		return m_instance;
 	}
 
 	/* Mouse adapter methods */

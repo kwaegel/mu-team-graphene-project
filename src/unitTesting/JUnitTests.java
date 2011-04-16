@@ -342,22 +342,22 @@ public class JUnitTests
 		node1.attachPanel(new NodePanel(testDiagram, node1));
 		node2.attachPanel(new NodePanel(testDiagram, node2));
 
-		assertFalse("Error: nodes should not be the same because of different names", node1.propertiesEqual(node2));
+		assertFalse("Error: nodes should not be the same because of different names", node1.equals(node2));
 
 		// Setting nodes to have equal names
 		node1.setName("hi");
 		node2.setName("hi");
 
-		assertTrue("Error: nodes should be the same", node1.propertiesEqual(node2));
+		assertTrue("Error: nodes should be the same", node1.equals(node2));
 
 		// Nodes different because of additional attribute
 		node1.addAttribute("trib");
 
-		assertFalse("Error: node1 should have another attribute", node1.propertiesEqual(node2));
+		assertFalse("Error: node1 should have another attribute", node1.equals(node2));
 
 		// Setting properties of node2 to node1
 		node2.setPropertiesTo(node1);
 
-		assertTrue("Error: nodes are not equal", node1.propertiesEqual(node2));
+		assertTrue("Error: nodes are not equal", node1.equals(node2));
 	}
 }

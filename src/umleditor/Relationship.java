@@ -109,6 +109,8 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		m_line = new Path2D.Float();
 		m_arrow = new Polygon();
+		addMouseListener(RelationshipDragListener.getInstance());
+		addMouseMotionListener(RelationshipDragListener.getInstance());
 	}
 
 	/***** Constructors *****/

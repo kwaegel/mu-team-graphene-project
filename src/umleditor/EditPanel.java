@@ -27,10 +27,10 @@ import net.miginfocom.swing.MigLayout;
 import umleditor.NumberedTextField.FieldType;
 
 /**
- * Allows user to edit values for a particular {@link ClassNode} in the UML diagram. The {@link ClassNode} will be changed automatically
- * as it is edited -- there is no "cancel" option because editing a value through the EditPanel already changed that
- * value in the class. There is a "revert" option which changes all values back to the point when the edit panel was
- * opened. Choosing this option and then closing the dialog has the effect of "cancel"
+ * Allows user to edit values for a particular {@link ClassNode} in the UML diagram. The {@link ClassNode} will be
+ * changed automatically as it is edited -- there is no "cancel" option because editing a value through the EditPanel
+ * already changed that value in the class. There is a "revert" option which changes all values back to the point when
+ * the edit panel was opened. Choosing this option and then closing the dialog has the effect of "cancel"
  */
 public class EditPanel extends JDialog implements FocusListener, ActionListener, KeyListener, WindowListener
 {
@@ -252,13 +252,13 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		revertButton.addActionListener(this);
 		everythingPanel.add(revertButton, "align center");
 	}
-	
+
 	/**
-	 * Marks the parent {@link ClassDiagram} as changed if the node has been modified, and closes the {@link EditPanel}. 
+	 * Marks the parent {@link ClassDiagram} as changed if the node has been modified, and closes the {@link EditPanel}.
 	 */
 	private void closeEditPanel()
 	{
-		if (!associatedNode.propertiesEqual(copyOfOriginalNode))
+		if (!associatedNode.equals(copyOfOriginalNode))
 		{
 			parentDiagram.markAsChanged();
 		}
@@ -426,7 +426,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	@Override
 	public void windowDeactivated(WindowEvent e)
 	{
-		if (!associatedNode.propertiesEqual(copyOfOriginalNode))
+		if (!associatedNode.equals(copyOfOriginalNode))
 		{
 			// check if the user has changed the class and if they have, notify its
 			// node panel's parent diagram that changes have been made.
