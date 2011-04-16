@@ -1,5 +1,6 @@
 package umleditor;
 
+import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -109,8 +110,7 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		m_line = new Path2D.Float();
 		m_arrow = new Polygon();
-		addMouseListener(RelationshipDragListener.getInstance());
-		addMouseMotionListener(RelationshipDragListener.getInstance());
+		enableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
 	}
 
 	/***** Constructors *****/
@@ -378,126 +378,6 @@ public class Relationship extends JComponent implements ISelectable
 	}
 
 	/**
-	 * Handle dragging the relationship control points. If the first or last control point is being dragged, ensure it
-	 * remains attached to the box.
-	 * 
-	 * @param e
-	 */
-	public void mouseDragged(MouseEvent e)
-	{
-		if (m_selected && m_selectedControlPointIndex >= 0)
-		{
-			Point dragPoint = e.getPoint();
-			// TODO: change this to work in local coordinates instead of doing a conversion.
-			dragPoint = SwingUtilities.convertPoint(this, dragPoint, getParent());
-
-			List<Point> m_points = m_model.getPoints();
-			Point m_firstNodeOffset = m_model.getFirstNodeOffset();
-			Point m_secondNodeOffset = m_model.getSecondNodeOffset();
-
-			if (m_selectedControlPointIndex == 0)
-			{
-				Rectangle bounds = m_model.getFirstNode().getPanelBounds();
-				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
-				m_points.set(m_selectedControlPointIndex, closestPoint);
-
-				m_firstNodeOffset.x = m_points.get(0).x - bounds.x;
-				m_firstNodeOffset.y = m_points.get(0).y - bounds.y;
-			}
-			else if (m_selectedControlPointIndex == m_points.size() - 1)
-			{
-				Rectangle bounds = m_model.getSecondNode().getPanelBounds();
-				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
-				m_points.set(m_selectedControlPointIndex, closestPoint);
-
-				int end = m_points.size() - 1;
-				m_secondNodeOffset.x = m_points.get(end).x - bounds.x;
-				m_secondNodeOffset.y = m_points.get(end).y - bounds.y;
-			}
-			else
-			{
-				m_points.set(m_selectedControlPointIndex, dragPoint);
-			}
-
-			// Rebuild the path.
-			createPathFromPoints();
-
-			// If we are dragging nodes at the end of the line, also rebuild the arrows.
-			if (m_selectedControlPointIndex <= 1 || m_selectedControlPointIndex >= m_points.size() - 2)
-			{
-				createArrow();
-			}
-
-			// Recalculate the bounding box.
-			recalculateBounds();
-
-			// Repaint the relationship.
-			repaint();
-
-			fireChangeEvent();
-		}
-	}
-
-	/**
-	 * Return the point on the rectangle that is closest to the click point.
-	 * 
-	 * @param clickPoint
-	 *            - the click point
-	 * @param rect
-	 *            - the {@link java.awt.Rectangle rectangle} to check.
-	 * @return - the point on the rectangle nearest to the click point.
-	 */
-	private static Point getClosestPointOnRectangle(Point clickPoint, Rectangle rect)
-	{
-		Point nearestPoint = new Point(clickPoint);
-
-		int maxX = rect.x + rect.width;
-		int maxY = rect.y + rect.height;
-
-		// Snap one of the coords to the side for points inside the rectangle
-		if (rect.contains(clickPoint))
-		{
-			float centerDeltaX = (float) rect.getCenterX() - clickPoint.x;
-			float centerDeltaY = (float) rect.getCenterY() - clickPoint.y;
-
-			if (Math.abs(centerDeltaX) > Math.abs(centerDeltaY))
-			{
-				// Snap left if the delta is positive, else right.
-				nearestPoint.x = (centerDeltaX > 0) ? rect.x : maxX;
-			}
-			else
-			{
-				// Snap up if the delta is positive, else down.
-				nearestPoint.y = (centerDeltaY > 0) ? rect.y : maxY;
-			}
-		}
-		else
-		{
-			// Check x coords for points outside the rectangle
-			if (clickPoint.x < rect.x)
-			{
-				nearestPoint.x = rect.x;
-			}
-			else if (clickPoint.x > maxX)
-			{
-				nearestPoint.x = maxX;
-			}
-
-			// Check y coords for points outside the rectangle
-			if (clickPoint.y < rect.y)
-			{
-				nearestPoint.y = rect.y;
-			}
-			else if (clickPoint.y > maxY)
-			{
-				nearestPoint.y = maxY;
-			}
-		}
-
-		return nearestPoint;
-	}
-
-	/**
 	 * Mark this relationship as selected. When selected, control nodes will be drawn to allow manipulation of the
 	 * relationship path. No control nodes will be selected.
 	 */
@@ -599,6 +479,40 @@ public class Relationship extends JComponent implements ISelectable
 	}
 
 	/**
+	 * Set the {@link EventPublisher} to use.
+	 * 
+	 * @param eventPublisher
+	 */
+	public void setEventPublisher(EventPublisher eventPublisher)
+	{
+		m_eventPublisher = eventPublisher;
+	}
+
+	/**
+	 * Publish an event notifying that this object has changed.
+	 */
+	private void fireChangeEvent()
+	{
+		if (m_eventPublisher != null)
+		{
+			m_eventPublisher.fireChangeEvent(this);
+		}
+	}
+
+	/**
+	 * Publish an event notifying that this object has been selected.
+	 */
+	private void fireSelectedEvent()
+	{
+		if (m_eventPublisher != null)
+		{
+			m_eventPublisher.fireSelectedEvent(this);
+		}
+	}
+
+	/********** Drawing **********/
+
+	/**
 	 * Draw a line representing the relationship in the ClassDiagram view panel. Nature of line drawn depends on
 	 * relationship type. Placement of line determined by location of NodePanels associated with first and second nodes.
 	 * 
@@ -652,7 +566,8 @@ public class Relationship extends JComponent implements ISelectable
 			case Solid:
 				g2d.fillPolygon(m_arrow);
 				break;
-			case Outline: {
+			case Outline:
+			{
 				g2d.setColor(Color.white);
 				g2d.fillPolygon(m_arrow);
 				g2d.setColor(Color.black);
@@ -685,30 +600,176 @@ public class Relationship extends JComponent implements ISelectable
 		g2d.translate(loc.x, loc.y);
 	}
 
+	/********** Event processing **********/
+
+	@Override
+	protected void processMouseEvent(MouseEvent e)
+	{
+		int id = e.getID();
+		switch (id)
+		{
+			case MouseEvent.MOUSE_PRESSED:
+			{
+				// Convert click point to diagram coordinates.
+				Point clickPoint = e.getPoint();
+				clickPoint = SwingUtilities.convertPoint(this, clickPoint, this.getParent());
+
+				setSelected(true, clickPoint);
+			}
+				break;
+			case MouseEvent.MOUSE_CLICKED:
+			{
+
+				// Convert click point to diagram coordinates.
+				Point clickPoint = e.getPoint();
+				clickPoint = SwingUtilities.convertPoint(this, clickPoint, this.getParent());
+
+				// Edit relationship on single click
+				if (e.getClickCount() == 2)
+				{
+					openEditDialog(clickPoint);
+				}
+				// Add control point on control-click
+				else if (e.getClickCount() == 1 && e.isControlDown())
+				{
+					addControlPoint(clickPoint);
+					repaint();
+				}
+			}
+				break;
+		}
+		super.processMouseEvent(e);
+	}
+
+	@Override
+	protected void processMouseMotionEvent(MouseEvent e)
+	{
+		if (e.getID() == MouseEvent.MOUSE_DRAGGED)
+		{
+			mouseDragged(e);
+		}
+		super.processMouseMotionEvent(e);
+	}
+
 	/**
-	 * Set the {@link EventPublisher} to use.
+	 * Handle dragging the relationship control points. If the first or last control point is being dragged, ensure it
+	 * remains attached to the box.
 	 * 
-	 * @param eventPublisher
+	 * @param e
 	 */
-
-	public void setEventPublisher(EventPublisher eventPublisher)
+	private void mouseDragged(MouseEvent e)
 	{
-		m_eventPublisher = eventPublisher;
-	}
-
-	private void fireChangeEvent()
-	{
-		if (m_eventPublisher != null)
+		if (m_selected && m_selectedControlPointIndex >= 0)
 		{
-			m_eventPublisher.fireChangeEvent(this);
+			Point dragPoint = e.getPoint();
+			// TODO: change this to work in local coordinates instead of doing a conversion.
+			dragPoint = SwingUtilities.convertPoint(this, dragPoint, getParent());
+
+			List<Point> m_points = m_model.getPoints();
+			Point m_firstNodeOffset = m_model.getFirstNodeOffset();
+			Point m_secondNodeOffset = m_model.getSecondNodeOffset();
+
+			if (m_selectedControlPointIndex == 0)
+			{
+				Rectangle bounds = m_model.getFirstNode().getPanelBounds();
+				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
+				m_points.set(m_selectedControlPointIndex, closestPoint);
+
+				m_firstNodeOffset.x = m_points.get(0).x - bounds.x;
+				m_firstNodeOffset.y = m_points.get(0).y - bounds.y;
+			}
+			else if (m_selectedControlPointIndex == m_points.size() - 1)
+			{
+				Rectangle bounds = m_model.getSecondNode().getPanelBounds();
+				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
+				m_points.set(m_selectedControlPointIndex, closestPoint);
+
+				int end = m_points.size() - 1;
+				m_secondNodeOffset.x = m_points.get(end).x - bounds.x;
+				m_secondNodeOffset.y = m_points.get(end).y - bounds.y;
+			}
+			else
+			{
+				m_points.set(m_selectedControlPointIndex, dragPoint);
+			}
+
+			// Rebuild the path.
+			createPathFromPoints();
+
+			// If we are dragging nodes at the end of the line, also rebuild the arrows.
+			if (m_selectedControlPointIndex <= 1 || m_selectedControlPointIndex >= m_points.size() - 2)
+			{
+				createArrow();
+			}
+
+			// Recalculate the bounding box.
+			recalculateBounds();
+
+			// Repaint the relationship.
+			repaint();
+
+			fireChangeEvent();
 		}
 	}
 
-	private void fireSelectedEvent()
+	/********** Static methods **********/
+
+	/**
+	 * Return the point on the rectangle that is closest to the click point.
+	 * 
+	 * @param clickPoint
+	 *            - the click point
+	 * @param rect
+	 *            - the {@link java.awt.Rectangle rectangle} to check.
+	 * @return - the point on the rectangle nearest to the click point.
+	 */
+	private static Point getClosestPointOnRectangle(Point clickPoint, Rectangle rect)
 	{
-		if (m_eventPublisher != null)
+		Point nearestPoint = new Point(clickPoint);
+
+		int maxX = rect.x + rect.width;
+		int maxY = rect.y + rect.height;
+
+		// Snap one of the coords to the side for points inside the rectangle
+		if (rect.contains(clickPoint))
 		{
-			m_eventPublisher.fireSelectedEvent(this);
+			float centerDeltaX = (float) rect.getCenterX() - clickPoint.x;
+			float centerDeltaY = (float) rect.getCenterY() - clickPoint.y;
+
+			if (Math.abs(centerDeltaX) > Math.abs(centerDeltaY))
+			{
+				// Snap left if the delta is positive, else right.
+				nearestPoint.x = (centerDeltaX > 0) ? rect.x : maxX;
+			}
+			else
+			{
+				// Snap up if the delta is positive, else down.
+				nearestPoint.y = (centerDeltaY > 0) ? rect.y : maxY;
+			}
 		}
+		else
+		{
+			// Check x coords for points outside the rectangle
+			if (clickPoint.x < rect.x)
+			{
+				nearestPoint.x = rect.x;
+			}
+			else if (clickPoint.x > maxX)
+			{
+				nearestPoint.x = maxX;
+			}
+
+			// Check y coords for points outside the rectangle
+			if (clickPoint.y < rect.y)
+			{
+				nearestPoint.y = rect.y;
+			}
+			else if (clickPoint.y > maxY)
+			{
+				nearestPoint.y = maxY;
+			}
+		}
+
+		return nearestPoint;
 	}
 }
