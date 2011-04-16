@@ -11,11 +11,8 @@ import javax.swing.SwingUtilities;
  */
 public class RelationshipDragListener extends MouseAdapter
 {
-	private ClassDiagram m_diagram;
-
-	RelationshipDragListener(ClassDiagram diagram)
+	RelationshipDragListener()
 	{
-		m_diagram = diagram;
 	}
 
 	/* Mouse adapter methods */
@@ -39,7 +36,6 @@ public class RelationshipDragListener extends MouseAdapter
 		{
 			source.addControlPoint(clickPoint);
 			source.repaint();
-			m_diagram.markAsChanged();
 		}
 	}
 
@@ -52,9 +48,7 @@ public class RelationshipDragListener extends MouseAdapter
 		Point clickPoint = e.getPoint();
 		clickPoint = SwingUtilities.convertPoint(source, clickPoint, source.getParent());
 
-		m_diagram.setSelectedObject(source, true);
 		source.setSelected(true, clickPoint);
-		source.repaint();
 	}
 
 	@Override
@@ -62,6 +56,5 @@ public class RelationshipDragListener extends MouseAdapter
 	{
 		Relationship source = (Relationship) e.getSource();
 		source.mouseDragged(e);
-		m_diagram.markAsChanged();
 	}
 }

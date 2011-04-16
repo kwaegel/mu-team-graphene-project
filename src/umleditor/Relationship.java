@@ -45,6 +45,9 @@ public class Relationship extends JComponent implements ISelectable
 	private static final Color m_nodeColor = new Color(0, 100, 255);
 	private static final Color m_selectedNodeColor = Color.red;
 
+	// Event publisher
+	private EventPublisher m_eventPublisher;
+
 	/**
 	 * The type of relationship.
 	 */
@@ -122,7 +125,7 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		m_model = new RelationshipModel(first, firstOffset, second, secondOffset, type);
 
-		rebuildAfterModelChange();
+		rebuildGraphics();
 	}
 
 	/**
@@ -136,14 +139,14 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		m_model = new RelationshipModel(first, second, type);
 
-		rebuildAfterModelChange();
+		rebuildGraphics();
 	}
 
 	// TODO: comments
 	public Relationship(RelationshipModel model)
 	{
 		m_model = model;
-		rebuildAfterModelChange();
+		rebuildGraphics();
 	}
 
 	/***** Methods *****/
@@ -165,7 +168,7 @@ public class Relationship extends JComponent implements ISelectable
 	/**
 	 * Rebuild the needed drawing components when the model updated.
 	 */
-	public void rebuildAfterModelChange()
+	public void rebuildGraphics()
 	{
 		m_model.setRelationship(this);
 
@@ -174,6 +177,8 @@ public class Relationship extends JComponent implements ISelectable
 		setArrowFill();
 
 		recalculateBounds();
+
+		fireChangeEvent();
 	}
 
 	/**
@@ -193,7 +198,7 @@ public class Relationship extends JComponent implements ISelectable
 	public void setModel(RelationshipModel model)
 	{
 		m_model = model;
-		rebuildAfterModelChange();
+		rebuildGraphics();
 	}
 
 	/**
@@ -347,6 +352,8 @@ public class Relationship extends JComponent implements ISelectable
 				break;
 			}
 		}
+
+		fireChangeEvent();
 	}
 
 	/**
@@ -424,6 +431,8 @@ public class Relationship extends JComponent implements ISelectable
 
 			// Repaint the relationship.
 			repaint();
+
+			fireChangeEvent();
 		}
 	}
 
@@ -512,6 +521,8 @@ public class Relationship extends JComponent implements ISelectable
 			m_selectedControlPointIndex = getSelectedControlIndex(clickPoint);
 		}
 		repaint();
+
+		fireSelectedEvent();
 	}
 
 	/**
@@ -635,19 +646,20 @@ public class Relationship extends JComponent implements ISelectable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill) {
-		case Solid:
-			g2d.fillPolygon(m_arrow);
-			break;
-		case Outline: {
-			g2d.setColor(Color.white);
-			g2d.fillPolygon(m_arrow);
-			g2d.setColor(Color.black);
-			g2d.drawPolygon(m_arrow);
-		}
-			break;
-		case None:// Do not draw an arrow.
-			break;
+		switch (m_endFill)
+		{
+			case Solid:
+				g2d.fillPolygon(m_arrow);
+				break;
+			case Outline: {
+				g2d.setColor(Color.white);
+				g2d.fillPolygon(m_arrow);
+				g2d.setColor(Color.black);
+				g2d.drawPolygon(m_arrow);
+			}
+				break;
+			case None:// Do not draw an arrow.
+				break;
 		}
 
 		// If the relationship is selected, draw a handle at each control node
@@ -670,5 +682,32 @@ public class Relationship extends JComponent implements ISelectable
 
 		// Set the old transform back
 		g2d.translate(loc.x, loc.y);
+	}
+
+	/**
+	 * Set the {@link EventPublisher} to use.
+	 * 
+	 * @param eventPublisher
+	 */
+
+	public void setEventPublisher(EventPublisher eventPublisher)
+	{
+		m_eventPublisher = eventPublisher;
+	}
+
+	private void fireChangeEvent()
+	{
+		if (m_eventPublisher != null)
+		{
+			m_eventPublisher.fireChangeEvent(this);
+		}
+	}
+
+	private void fireSelectedEvent()
+	{
+		if (m_eventPublisher != null)
+		{
+			m_eventPublisher.fireSelectedEvent(this);
+		}
 	}
 }
