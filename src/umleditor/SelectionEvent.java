@@ -10,7 +10,7 @@ public class SelectionEvent extends ChangeEvent
 
 	public SelectionEvent(ISelectable source)
 	{
-		super(source);
+		this(source, true);
 	}
 
 	public SelectionEvent(ISelectable source, boolean singleSelection)
