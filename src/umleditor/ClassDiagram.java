@@ -1,6 +1,8 @@
 package umleditor;
 
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -183,6 +185,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 		NodePanel newNodePanel = new NodePanel(this, newClassNode);
 		newNodePanel.attachToView(view);
 		newNodePanel.resetBounds(addLocation);
+		view.revalidate();
 	}
 
 	/**
@@ -505,7 +508,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 			return "Untitled Diagram";
 		}
 	}
-	
+
 	public boolean isSavedInFile(File file)
 	{
 		return (file.equals(fileSavedTo));
@@ -626,11 +629,23 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	 */
 	public void moveSelectedNodes(Point movePoint)
 	{
+		// go through all nodes, and adjust amount to move by,
+		// if it would take any of the nodes off of the screen
 		for (int i = 0; i < currentlySelectedObjects.size(); ++i)
 		{
 			NodePanel nodePanelToMove = ((ClassNode) currentlySelectedObjects.get(i)).getNodePanel();
-			int newPosX = Math.max(nodePanelToMove.getX() + movePoint.x, 0);
-			int newPosY = Math.max(nodePanelToMove.getY() + movePoint.y, 0);
+			if (nodePanelToMove.getX() + movePoint.x < 0)
+				movePoint.x = (0 - nodePanelToMove.getX());
+			if (nodePanelToMove.getY() + movePoint.y < 0)
+				movePoint.y = (0 - nodePanelToMove.getY());
+		}
+
+		// go through all nodes again and move them by the desired amount
+		for (int i = 0; i < currentlySelectedObjects.size(); ++i)
+		{
+			NodePanel nodePanelToMove = ((ClassNode) currentlySelectedObjects.get(i)).getNodePanel();
+			int newPosX = nodePanelToMove.getX() + movePoint.x;
+			int newPosY = nodePanelToMove.getY() + movePoint.y;
 			nodePanelToMove.resetBounds(new Point(newPosX, newPosY));
 		}
 
@@ -669,29 +684,38 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable
 	}
 
 	/**
-	 * Prints the current visible screen. If part of the diagram is offscreen, it will not be printed.
+	 * Prints the entire Uml Diagram on one page. If the diagram is larger than the printable portion of the page, it
+	 * will be scaled down to fit on the page. Also prints the title of the diagram in the upper LH corner of the page.
 	 */
 	public int print(Graphics arg0, PageFormat arg1, int arg2) throws PrinterException
 	{
 		if (arg2 > 0)
 			return NO_SUCH_PAGE;
-		
-//		if(view.getWidth() > view.getHeight())
-//		{
-//			arg1.setOrientation(PageFormat.LANDSCAPE);
-//			System.out.println("setting to landscape");
-//		}
-		
+
+		// if(view.getWidth() > view.getHeight())
+		// {
+		// arg1.setOrientation(PageFormat.LANDSCAPE);
+		// System.out.println("setting to landscape");
+		// }
+
 		Graphics2D g2d = (Graphics2D) arg0;
+
 		g2d.translate(arg1.getImageableX(), arg1.getImageableY());
-		
+
+		// TODO: make text centered
+		g2d.setFont(new Font("Serif", Font.PLAIN, 12));
+		FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+		g2d.drawString(getName(), 1, metrics.getHeight());
+
+		g2d.translate(0, metrics.getHeight());
+
 		double widthScale = arg1.getImageableWidth() / view.getWidth();
 		double heightScale = arg1.getImageableHeight() / view.getHeight();
 
 		double uniformScale = Math.min(widthScale, heightScale);
-		
+
 		g2d.scale(uniformScale, uniformScale);
-		
+
 		view.printAll(arg0);
 
 		return PAGE_EXISTS;

@@ -340,37 +340,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else if (arg0.getActionCommand() == "PRINT")
 		{
-			PrinterJob printJob = PrinterJob.getPrinterJob();
-			PrintRequestAttributeSet attributeSet = new HashPrintRequestAttributeSet();
-			printJob.setPrintable(getCurrentDiagram());
-			boolean print = printJob.printDialog(attributeSet);
-			if (print)
-			{
-				try
-				{
-					printJob.print(attributeSet);
-				}
-				catch (PrinterException e)
-				{
-					e.printStackTrace();
-				}
-			}
-			
-//			PrinterJob printJob = PrinterJob.getPrinterJob();
-//			printJob.setPrintable(getCurrentDiagram());
-//			boolean print = printJob.printDialog();
-//			if (print)
-//			{
-//				try
-//				{
-//					printJob.print();
-//				}
-//				catch (PrinterException e)
-//				{
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
+			printClassDiagram(getCurrentDiagram());
 		}
 		else if (arg0.getActionCommand() == "CLOSE")
 		{
@@ -405,6 +375,47 @@ public class UMLEditor extends JFrame implements ActionListener
 			helpPanel.setToAboutTab();
 			helpPanel.setVisible(true);
 		}
+	}
+
+	/**
+	 * Provides the user with the option of printing the following diagram. User can choose layout (portrait vs.
+	 * landscape) or other options (some of which may not make sense given the context), or cancel printing.
+	 * 
+	 * @param diagram - UML class diagram to print
+	 */
+	public void printClassDiagram(ClassDiagram diagram)
+	{
+		PrinterJob printJob = PrinterJob.getPrinterJob();
+		PrintRequestAttributeSet attributeSet = new HashPrintRequestAttributeSet();
+		printJob.setPrintable(diagram);
+		boolean print = printJob.printDialog(attributeSet);
+		if (print)
+		{
+			try
+			{
+				printJob.print(attributeSet);
+			}
+			catch (PrinterException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		// PrinterJob printJob = PrinterJob.getPrinterJob();
+		// printJob.setPrintable(getCurrentDiagram());
+		// boolean print = printJob.printDialog();
+		// if (print)
+		// {
+		// try
+		// {
+		// printJob.print();
+		// }
+		// catch (PrinterException e)
+		// {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
 	}
 
 	/**
