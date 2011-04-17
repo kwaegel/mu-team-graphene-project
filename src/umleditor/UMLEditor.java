@@ -144,7 +144,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	public void reflectSelectedState(boolean enabled)
 	{
 		deleteButton.setEnabled(enabled);
-		menuBar.toggleCopyCutMode(enabled);
+		menuBar.setCopyCutMode(enabled);
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		if (copyNode != null)
 			newDiagram.enablePastePopup();
-		menuBar.toggleDiagramBasedMenuItems(true);
+		menuBar.setDiagramBasedMenuItems(true);
 		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(),
 				new TabTitleComponent(tabCloseListener, diagramName));
 	}
@@ -495,7 +495,7 @@ public class UMLEditor extends JFrame implements ActionListener
 			{
 				addClassButton.setEnabled(false);
 				deleteButton.setEnabled(false);
-				menuBar.toggleDiagramBasedMenuItems(false);
+				menuBar.setDiagramBasedMenuItems(false);
 			}
 			return (true);
 		}

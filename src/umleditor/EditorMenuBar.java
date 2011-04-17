@@ -8,13 +8,21 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+/**
+ * {@link JMenuBar} that holds menu items for the UML Editor. Maintains references to those {@link JMenuItem}s whose
+ * state will need to change in the future based on changes in the {@link UMLEditor}, and provides methods for changing
+ * them.
+ */
 public class EditorMenuBar extends JMenuBar
 {
 	/**
 	 * Generated id for GUI item
 	 */
 	private static final long serialVersionUID = -5119021766263204155L;
-	
+
+	/**
+	 * Menu items that will need to be enabled/disabled based on changes in the {@link UMLEditor}'s state.
+	 */
 	private JMenuItem closeOption;
 	private JMenuItem saveOption;
 	private JMenuItem saveAsOption;
@@ -22,24 +30,37 @@ public class EditorMenuBar extends JMenuBar
 	private JMenuItem cutOption;
 	private JMenuItem copyOption;
 	private JMenuItem pasteOption;
-	
+
+	/**
+	 * Maintains whether or not a node has been copied, so that when diagram-related options are enabled, the paste
+	 * option will set appropriately.
+	 */
 	private boolean pasteEnabled;
-	
-	public EditorMenuBar (UMLEditor parentEditor)
+
+	/**
+	 * Constructs a new {@link EditorMenuBar} which displays menus in the specified {@link UMLEditor}.
+	 * 
+	 * @param parentEditor
+	 *            - UMLEditor of which this menu will be part
+	 */
+	public EditorMenuBar(UMLEditor parentEditor)
 	{
-		super ();
-		
+		super();
+
 		pasteEnabled = false;
-		
+
 		createFileMenu(parentEditor);
 
 		createEditMenu(parentEditor);
 
 		createHelpMenu(parentEditor);
 	}
-	
+
 	/**
 	 * Sets up and attaches the file menu. File menu contains New, Load, Close, Save, Save As, and Exit
+	 * 
+	 * @param parentEditor
+	 *            - {@link UMLEditor} that will listen to events from the menu items.
 	 */
 	private void createFileMenu(UMLEditor parentEditor)
 	{
@@ -96,7 +117,10 @@ public class EditorMenuBar extends JMenuBar
 	}
 
 	/**
-	 * Sets up and attaches the edit menu. Edit menu contains Cut, Copy and Paste
+	 * Sets up and attaches the edit menu. Edit menu contains Cut, Copy and Paste.
+	 * 
+	 * @param parentEditor
+	 *            - {@link UMLEditor} that will listen to events from the menu items.
 	 */
 	private void createEditMenu(UMLEditor parentEditor)
 	{
@@ -124,6 +148,12 @@ public class EditorMenuBar extends JMenuBar
 		this.add(editMenu);
 	}
 
+	/**
+	 * Sets up and attaches the help menu. Help menu contains the Help Contents and About options.
+	 * 
+	 * @param parentEditor
+	 *            - {@link UMLEditor} that will listen to events from the menu items.
+	 */
 	private void createHelpMenu(UMLEditor parentEditor)
 	{
 		JMenu helpMenu = new JMenu("Help");
@@ -142,20 +172,38 @@ public class EditorMenuBar extends JMenuBar
 
 		this.add(helpMenu);
 	}
-	
+
+	/**
+	 * Called when a node is copied in the UMLEditor. Ensures the paste menu item will always be enabled when a class
+	 * diagram is open.
+	 */
 	public void enablePaste()
 	{
 		pasteEnabled = true;
 		pasteOption.setEnabled(pasteEnabled);
 	}
-	
-	public void toggleCopyCutMode(boolean enabled)
+
+	/**
+	 * Sets the state of the copy and cut menu items, which should become enabled when a {@link ClassNode} is selected,
+	 * and disabled when none are selected.
+	 * 
+	 * @param enabled
+	 *            - whether the cut and copy options should be enabled or not.
+	 */
+	public void setCopyCutMode(boolean enabled)
 	{
 		cutOption.setEnabled(enabled);
 		copyOption.setEnabled(enabled);
 	}
 
-	public void toggleDiagramBasedMenuItems(boolean enabled)
+	/**
+	 * Sets the state of the menu items which should only be enabled when a {@link ClassDiagram} is open in the
+	 * {@link UMLEditor}.
+	 * 
+	 * @param enabled
+	 *            - whether the menu items should be enabled or disabled.
+	 */
+	public void setDiagramBasedMenuItems(boolean enabled)
 	{
 		closeOption.setEnabled(enabled);
 		saveOption.setEnabled(enabled);
@@ -164,7 +212,7 @@ public class EditorMenuBar extends JMenuBar
 		cutOption.setEnabled(enabled);
 		copyOption.setEnabled(enabled);
 		boolean pasteState;
-		if(enabled)
+		if (enabled)
 		{
 			pasteState = pasteEnabled;
 		}
