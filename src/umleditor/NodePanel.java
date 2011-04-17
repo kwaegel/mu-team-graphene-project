@@ -262,6 +262,10 @@ public class NodePanel extends JPanel
 			{
 				displayEditPanel();
 			}
+			else if (!e.isControlDown())
+			{
+				parentDiagram.setSelectedObject(associatedNode, true);
+			}
 		}
 
 		/**

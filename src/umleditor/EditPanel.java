@@ -1,6 +1,7 @@
 package umleditor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -111,12 +112,10 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		super.setResizable(false);
 
 		this.addWindowListener(new WindowDeactivationListener());
-		// this.addKeyListener(this);
 
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		everythingPanel = new JPanel(new MigLayout("wrap 1", "0[]0", ""));
-		// everythingPanel.addKeyListener(this);
 		scrollPane.setViewportView(everythingPanel);
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
@@ -190,7 +189,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			JButton deleteButton = new JButton("Delete");
 			deleteButton.setActionCommand("DeleteAttrib" + i);
 			deleteButton.addActionListener(this);
-			// deleteButton.addKeyListener(this);
+			deleteButton.addKeyListener(this);
 			everythingPanel.add(deleteButton, "split 2");
 		}
 
@@ -203,7 +202,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		JButton newAttributeButton = new JButton("New");
 		newAttributeButton.setActionCommand("NewAttrib");
 		newAttributeButton.addActionListener(this);
-		// newAttributeButton.addKeyListener(this);
+		newAttributeButton.addKeyListener(this);
 		everythingPanel.add(newAttributeButton, "split 2");
 	}
 
@@ -226,7 +225,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			JButton deleteButton = new JButton("Delete");
 			deleteButton.setActionCommand("DeleteMethod" + i);
 			deleteButton.addActionListener(this);
-			// deleteButton.addKeyListener(this);
+			deleteButton.addKeyListener(this);
 			everythingPanel.add(deleteButton, "split 2");
 		}
 		newMethodTextField = new JTextField();
@@ -238,7 +237,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		JButton newMethodButton = new JButton("New");
 		newMethodButton.setActionCommand("NewMethod");
 		newMethodButton.addActionListener(this);
-		// newMethodButton.addKeyListener(this);
+		newMethodButton.addKeyListener(this);
 		everythingPanel.add(newMethodButton, "split 2, wrap 15:push");
 	}
 
@@ -250,13 +249,13 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		JButton closeButton = new JButton("Close");
 		closeButton.setActionCommand("Exit");
 		closeButton.addActionListener(this);
-		// closeButton.addKeyListener(this);
+		closeButton.addKeyListener(this);
 		everythingPanel.add(closeButton, "align center, split, gapright 30");
 
 		JButton revertButton = new JButton("Discard Changes");
 		revertButton.setActionCommand("Discard");
 		revertButton.addActionListener(this);
-		// revertButton.addKeyListener(this);
+		revertButton.addKeyListener(this);
 		everythingPanel.add(revertButton, "align center");
 	}
 
@@ -274,33 +273,76 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	public void focusLost(FocusEvent e)
 	{
 		NumberedTextField ntf = (NumberedTextField) e.getComponent();
-		int componentIndex = ntf.getNumberIndex();
-		FieldType type = ntf.getType();
 		String text = ntf.getText();
 
 		if (text.isEmpty())
 		{
-			String dialogMessage;
-			if (type == FieldType.Attribute)
-			{
-				associatedNode.setAttribute(componentIndex, "default attribute");
-				ntf.setText(associatedNode.getAttribute(componentIndex));
-				dialogMessage = "Attribute name cannot be blank. To delete this attribute, click Delete";
-			}
-			else if (type == FieldType.Method)
-			{
-				associatedNode.setMethod(componentIndex, "default method");
-				ntf.setText(associatedNode.getMethod(componentIndex));
-				dialogMessage = "Method name cannot be blank. To delete this method, click Delete";
-			}
-			else
-			// type == FieldType.ClassName
-			{
-				associatedNode.setName("DefaultClass");
-				ntf.setText(associatedNode.getName());
-				dialogMessage = "Class name cannot be blank";
-			}
-			JOptionPane.showMessageDialog(this, dialogMessage);
+			displayEmptyFieldMessage(ntf);
+			ntf.requestFocus();
+		}
+	}
+
+	/**
+	 * Displays a message stating that the property associated with this {@link NumberedTextField} cannot be blank.
+	 * Called when the user attempts to make the value of the class name or some attribute or method be blank.
+	 * 
+	 * @param ntf
+	 *            - field whose value user has attempted to set to nothing.
+	 */
+	private void displayEmptyFieldMessage(NumberedTextField ntf)
+	{
+		int componentIndex = ntf.getNumberIndex();
+		FieldType type = ntf.getType();
+
+		String dialogMessage;
+		if (type == FieldType.Attribute)
+		{
+			associatedNode.setAttribute(componentIndex, "default attribute");
+			ntf.setText(associatedNode.getAttribute(componentIndex));
+			dialogMessage = "Attribute name cannot be blank. To delete this attribute, click Delete";
+		}
+		else if (type == FieldType.Method)
+		{
+			associatedNode.setMethod(componentIndex, "default method");
+			ntf.setText(associatedNode.getMethod(componentIndex));
+			dialogMessage = "Method name cannot be blank. To delete this method, click Delete";
+		}
+		else
+		// type == FieldType.ClassName
+		{
+			associatedNode.setName("DefaultClass");
+			ntf.setText(associatedNode.getName());
+			dialogMessage = "Class name cannot be blank";
+		}
+		JOptionPane.showMessageDialog(this, dialogMessage);
+	}
+
+	/**
+	 * Request focus on component identified by the component code.
+	 * 
+	 * @param nextComponentCode
+	 *            - code used to identify component to focus on.
+	 */
+	private void focusOnComponent(String nextComponentCode)
+	{
+		if (nextComponentCode.equals("NewAttributeField"))
+		{
+			newAttributeTextField.requestFocus();
+		}
+		else if (nextComponentCode.equals("NewMethodField"))
+		{
+			newMethodTextField.requestFocus();
+		}
+		else if (nextComponentCode.equals("CloseButton"))
+		{
+			// int closeButtonIndex = 11 + 2 * associatedNode.getNumAttributes() + 2 * associatedNode.getNumMethods();
+			everythingPanel.getComponent(everythingPanel.getComponentCount() - 2).requestFocus();
+		}
+		else if (nextComponentCode.equals("ClassNameField"))
+		{
+			int classNameFieldIndex = 1;
+			System.out.println(everythingPanel.getComponent(classNameFieldIndex));
+			everythingPanel.getComponent(classNameFieldIndex).requestFocus();
 		}
 	}
 
@@ -311,6 +353,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	public void actionPerformed(ActionEvent e)
 	{
 		String actionCommand = e.getActionCommand();
+		String nextComponentToGainFocus = "";
 
 		if (actionCommand == "Exit")
 		{
@@ -320,6 +363,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		{
 			associatedNode.setPropertiesTo(copyOfOriginalNode);
 			associatedNode.updateNodePanel();
+			nextComponentToGainFocus = "ClassNameField";
 		}
 		else if (actionCommand.startsWith("New"))
 		{
@@ -327,7 +371,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			{
 				// add new attribute to ClassNode
 				String newAttribName = newAttributeTextField.getText();
-				if (newAttribName.equals(""))
+				if (newAttribName.isEmpty())
 				{
 					JOptionPane.showMessageDialog(this, "New attribute name cannot be blank");
 				}
@@ -335,12 +379,13 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 				{
 					associatedNode.addAttribute(newAttribName);
 				}
+				nextComponentToGainFocus = "NewAttributeField";
 			}
 			else
 			{
 				// add new method to ClassNode
 				String newMethodName = newMethodTextField.getText();
-				if (newMethodName.equals(""))
+				if (newMethodName.isEmpty())
 				{
 					JOptionPane.showMessageDialog(this, "New method name cannot be blank");
 				}
@@ -348,10 +393,12 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 				{
 					associatedNode.addMethod(newMethodName);
 				}
+				nextComponentToGainFocus = "NewMethodField";
 			}
 		}
 		else if (actionCommand.startsWith("Delete"))
 		{
+			nextComponentToGainFocus = "CloseButton";
 			// get index of value to delete from action command (index will be at end of command)
 			int index = new Integer(actionCommand.substring(actionCommand.length() - 1));
 			if (actionCommand.contains("Attrib"))
@@ -367,60 +414,106 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		}
 		// recreate display to reflect changes to ClassNode
 		this.displayNodeProperties();
+
 		// redraw the EditPanel
 		this.validate();
+
+		// focus on next component
+		if (!nextComponentToGainFocus.isEmpty())
+			focusOnComponent(nextComponentToGainFocus);
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
-		// do nothing
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e)
-	{
-		// do nothing
+		// Do Nothing
 	}
 
 	/**
-	 * Handles KeyReleased events for class name, attribute and method fields so will update continuously as user types.
+	 * Handles enter events for ntf's in edit panel
+	 */
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.getComponent() instanceof NumberedTextField && e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			// pressing enter in a text field closes
+			// the edit panel, keeping current changes
+			// unless the text field is empty, which is illegal
+			NumberedTextField ntf = (NumberedTextField) e.getComponent();
+			if (ntf.getText().isEmpty())
+				displayEmptyFieldMessage(ntf);
+			else
+				super.dispose();
+		}
+	}
+
+	/**
+	 * Handles KeyReleased events for class name, attribute and method fields and all buttons. Ensures class name,
+	 * attributes and methods will update continuously as user types, and hitting enter when focused on a button will
+	 * behave the same as pressing that button. Also handles special escape events: pressing escape while focused on any
+	 * component will revert changes and close the edit panel.
 	 */
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
-		if (e.getComponent() instanceof NumberedTextField)
-		{
-			NumberedTextField ntf = (NumberedTextField) e.getComponent();
-			int componentIndex = ntf.getNumberIndex();
-			FieldType type = ntf.getType();
-			if (type == FieldType.Attribute)
-			{
-				associatedNode.setAttribute(componentIndex, ntf.getText());
-
-			}
-			else if (type == FieldType.Method)
-			{
-				associatedNode.setMethod(componentIndex, ntf.getText());
-			}
-			else
-			// type == FieldType.ClassName
-			{
-				associatedNode.setName(ntf.getText());
-			}
-		}
-
-		// System.out.println("key from " + e.getComponent());
-		// special key events
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
+			// if the user pressed escape, regardless of what has focus, want to
+			// revert changes and exit immediately, without doing anything further
 			associatedNode.setPropertiesTo(copyOfOriginalNode);
 			associatedNode.updateNodePanel();
 			super.dispose();
+			// don't continue with rest of method.
+			return;
 		}
-		else if (e.getKeyCode() == KeyEvent.VK_ENTER)
+
+		Component originatingComponent = e.getComponent();
+		if (originatingComponent instanceof JButton && e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			super.dispose();
+			// if user hits enter while button has focus,
+			// same result as clicking button.
+			JButton button = (JButton) originatingComponent;
+			button.doClick();
+		}
+		else if (originatingComponent instanceof NumberedTextField)
+		{
+			NumberedTextField ntf = (NumberedTextField) e.getComponent();
+
+			if (e.getKeyCode() == KeyEvent.VK_DELETE)
+			{
+				// delete field
+				if (ntf.getType() == FieldType.Attribute)
+					associatedNode.removeAttribute(ntf.getNumberIndex());
+				else if (ntf.getType() == FieldType.Method)
+					associatedNode.removeMethod(ntf.getNumberIndex());
+				// recreate display to reflect changes to ClassNode
+				this.displayNodeProperties();
+				// redraw the EditPanel
+				this.validate();
+				// focus on close button
+				focusOnComponent("CloseButton");
+			}
+			else
+			{
+				// typed something in this text box, so update the associated node appropriately
+				int componentIndex = ntf.getNumberIndex();
+				FieldType type = ntf.getType();
+				if (type == FieldType.Attribute)
+				{
+					associatedNode.setAttribute(componentIndex, ntf.getText());
+
+				}
+				else if (type == FieldType.Method)
+				{
+					associatedNode.setMethod(componentIndex, ntf.getText());
+				}
+				else
+				// type == FieldType.ClassName
+				{
+					associatedNode.setName(ntf.getText());
+				}
+			}
 		}
 	}
 
@@ -447,5 +540,4 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			}
 		}
 	}
-
 }
