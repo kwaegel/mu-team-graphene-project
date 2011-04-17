@@ -119,6 +119,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		RelationshipType newType = RelationshipType.valueOf(typeName);
 		System.out.println("Selected " + newType);
 		m_model.setType(newType);
+		RelationshipEditDialog.this.setModelChanged(true);
 	}
 
 	/** Actions **/
@@ -146,6 +147,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 			{
 				// Restore state from backup
 				m_model.setModelState(m_backupModel);
+				m_model.getRelationship().repaint();
 			}
 
 			RelationshipEditDialog.this.setModelChanged(false);
@@ -161,6 +163,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		public void actionPerformed(ActionEvent e)
 		{
 			m_model.reverse();
+			RelationshipEditDialog.this.setModelChanged(true);
 		}
 
 	}
