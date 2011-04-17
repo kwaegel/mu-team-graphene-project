@@ -45,6 +45,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 
 		setLayout(new MigLayout("wrap 1"));
 
+		super.setModalityType(ModalityType.APPLICATION_MODAL);
 		createDialogComponents();
 
 		this.addWindowListener(new WindowAdapter()
