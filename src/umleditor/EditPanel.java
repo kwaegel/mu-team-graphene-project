@@ -27,10 +27,10 @@ import net.miginfocom.swing.MigLayout;
 import umleditor.NumberedTextField.FieldType;
 
 /**
- * Allows user to edit values for a particular {@link ClassNode} in the UML diagram. The {@link ClassNode} will be changed automatically
- * as it is edited -- there is no "cancel" option because editing a value through the EditPanel already changed that
- * value in the class. There is a "revert" option which changes all values back to the point when the edit panel was
- * opened. Choosing this option and then closing the dialog has the effect of "cancel"
+ * Allows user to edit values for a particular {@link ClassNode} in the UML diagram. The {@link ClassNode} will be
+ * changed automatically as it is edited -- there is no "cancel" option because editing a value through the EditPanel
+ * already changed that value in the class. There is a "revert" option which changes all values back to the point when
+ * the edit panel was opened. Choosing this option and then closing the dialog has the effect of "cancel"
  */
 public class EditPanel extends JDialog implements FocusListener, ActionListener, KeyListener, WindowListener
 {
@@ -111,10 +111,12 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		super.setResizable(false);
 
 		this.addWindowListener(this);
+		// this.addKeyListener(this);
 
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		everythingPanel = new JPanel(new MigLayout("wrap 1", "0[]0", ""));
+		// everythingPanel.addKeyListener(this);
 		scrollPane.setViewportView(everythingPanel);
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
@@ -183,12 +185,12 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			attributeField.setPreferredSize(new Dimension(100, 25));
 			attributeField.addFocusListener(this);
 			attributeField.addKeyListener(this);
-			attributeField.addKeyListener(this);
 			everythingPanel.add(attributeField, "split 2, gapx 5");
 
 			JButton deleteButton = new JButton("Delete");
 			deleteButton.setActionCommand("DeleteAttrib" + i);
 			deleteButton.addActionListener(this);
+			// deleteButton.addKeyListener(this);
 			everythingPanel.add(deleteButton, "split 2");
 		}
 
@@ -201,6 +203,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		JButton newAttributeButton = new JButton("New");
 		newAttributeButton.setActionCommand("NewAttrib");
 		newAttributeButton.addActionListener(this);
+		// newAttributeButton.addKeyListener(this);
 		everythingPanel.add(newAttributeButton, "split 2");
 	}
 
@@ -223,6 +226,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			JButton deleteButton = new JButton("Delete");
 			deleteButton.setActionCommand("DeleteMethod" + i);
 			deleteButton.addActionListener(this);
+			// deleteButton.addKeyListener(this);
 			everythingPanel.add(deleteButton, "split 2");
 		}
 		newMethodTextField = new JTextField();
@@ -234,6 +238,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		JButton newMethodButton = new JButton("New");
 		newMethodButton.setActionCommand("NewMethod");
 		newMethodButton.addActionListener(this);
+		// newMethodButton.addKeyListener(this);
 		everythingPanel.add(newMethodButton, "split 2, wrap 15:push");
 	}
 
@@ -245,16 +250,18 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		JButton closeButton = new JButton("Close");
 		closeButton.setActionCommand("Exit");
 		closeButton.addActionListener(this);
+		// closeButton.addKeyListener(this);
 		everythingPanel.add(closeButton, "align center, split, gapright 30");
 
 		JButton revertButton = new JButton("Discard Changes");
 		revertButton.setActionCommand("Discard");
 		revertButton.addActionListener(this);
+		// revertButton.addKeyListener(this);
 		everythingPanel.add(revertButton, "align center");
 	}
-	
+
 	/**
-	 * Marks the parent {@link ClassDiagram} as changed if the node has been modified, and closes the {@link EditPanel}. 
+	 * Marks the parent {@link ClassDiagram} as changed if the node has been modified, and closes the {@link EditPanel}.
 	 */
 	private void closeEditPanel()
 	{
@@ -395,27 +402,38 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
+		if (e.getComponent() instanceof NumberedTextField)
+		{
+			NumberedTextField ntf = (NumberedTextField) e.getComponent();
+			int componentIndex = ntf.getNumberIndex();
+			FieldType type = ntf.getType();
+			if (type == FieldType.Attribute)
+			{
+				associatedNode.setAttribute(componentIndex, ntf.getText());
+
+			}
+			else if (type == FieldType.Method)
+			{
+				associatedNode.setMethod(componentIndex, ntf.getText());
+			}
+			else
+			// type == FieldType.ClassName
+			{
+				associatedNode.setName(ntf.getText());
+			}
+		}
+
+		// System.out.println("key from " + e.getComponent());
+		// special key events
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
+			associatedNode.setPropertiesTo(copyOfOriginalNode);
+			associatedNode.updateNodePanel();
+			super.dispose();
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
 			closeEditPanel();
-		}
-
-		NumberedTextField ntf = (NumberedTextField) e.getComponent();
-		int componentIndex = ntf.getNumberIndex();
-		FieldType type = ntf.getType();
-		if (type == FieldType.Attribute)
-		{
-			associatedNode.setAttribute(componentIndex, ntf.getText());
-
-		}
-		else if (type == FieldType.Method)
-		{
-			associatedNode.setMethod(componentIndex, ntf.getText());
-		}
-		else
-		// type == FieldType.ClassName
-		{
-			associatedNode.setName(ntf.getText());
 		}
 	}
 
