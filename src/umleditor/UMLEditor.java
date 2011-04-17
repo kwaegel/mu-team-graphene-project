@@ -144,6 +144,10 @@ public class UMLEditor extends JFrame implements ActionListener
 	public void reflectSelectedState(boolean enabled)
 	{
 		deleteButton.setEnabled(enabled);
+		/*
+		 * KY: copy cut mode should not be enabled here, but only if class nodes are selected. Otherwise, Menu shows you
+		 * can copy or cut something that you can't, like a relationship or relationship control point
+		 */
 		menuBar.setCopyCutMode(enabled);
 	}
 
@@ -267,8 +271,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Adds a either a new Class Diagram or a loaded Class Diagram to the
-	 * UML Editor
+	 * Adds a either a new Class Diagram or a loaded Class Diagram to the UML Editor
 	 */
 	private void addDiagramToEditor(ClassDiagram newDiagram, String diagramName)
 	{
@@ -296,8 +299,7 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Checks to see if the file is already open. If it is open, returns the index 
-	 * of the Class Diagram.
+	 * Checks to see if the file is already open. If it is open, returns the index of the Class Diagram.
 	 */
 	private int wasAlreadyOpen(File file)
 	{
@@ -389,7 +391,8 @@ public class UMLEditor extends JFrame implements ActionListener
 	 * Provides the user with the option of printing the following diagram. User can choose layout (portrait vs.
 	 * landscape) or other options (some of which may not make sense given the context), or cancel printing.
 	 * 
-	 * @param diagram - UML class diagram to print
+	 * @param diagram
+	 *            - UML class diagram to print
 	 */
 	public void printClassDiagram(ClassDiagram diagram)
 	{
