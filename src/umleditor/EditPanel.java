@@ -9,8 +9,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -32,7 +32,7 @@ import umleditor.NumberedTextField.FieldType;
  * already changed that value in the class. There is a "revert" option which changes all values back to the point when
  * the edit panel was opened. Choosing this option and then closing the dialog has the effect of "cancel"
  */
-public class EditPanel extends JDialog implements FocusListener, ActionListener, KeyListener, WindowListener
+public class EditPanel extends JDialog implements FocusListener, ActionListener, KeyListener
 {
 	/**
 	 * Generated id, recommended for all GUI components
@@ -110,7 +110,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		super.setMinimumSize(new Dimension(400, 450));
 		super.setResizable(false);
 
-		this.addWindowListener(this);
+		this.addWindowListener(new WindowDeactivationListener());
 		// this.addKeyListener(this);
 
 		scrollPane = new JScrollPane();
@@ -260,19 +260,6 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		everythingPanel.add(revertButton, "align center");
 	}
 
-	/**
-	 * Marks the parent {@link ClassDiagram} as changed if the node has been modified, and closes the {@link EditPanel}.
-	 */
-	private void closeEditPanel()
-	{
-		if (!associatedNode.equals(copyOfOriginalNode))
-		{
-			parentDiagram.markAsChanged();
-		}
-		// get rid of JDialog
-		super.dispose();
-	}
-
 	@Override
 	public void focusGained(FocusEvent e)
 	{
@@ -327,7 +314,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 
 		if (actionCommand == "Exit")
 		{
-			closeEditPanel();
+			super.dispose();
 		}
 		else if (actionCommand == "Discard")
 		{
@@ -433,59 +420,32 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			closeEditPanel();
+			super.dispose();
 		}
 	}
 
 	/**
-	 * When {@link EditPanel} closes, determines if the node has been changed, and, if so, sets the state in the node's
-	 * parent {@link ClassDiagram}.
+	 * Listens for window deactivation events (when edit panel is about to close) and checks to see if the node has been
+	 * changed, if so, marks the parent {@link ClassDiagram} as changed. Window Adapter provides an empty implementation
+	 * of all Window listening methods, extending it is preferable to implementing WindowListener because that requires
+	 * implementation of unnecessary methods.
 	 */
-	@Override
-	public void windowDeactivated(WindowEvent e)
+	private class WindowDeactivationListener extends WindowAdapter
 	{
-		if (!associatedNode.equals(copyOfOriginalNode))
+		/**
+		 * When {@link EditPanel} closes, determines if the node has been changed, and, if so, sets the state in the
+		 * node's parent {@link ClassDiagram}.
+		 */
+		@Override
+		public void windowDeactivated(WindowEvent e)
 		{
-			// check if the user has changed the class and if they have, notify its
-			// node panel's parent diagram that changes have been made.
-			parentDiagram.markAsChanged();
+			if (!associatedNode.equals(copyOfOriginalNode))
+			{
+				// check if the user has changed the class and if they have, notify its
+				// node panel's parent diagram that changes have been made.
+				parentDiagram.markAsChanged();
+			}
 		}
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e)
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void windowOpened(WindowEvent e)
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e)
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e)
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e)
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e)
-	{
-		// Do nothing
 	}
 
 }
