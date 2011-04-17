@@ -160,6 +160,7 @@ public class RelationshipModel
 		m_secondNodeOffset = tempOffset;
 
 		m_relationship.rebuildGraphics();
+		m_relationship.repaint();
 	}
 
 	/**
