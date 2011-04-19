@@ -6,7 +6,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuItem;
@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -865,13 +866,17 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		setSelectedObject(e.getSource(), e.isSingleSelectionRequested());
 	}
 
-	public void drawDragLine(Point startPoint, Point endPoint, Rectangle startBounds, Rectangle endBounds)
+	public void drawDragLine(Point startPoint, Point endPoint, JComponent startNode, JComponent endNode)
 	{
-		Path2D.Float dragPath = new Path2D.Float();
-		dragPath.moveTo(startPoint.x, startPoint.y);
-		dragPath.lineTo(endPoint.x, endPoint.y);
-
 		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
+
+		Point start = SwingUtilities.convertPoint(startNode, startPoint, gp);
+		Point end = endPoint;
+
+		Path2D.Float dragPath = new Path2D.Float();
+		dragPath.moveTo(start.x, start.y);
+		dragPath.lineTo(end.x, end.y);
+
 		gp.setDrawPath(dragPath);
 		view.repaint();
 	}
