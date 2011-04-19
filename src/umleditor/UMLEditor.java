@@ -83,6 +83,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		createNewClassDiagram();
 		setUpHelpPanel();
 
+		// Create a glass pane for temporary drawing.
+		this.setGlassPane(new GlassDrawingPane());
+
 		this.pack();
 		this.setVisible(true);
 	}
@@ -283,7 +286,9 @@ public class UMLEditor extends JFrame implements ActionListener
 			newDiagram.requestFocusOnView();
 		}
 		if (copyNode != null)
+		{
 			newDiagram.enablePastePopup();
+		}
 		menuBar.setDiagramBasedMenuItems(true);
 		tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(),
 				new TabTitleComponent(tabCloseListener, diagramName));
@@ -306,7 +311,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		for (int i = 0; i < classDiagrams.size(); ++i)
 		{
 			if (classDiagrams.get(i).isSavedInFile(file))
+			{
 				return (i);
+			}
 		}
 		return (-1);
 	}
@@ -325,7 +332,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		{
 			ClassDiagram currentDiagram = getCurrentDiagram();
 			if (currentDiagram != null)
+			{
 				currentDiagram.deleteSelectedObjects();
+			}
 		}
 		else if (arg0.getActionCommand() == "NEW")
 		{
@@ -487,7 +496,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		{
 			boolean userSaved = currentDiagram.saveToFile(false);
 			if (!userSaved)
+			{
 				userOption = JOptionPane.CANCEL_OPTION;
+			}
 		}
 
 		if (userOption != JOptionPane.CANCEL_OPTION && userOption != JOptionPane.CLOSED_OPTION)
@@ -554,6 +565,21 @@ public class UMLEditor extends JFrame implements ActionListener
 	 */
 	public static void main(String[] args)
 	{
+		// // Used for event debugging.
+		// java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener()
+		// {
+		//
+		// @Override
+		// public void eventDispatched(AWTEvent event)
+		// {
+		// if (event.getID() == MouseEvent.MOUSE_DRAGGED)
+		// {
+		// System.out.println(event);
+		// }
+		// }
+		//
+		// }, AWTEvent.MOUSE_MOTION_EVENT_MASK);
+
 		new UMLEditor();
 	}
 

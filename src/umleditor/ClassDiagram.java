@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -14,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Path2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -668,9 +670,13 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		{
 			NodePanel nodePanelToMove = ((ClassNode) currentlySelectedObjects.get(i)).getNodePanel();
 			if (nodePanelToMove.getX() + movePoint.x < 0)
+			{
 				movePoint.x = (0 - nodePanelToMove.getX());
+			}
 			if (nodePanelToMove.getY() + movePoint.y < 0)
+			{
 				movePoint.y = (0 - nodePanelToMove.getY());
+			}
 		}
 
 		// go through all nodes again and move them by the desired amount
@@ -859,4 +865,14 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		setSelectedObject(e.getSource(), e.isSingleSelectionRequested());
 	}
 
+	public void drawDragLine(Point startPoint, Point endPoint, Rectangle startBounds, Rectangle endBounds)
+	{
+		Path2D.Float dragPath = new Path2D.Float();
+		dragPath.moveTo(startPoint.x, startPoint.y);
+		dragPath.lineTo(endPoint.x, endPoint.y);
+
+		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
+		gp.setDrawPath(dragPath);
+		view.repaint();
+	}
 }

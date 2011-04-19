@@ -70,14 +70,13 @@ public class NodeDragListener extends MouseInputAdapter
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		// this prevents bug where releasing a nodePanel after dragging creates a relationship
-		// with any node in the upper left-hand corner, if one happens to be there.
-		// this bug occurred because the getComponentUnder method in class diagram
-		// (itself a workaround for a swing bug) depends on the location of the released-event's source,
-		// but source was different if released event came from drag label (here) or the
-		// NodePanel itself.
-		// The following line ensures the panel is always the source while preserving
-		// all other info about the event
+		/*
+		 * This prevents bug where releasing a nodePanel after dragging creates a relationship with any node in the
+		 * upper left-hand corner, if one happens to be there. this bug occurred because the getComponentUnder method in
+		 * class diagram (itself a workaround for a swing bug) depends on the location of the released-event's source,
+		 * but source was different if released event came from drag label (here) or the NodePanel itself. The following
+		 * line ensures the panel is always the source while preserving all other info about the event
+		 */
 		MouseEvent e2 = new MouseEvent(panel, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(),
 				e.getClickCount(), e.isPopupTrigger());
 		// forward event to node panel
@@ -87,6 +86,7 @@ public class NodeDragListener extends MouseInputAdapter
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
+		System.out.println("mouse dragged event on drag listener");
 		// tell the node's parent diagram to move the node to the new location
 		ClassDiagram containingDiagram = panel.getParentDiagram();
 		Point delta = new Point(e.getX() - previousMouseLoc.x, e.getY() - previousMouseLoc.y);
