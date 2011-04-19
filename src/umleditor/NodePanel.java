@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,8 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -284,8 +281,8 @@ public class NodePanel extends JPanel
 			parentDiagram.setSelectedObject(associatedNode, deselectOthers);
 
 			// Set initial point when drawing drag lines.
-			m_initialDragPoint = SwingUtilities.convertPoint(NodePanel.this, e.getPoint(), NodePanel.this.getParent());
-			System.err.println("Initial drag point set to" + m_initialDragPoint);
+			m_initialDragPoint = e.getPoint();
+			System.err.println("Initial drag point set to " + m_initialDragPoint + " from " + e.getSource());
 		}
 
 		/**
@@ -322,23 +319,23 @@ public class NodePanel extends JPanel
 		@Override
 		public void mouseDragged(MouseEvent e)
 		{
-
 			Component targetComponent = parentDiagram.getComponentUnder(e);
 
-			m_dragPoint = SwingUtilities.convertPoint(NodePanel.this, e.getPoint(), NodePanel.this.getParent());
+			m_dragPoint = e.getPoint();
+
+			System.out.println("end point at " + m_dragPoint + " from " + e.getSource());
 
 			// Get the bounds
-			Rectangle startBounds = NodePanel.this.getBounds();
-			Rectangle endBounds = null;
+			NodePanel startNode = NodePanel.this;
+			NodePanel endNode = null;
 
 			if (targetComponent instanceof NodePanel && targetComponent != NodePanel.this)
 			{
 				NodePanel node = (NodePanel) targetComponent;
-				endBounds = node.getBounds();
 				node.setBackground(new Color(150, 250, 130));
 			}
 
-			parentDiagram.drawDragLine(m_initialDragPoint, m_dragPoint, startBounds, endBounds);
+			parentDiagram.drawDragLine(m_initialDragPoint, m_dragPoint, startNode, endNode);
 		}
 	}
 
