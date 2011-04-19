@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -75,7 +77,9 @@ public class NodePanel extends JPanel
 
 		this.createDisplay();
 
-		this.addMouseListener(new NodeSelectionListener());
+		NodeSelectionListener nsl = new NodeSelectionListener();
+		this.addMouseListener(nsl);
+		this.addMouseMotionListener(nsl);
 	}
 
 	/**
@@ -250,6 +254,8 @@ public class NodePanel extends JPanel
 	 */
 	private class NodeSelectionListener extends MouseAdapter
 	{
+		private Point m_initialDragPoint;
+		private Point m_dragPoint;
 
 		/**
 		 * One click selects this panel's node Two clicks opens the edit panel.
@@ -274,8 +280,12 @@ public class NodePanel extends JPanel
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
-			boolean deselectOthers = (e.isControlDown()) ? false : true;
+			boolean deselectOthers = e.isControlDown() ? false : true;
 			parentDiagram.setSelectedObject(associatedNode, deselectOthers);
+
+			// Set initial point when drawing drag lines.
+			m_initialDragPoint = SwingUtilities.convertPoint(NodePanel.this, e.getPoint(), NodePanel.this.getParent());
+			System.err.println("Initial drag point set to" + m_initialDragPoint);
 		}
 
 		/**
@@ -290,7 +300,8 @@ public class NodePanel extends JPanel
 
 			if (comp instanceof NodePanel)
 			{
-				ClassNode targetNode = ((NodePanel) comp).getClassNode();
+				NodePanel panel = ((NodePanel) comp);
+				ClassNode targetNode = panel.getClassNode();
 				if (e.isPopupTrigger())
 				{
 					JPopupMenu nodePopup = new NodePanelPopup();
@@ -301,8 +312,33 @@ public class NodePanel extends JPanel
 				else
 				{
 					parentDiagram.addRelationship(targetNode);
+
+					// Reset color of target node.
+					panel.setBackground(Color.white);
 				}
 			}
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e)
+		{
+
+			Component targetComponent = parentDiagram.getComponentUnder(e);
+
+			m_dragPoint = SwingUtilities.convertPoint(NodePanel.this, e.getPoint(), NodePanel.this.getParent());
+
+			// Get the bounds
+			Rectangle startBounds = NodePanel.this.getBounds();
+			Rectangle endBounds = null;
+
+			if (targetComponent instanceof NodePanel && targetComponent != NodePanel.this)
+			{
+				NodePanel node = (NodePanel) targetComponent;
+				endBounds = node.getBounds();
+				node.setBackground(new Color(150, 250, 130));
+			}
+
+			parentDiagram.drawDragLine(m_initialDragPoint, m_dragPoint, startBounds, endBounds);
 		}
 	}
 

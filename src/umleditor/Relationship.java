@@ -13,7 +13,6 @@ import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -445,7 +444,7 @@ public class Relationship extends JComponent implements ISelectable
 	{
 		// Note: the provided point is relative to the bounding box of the component, not the parent window.
 		// Convert coordinates (local-to-parent) for testing. This is a workaround until all data is stored in local
-		// coordinates.
+		// coordinates (assuming that is possible).
 		Point loc = getLocation();
 		x += loc.x;
 		y += loc.y;
@@ -454,26 +453,8 @@ public class Relationship extends JComponent implements ISelectable
 				m_clickDelta * 2);
 
 		boolean inBounds = getBounds().contains(x, y);
-		boolean intersectsLine = false;
+		boolean intersectsLine = MathHelper.intersectsPath(m_line.getPathIterator(null), clickArea);
 		boolean intersectsArrow = m_arrow.intersects(clickArea);
-
-		/*
-		 * Need to check line intersections by hand, as the intersects() method only checks shape containment, not line
-		 * intersection. TODO: Find a more elegant way to do this.
-		 */
-		PathIterator lineItr = m_line.getPathIterator(null);
-		float[] nextPoints = new float[6];
-		float[] lastPoints = new float[6];
-		while (!lineItr.isDone() && !intersectsLine)
-		{
-			int segmentType = lineItr.currentSegment(nextPoints);
-			if (segmentType == PathIterator.SEG_LINETO)
-			{
-				intersectsLine = clickArea.intersectsLine(lastPoints[0], lastPoints[1], nextPoints[0], nextPoints[1]);
-			}
-			System.arraycopy(nextPoints, 0, lastPoints, 0, 6);
-			lineItr.next();
-		}
 
 		return inBounds && (intersectsLine || intersectsArrow);
 	}
@@ -672,7 +653,7 @@ public class Relationship extends JComponent implements ISelectable
 			if (m_selectedControlPointIndex == 0)
 			{
 				Rectangle bounds = m_model.getFirstNode().getPanelBounds();
-				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
+				Point closestPoint = MathHelper.getClosestEdgePoint(dragPoint, bounds);
 				m_points.set(m_selectedControlPointIndex, closestPoint);
 
 				m_firstNodeOffset.x = m_points.get(0).x - bounds.x;
@@ -681,7 +662,7 @@ public class Relationship extends JComponent implements ISelectable
 			else if (m_selectedControlPointIndex == m_points.size() - 1)
 			{
 				Rectangle bounds = m_model.getSecondNode().getPanelBounds();
-				Point closestPoint = getClosestPointOnRectangle(dragPoint, bounds);
+				Point closestPoint = MathHelper.getClosestEdgePoint(dragPoint, bounds);
 				m_points.set(m_selectedControlPointIndex, closestPoint);
 
 				int end = m_points.size() - 1;
@@ -712,64 +693,4 @@ public class Relationship extends JComponent implements ISelectable
 		}
 	}
 
-	/********** Static methods **********/
-
-	/**
-	 * Return the point on the rectangle that is closest to the click point.
-	 * 
-	 * @param clickPoint
-	 *            - the click point
-	 * @param rect
-	 *            - the {@link java.awt.Rectangle rectangle} to check.
-	 * @return - the point on the rectangle nearest to the click point.
-	 */
-	private static Point getClosestPointOnRectangle(Point clickPoint, Rectangle rect)
-	{
-		Point nearestPoint = new Point(clickPoint);
-
-		int maxX = rect.x + rect.width;
-		int maxY = rect.y + rect.height;
-
-		// Snap one of the coords to the side for points inside the rectangle
-		if (rect.contains(clickPoint))
-		{
-			float centerDeltaX = (float) rect.getCenterX() - clickPoint.x;
-			float centerDeltaY = (float) rect.getCenterY() - clickPoint.y;
-
-			if (Math.abs(centerDeltaX) > Math.abs(centerDeltaY))
-			{
-				// Snap left if the delta is positive, else right.
-				nearestPoint.x = (centerDeltaX > 0) ? rect.x : maxX;
-			}
-			else
-			{
-				// Snap up if the delta is positive, else down.
-				nearestPoint.y = (centerDeltaY > 0) ? rect.y : maxY;
-			}
-		}
-		else
-		{
-			// Check x coords for points outside the rectangle
-			if (clickPoint.x < rect.x)
-			{
-				nearestPoint.x = rect.x;
-			}
-			else if (clickPoint.x > maxX)
-			{
-				nearestPoint.x = maxX;
-			}
-
-			// Check y coords for points outside the rectangle
-			if (clickPoint.y < rect.y)
-			{
-				nearestPoint.y = rect.y;
-			}
-			else if (clickPoint.y > maxY)
-			{
-				nearestPoint.y = maxY;
-			}
-		}
-
-		return nearestPoint;
-	}
 }
