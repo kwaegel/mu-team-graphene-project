@@ -866,6 +866,14 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		setSelectedObject(e.getSource(), e.isSingleSelectionRequested());
 	}
 
+	/**
+	 * Drag a drag line on the screen.
+	 * 
+	 * @param startPoint
+	 * @param endPoint
+	 * @param startNode
+	 * @param endNode
+	 */
 	public void drawDragLine(Point startPoint, Point endPoint, JComponent startNode, JComponent endNode)
 	{
 		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
