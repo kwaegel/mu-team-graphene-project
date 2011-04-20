@@ -1,12 +1,9 @@
 package umleditor;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JLayeredPane;
 
 /**
  * Model of a class in the UML Diagram.
@@ -152,15 +149,11 @@ public class ClassNode implements ISelectable
 	{
 		if (selected)
 		{
-			nodePanel.setBackground(Color.pink);
-			JLayeredPane view = (JLayeredPane) nodePanel.getParent();
-			view.setLayer(nodePanel, JLayeredPane.DRAG_LAYER);
+			nodePanel.makeSelected();
 		}
 		else
 		{
-			nodePanel.setBackground(Color.white);
-			JLayeredPane view = (JLayeredPane) nodePanel.getParent();
-			view.setLayer(nodePanel, JLayeredPane.DEFAULT_LAYER);
+			nodePanel.makeUnselected();
 		}
 	}
 
