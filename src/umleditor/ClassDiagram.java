@@ -388,9 +388,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				rel.setEventPublisher(m_changePublisher);
 
 				rel.repaint();
+				
+				markAsChanged();
 			}
-
-			markAsChanged();
 		}
 	}
 
@@ -875,9 +875,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	 * @param startPoint
 	 * @param endPoint
 	 * @param startNode
-	 * @param endNode
 	 */
-	public void drawDragLine(Point startPoint, Point endPoint, JComponent startNode, JComponent endNode)
+	public void drawDragLine(Point startPoint, Point endPoint, JComponent startNode)
 	{
 		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
 

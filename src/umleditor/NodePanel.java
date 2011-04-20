@@ -54,6 +54,8 @@ public class NodePanel extends JPanel
 	 */
 	private ClassDiagram parentDiagram;
 
+	private boolean isSelected;
+
 	/**
 	 * Constructs a new NodePanel which displays the given {@link ClassNode} which is part of the given ClassDiagram.
 	 * 
@@ -70,7 +72,8 @@ public class NodePanel extends JPanel
 
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setLayout(new MigLayout("wrap 1, fill", "0[fill]0", ""));
-		this.setBackground(Color.white);
+		isSelected = false;
+		this.setAppropriateColor();
 
 		this.createDisplay();
 
@@ -236,6 +239,22 @@ public class NodePanel extends JPanel
 		view.add(this, "external", JLayeredPane.DEFAULT_LAYER);
 	}
 
+	public void makeSelected()
+	{
+		isSelected = true;
+		this.setAppropriateColor();
+		JLayeredPane view = (JLayeredPane) this.getParent();
+		view.setLayer(this, JLayeredPane.DRAG_LAYER);
+	}
+
+	public void makeUnselected()
+	{
+		isSelected = false;
+		this.setAppropriateColor();
+		JLayeredPane view = (JLayeredPane) this.getParent();
+		view.setLayer(this, JLayeredPane.DEFAULT_LAYER);
+	}
+
 	/**
 	 * Returns whether or not this panel is selected
 	 * 
@@ -243,7 +262,12 @@ public class NodePanel extends JPanel
 	 */
 	public boolean isSelected()
 	{
-		return (this.getBackground().equals(Color.pink));
+		return (isSelected);
+	}
+
+	public void setAppropriateColor()
+	{
+		this.setBackground(isSelected ? Color.pink : Color.white);
 	}
 
 	/**
@@ -251,11 +275,11 @@ public class NodePanel extends JPanel
 	 */
 	private class NodeSelectionListener extends MouseAdapter
 	{
+		private final Color m_nodeHoverColor = new Color(150, 250, 130);
 		private Point m_initialDragPoint;
-		private Point m_dragPoint;
 
-		private Component m_lastHoveredNode;
-
+		private NodePanel m_lastHoveredNode;
+		
 		/**
 		 * One click selects this panel's node Two clicks opens the edit panel.
 		 */
@@ -313,40 +337,41 @@ public class NodePanel extends JPanel
 				else
 				{
 					parentDiagram.addRelationship(targetNode);
-
-					// Reset color of target node.
-					panel.setBackground(Color.white);
+					panel.setAppropriateColor();
 				}
 			}
 		}
 
+		/**
+		 * When dragging to create a relationship, draws teh line behind the mouse, and colors nodes that are hovered
+		 * over.
+		 */
 		@Override
 		public void mouseDragged(MouseEvent e)
 		{
-			m_dragPoint = e.getPoint();
-
-			// Get the bounds
+			// drag line drawing code
+			Point dragPoint = e.getPoint();
 			NodePanel startNode = NodePanel.this;
-			NodePanel endNode = null;
+			parentDiagram.drawDragLine(m_initialDragPoint, dragPoint, startNode);
 
+			// node hover coloring code
 			Component targetComponent = parentDiagram.getComponentUnder(e);
-
-			if (targetComponent instanceof NodePanel && targetComponent != NodePanel.this)
-			{
-				NodePanel node = (NodePanel) targetComponent;
-				node.setBackground(new Color(150, 250, 130));
-			}
-			else if (m_lastHoveredNode != null && m_lastHoveredNode != targetComponent)
-			{
-				m_lastHoveredNode.setBackground(Color.white);
-			}
-
+			NodePanel newHoveredNode = null;
 			if (targetComponent instanceof NodePanel)
 			{
-				m_lastHoveredNode = targetComponent;
+				newHoveredNode = (NodePanel) targetComponent;
 			}
 
-			parentDiagram.drawDragLine(m_initialDragPoint, m_dragPoint, startNode, endNode);
+			if (m_lastHoveredNode != null)
+			{
+				m_lastHoveredNode.setAppropriateColor();
+			}
+
+			if (newHoveredNode != null && newHoveredNode != NodePanel.this)
+			{
+				newHoveredNode.setBackground(m_nodeHoverColor);
+			}
+			m_lastHoveredNode = newHoveredNode;
 		}
 	}
 
