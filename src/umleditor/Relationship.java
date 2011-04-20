@@ -342,8 +342,14 @@ public class Relationship extends JComponent implements ISelectable
 	 * 
 	 * @param clickPoint
 	 */
-	public void addControlPoint(Point clickPoint)
+	public void addControlPoint(Point clickPoint, boolean convertLocalToDiagram)
 	{
+		// Convert to diagram coordinates if needed.
+		if (convertLocalToDiagram)
+		{
+			clickPoint = SwingUtilities.convertPoint(this, clickPoint, this.getParent());
+		}
+
 		int halfTol = m_selectionTolerence / 2;
 		Rectangle2D boundingRect = new Rectangle2D.Float(clickPoint.x - halfTol, clickPoint.y - halfTol,
 				m_selectionTolerence, m_selectionTolerence);
@@ -366,6 +372,9 @@ public class Relationship extends JComponent implements ISelectable
 		}
 
 		fireChangeEvent();
+
+		setSelected(true, clickPoint);
+		repaint();
 	}
 
 	/**
@@ -621,9 +630,7 @@ public class Relationship extends JComponent implements ISelectable
 			// Add control point on control-click
 			else if (e.getClickCount() == 1 && e.isControlDown())
 			{
-				addControlPoint(clickPoint);
-				setSelected(true, clickPoint);
-				repaint();
+				addControlPoint(clickPoint, false);
 			}
 		}
 
@@ -746,10 +753,23 @@ public class Relationship extends JComponent implements ISelectable
 			editOption.setActionCommand("Edit");
 			this.add(editOption);
 
-			JMenuItem deleteOption = new JMenuItem("Delete");
-			deleteOption.addActionListener(this);
-			deleteOption.setActionCommand("Delete");
-			this.add(deleteOption);
+			boolean removePathNode = m_selectedControlPointIndex >= 0;
+			String deleteLabel = removePathNode ? "Delete path node" : "Delete";
+
+			if (removePathNode)
+			{
+				JMenuItem deleteOption = new JMenuItem(deleteLabel);
+				deleteOption.addActionListener(this);
+				deleteOption.setActionCommand("Delete");
+				this.add(deleteOption);
+			}
+			else
+			{
+				JMenuItem deleteOption = new JMenuItem("Add path node");
+				deleteOption.addActionListener(this);
+				deleteOption.setActionCommand("AddNode");
+				this.add(deleteOption);
+			}
 		}
 
 		@Override
@@ -762,22 +782,22 @@ public class Relationship extends JComponent implements ISelectable
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			if (e.getActionCommand() == "Cut")
-			{
-				// parentDiagram.cutNode();
-			}
-			else if (e.getActionCommand() == "Copy")
-			{
-				// parentDiagram.copyNode();
-			}
-			else if (e.getActionCommand() == "Edit")
+			if (e.getActionCommand() == "Edit")
 			{
 				SwingUtilities.convertPointToScreen(m_clickPoint, Relationship.this);
 				openEditDialog(m_clickPoint);
 			}
 			else if (e.getActionCommand() == "Delete")
 			{
+				if (m_selectedControlPointIndex >= 0)
+				{
+					removeSelectedControlPoint();
+				}
 				// parentDiagram.deleteSelectedObjects();
+			}
+			else if (e.getActionCommand() == "AddNode")
+			{
+				addControlPoint(m_clickPoint, true);
 			}
 		}
 	}
