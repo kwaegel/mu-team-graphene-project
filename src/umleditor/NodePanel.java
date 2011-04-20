@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -54,6 +55,9 @@ public class NodePanel extends JPanel
 	 */
 	private ClassDiagram parentDiagram;
 
+	/**
+	 * Maintains whether or not this NodePanel has been selected.
+	 */
 	private boolean isSelected;
 
 	/**
@@ -239,6 +243,9 @@ public class NodePanel extends JPanel
 		view.add(this, "external", JLayeredPane.DEFAULT_LAYER);
 	}
 
+	/**
+	 * Tells this node panel that it is selected, so it can change it's appearance and layer appropriately
+	 */
 	public void makeSelected()
 	{
 		isSelected = true;
@@ -247,6 +254,9 @@ public class NodePanel extends JPanel
 		view.setLayer(this, JLayeredPane.DRAG_LAYER);
 	}
 
+	/**
+	 * Tells this node panel that has been deselected, so it can change it's appearance and layer appropriately
+	 */
 	public void makeUnselected()
 	{
 		isSelected = false;
@@ -279,7 +289,7 @@ public class NodePanel extends JPanel
 		private Point m_initialDragPoint;
 
 		private NodePanel m_lastHoveredNode;
-		
+
 		/**
 		 * One click selects this panel's node Two clicks opens the edit panel.
 		 */
