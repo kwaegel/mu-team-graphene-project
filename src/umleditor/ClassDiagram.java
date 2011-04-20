@@ -257,7 +257,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		}
 
 		// Turn the delete button on if something non-null was selected.
-		parentEditor.reflectSelectedState(selected != null ? true : false);
+		parentEditor.reflectSelectedState(selected != null && !(selected instanceof Relationship) ? true : false);
 
 		parentEditor.disableAddNewClassMode();
 	}
