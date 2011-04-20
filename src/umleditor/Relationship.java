@@ -586,39 +586,31 @@ public class Relationship extends JComponent implements ISelectable
 	@Override
 	protected void processMouseEvent(MouseEvent e)
 	{
+		// Convert click point to diagram coordinates.
+		Point clickPoint = e.getPoint();
+		clickPoint = SwingUtilities.convertPoint(this, clickPoint, this.getParent());
+
 		int id = e.getID();
-		switch (id)
+		if (id == MouseEvent.MOUSE_PRESSED)
 		{
-			case MouseEvent.MOUSE_PRESSED:
-			{
-				// Convert click point to diagram coordinates.
-				Point clickPoint = e.getPoint();
-				clickPoint = SwingUtilities.convertPoint(this, clickPoint, this.getParent());
-
-				setSelected(true, clickPoint);
-			}
-				break;
-			case MouseEvent.MOUSE_CLICKED:
-			{
-
-				// Convert click point to diagram coordinates.
-				Point clickPoint = e.getPoint();
-				clickPoint = SwingUtilities.convertPoint(this, clickPoint, this.getParent());
-
-				// Edit relationship on single click
-				if (e.getClickCount() == 2)
-				{
-					openEditDialog(clickPoint);
-				}
-				// Add control point on control-click
-				else if (e.getClickCount() == 1 && e.isControlDown())
-				{
-					addControlPoint(clickPoint);
-					repaint();
-				}
-			}
-				break;
+			setSelected(true, clickPoint);
 		}
+		else if (id == MouseEvent.MOUSE_CLICKED)
+		{
+			// Edit relationship on single click
+			if (e.getClickCount() == 2)
+			{
+				openEditDialog(clickPoint);
+			}
+			// Add control point on control-click
+			else if (e.getClickCount() == 1 && e.isControlDown())
+			{
+				addControlPoint(clickPoint);
+				setSelected(true, clickPoint);
+				repaint();
+			}
+		}
+
 		super.processMouseEvent(e);
 	}
 

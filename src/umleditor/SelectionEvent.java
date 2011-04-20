@@ -30,4 +30,10 @@ public class SelectionEvent extends ChangeEvent
 		return m_singleSelectionRequested;
 	}
 
+	@Override
+	public String toString()
+	{
+		return ("Selected:" + source);
+	}
+
 }
