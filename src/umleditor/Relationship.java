@@ -3,6 +3,7 @@ package umleditor;
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -10,6 +11,9 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -18,6 +22,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 /**
@@ -110,6 +116,7 @@ public class Relationship extends JComponent implements ISelectable
 		m_line = new Path2D.Float();
 		m_arrow = new Polygon();
 		enableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+		addMouseListener(new PopupListener());
 	}
 
 	/***** Constructors *****/
@@ -143,7 +150,12 @@ public class Relationship extends JComponent implements ISelectable
 		rebuildGraphics();
 	}
 
-	// TODO: comments
+	/**
+	 * Create a relationship based on existing model data.
+	 * 
+	 * @param model
+	 *            - the {@link RelationshipModel model} to use.
+	 */
 	public Relationship(RelationshipModel model)
 	{
 		m_model = model;
@@ -157,12 +169,11 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	public void openEditDialog(Point dialogLocation)
 	{
-		boolean modelChanged = RelationshipEditDialog.showEditDialog(getModel(), (JComponent) this.getParent(),
-				dialogLocation);
+		boolean modelChanged = RelationshipEditDialog.showEditDialog(getModel(), dialogLocation);
 
 		if (modelChanged)
 		{
-			System.out.println("Model changed!");
+			m_eventPublisher.fireChangeEvent(this);
 		}
 	}
 
@@ -491,6 +502,11 @@ public class Relationship extends JComponent implements ISelectable
 		}
 	}
 
+	private JPopupMenu getPopupMenu()
+	{
+		return new RelationshipPopupMenu();
+	}
+
 	/********** Drawing **********/
 
 	/**
@@ -685,4 +701,84 @@ public class Relationship extends JComponent implements ISelectable
 		}
 	}
 
+	/********** Inner classes **********/
+
+	class PopupListener extends MouseAdapter
+	{
+		@Override
+		public void mousePressed(MouseEvent e)
+		{
+			maybeShowPopup(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e)
+		{
+			maybeShowPopup(e);
+		}
+
+		private void maybeShowPopup(MouseEvent e)
+		{
+			if (e.isPopupTrigger())
+			{
+				JPopupMenu popup = Relationship.this.getPopupMenu();
+
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+	}
+
+	/**
+	 * Creates a popup menu when the user right-clicks on the node panel
+	 */
+	private class RelationshipPopupMenu extends JPopupMenu implements ActionListener
+	{
+		private static final long serialVersionUID = 8918402885332092962L;
+
+		private transient Point m_clickPoint;
+
+		public RelationshipPopupMenu()
+		{
+			super();
+			// set up
+			JMenuItem editOption = new JMenuItem("Edit");
+			editOption.addActionListener(this);
+			editOption.setActionCommand("Edit");
+			this.add(editOption);
+
+			JMenuItem deleteOption = new JMenuItem("Delete");
+			deleteOption.addActionListener(this);
+			deleteOption.setActionCommand("Delete");
+			this.add(deleteOption);
+		}
+
+		@Override
+		public void show(Component invoker, int x, int y)
+		{
+			m_clickPoint = new Point(x, y);
+			super.show(invoker, x, y);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getActionCommand() == "Cut")
+			{
+				// parentDiagram.cutNode();
+			}
+			else if (e.getActionCommand() == "Copy")
+			{
+				// parentDiagram.copyNode();
+			}
+			else if (e.getActionCommand() == "Edit")
+			{
+				SwingUtilities.convertPointToScreen(m_clickPoint, Relationship.this);
+				openEditDialog(m_clickPoint);
+			}
+			else if (e.getActionCommand() == "Delete")
+			{
+				// parentDiagram.deleteSelectedObjects();
+			}
+		}
+	}
 }

@@ -10,7 +10,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -174,11 +173,9 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	 * Pop up a relationship modification dialog.
 	 * 
 	 * @param model
-	 * @param parent
-	 *            - the parent component for this dialog.
 	 * @return
 	 */
-	public static boolean showEditDialog(RelationshipModel model, JComponent parent, Point dialogLocation)
+	public static boolean showEditDialog(RelationshipModel model, Point dialogLocation)
 	{
 		RelationshipEditDialog dialog = new RelationshipEditDialog(model);
 		dialog.setLocation(dialogLocation);
@@ -193,14 +190,12 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	 * 
 	 * @param first
 	 * @param second
-	 * @param parent
 	 * @return
 	 */
-	public static RelationshipModel showCreationDialog(ClassNode first, ClassNode second, JComponent parent,
-			Point dialogLocation)
+	public static RelationshipModel showCreationDialog(ClassNode first, ClassNode second, Point dialogLocation)
 	{
 		RelationshipModel model = new RelationshipModel(first, second, RelationshipType.Association);
-		boolean saveModel = showEditDialog(model, parent, dialogLocation);
+		boolean saveModel = showEditDialog(model, dialogLocation);
 
 		// Return the model if save was selected, else return null
 		return (saveModel == true ? model : null);

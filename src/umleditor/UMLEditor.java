@@ -147,10 +147,6 @@ public class UMLEditor extends JFrame implements ActionListener
 	public void reflectSelectedState(boolean enabled)
 	{
 		deleteButton.setEnabled(enabled);
-		/*
-		 * KY: copy cut mode should not be enabled here, but only if class nodes are selected. Otherwise, Menu shows you
-		 * can copy or cut something that you can't, like a relationship or relationship control point
-		 */
 		menuBar.setCopyCutMode(enabled);
 	}
 
