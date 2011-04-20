@@ -2,7 +2,6 @@ package umleditor;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.Path2D;
 
 import javax.swing.JComponent;
@@ -23,14 +22,6 @@ public class GlassDrawingPane extends JComponent
 		m_dragPath = path;
 		this.setVisible(true);
 		repaint(m_dragPath.getBounds());
-	}
-
-	public void clearPath()
-	{
-		Rectangle repaintBounds = m_dragPath.getBounds();
-		m_dragPath = null;
-		this.setVisible(false);
-		repaint(repaintBounds);
 	}
 
 	@Override

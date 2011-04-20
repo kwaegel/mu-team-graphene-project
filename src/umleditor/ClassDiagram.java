@@ -879,7 +879,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
 
 		Point start = SwingUtilities.convertPoint(startNode, startPoint, gp);
-		Point end = endPoint;
+		Point end = SwingUtilities.convertPoint(startNode, endPoint, gp);
 
 		Path2D.Float dragPath = new Path2D.Float();
 		dragPath.moveTo(start.x, start.y);
@@ -887,5 +887,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 
 		gp.setDrawPath(dragPath);
 		view.repaint();
+	}
+
+	public void clearDragLine()
+	{
+		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
+		gp.setVisible(false);
 	}
 }

@@ -292,6 +292,9 @@ public class NodePanel extends JPanel
 		@Override
 		public void mouseReleased(MouseEvent e)
 		{
+			// Clear any drawn lines
+			parentDiagram.clearDragLine();
+
 			// necessary because of error in swing.
 			Component comp = parentDiagram.getComponentUnder(e);
 
@@ -319,8 +322,6 @@ public class NodePanel extends JPanel
 		@Override
 		public void mouseDragged(MouseEvent e)
 		{
-			Component targetComponent = parentDiagram.getComponentUnder(e);
-
 			m_dragPoint = e.getPoint();
 
 			System.out.println("end point at " + m_dragPoint + " from " + e.getSource());
@@ -329,6 +330,7 @@ public class NodePanel extends JPanel
 			NodePanel startNode = NodePanel.this;
 			NodePanel endNode = null;
 
+			Component targetComponent = parentDiagram.getComponentUnder(e);
 			if (targetComponent instanceof NodePanel && targetComponent != NodePanel.this)
 			{
 				NodePanel node = (NodePanel) targetComponent;
