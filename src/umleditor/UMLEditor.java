@@ -139,14 +139,30 @@ public class UMLEditor extends JFrame implements ActionListener
 	}
 
 	/**
-	 * Sets the state of the delete button
+	 * Ensures that the menu items and buttons in the {@link UMLEditor} are disabled when nothing is selected.
+	 */
+	public void reflectUnselectedState()
+	{
+		deleteButton.setEnabled(false);
+		menuBar.setCopyCutMode(false);
+	}
+
+	/**
+	 * Enable the delete button (called when something "deletable" is selected.
+	 */
+	public void enableDeleteButtonState()
+	{
+		deleteButton.setEnabled(true);
+	}
+
+	/**
+	 * Ensures the copy and cut menu items appropriately reflect state of the diagram.
 	 * 
 	 * @param enabled
-	 *            - whether to enable or disable the delete button
+	 *            - whether to enable or disable the menu options
 	 */
-	public void reflectSelectedState(boolean enabled)
+	public void setCopyCutState(boolean enabled)
 	{
-		deleteButton.setEnabled(enabled);
 		menuBar.setCopyCutMode(enabled);
 	}
 

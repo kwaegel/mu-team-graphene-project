@@ -228,7 +228,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				}
 			}
 			currentlySelectedObjects.clear();
-			parentEditor.reflectSelectedState(false);
+			parentEditor.reflectUnselectedState();
 		}
 	}
 
@@ -256,8 +256,13 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			selected.setSelected(true);
 		}
 
-		// Turn the delete button on if something non-null was selected.
-		parentEditor.reflectSelectedState(selected != null && !(selected instanceof Relationship) ? true : false);
+		// Turn the delete button on if something non-null was selected,
+		// and turn on copy/cut mode it the selected item was a ClassNode
+		if (selected != null)
+		{
+			parentEditor.enableDeleteButtonState();
+			parentEditor.setCopyCutState(deselectOthers && selected instanceof ClassNode);
+		}
 
 		parentEditor.disableAddNewClassMode();
 	}
@@ -291,7 +296,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 					listOfNodes.remove(node);
 				}
 				currentlySelectedObjects.clear();
-				parentEditor.reflectSelectedState(false);
+				parentEditor.reflectUnselectedState();
 			}
 			else if (firstSelectedObject instanceof Relationship)
 			{
@@ -308,7 +313,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 					view.remove(r);
 					// remove the selected object
 					currentlySelectedObjects.clear();
-					parentEditor.reflectSelectedState(false);
+					parentEditor.reflectUnselectedState();
 				}
 				view.repaint(r.getBounds());
 			}
@@ -388,7 +393,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				rel.setEventPublisher(m_changePublisher);
 
 				rel.repaint();
-				
+
 				markAsChanged();
 			}
 		}
@@ -702,8 +707,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	}
 
 	/**
-	 * When a diagram becomes visible in the UML editor, ensure that the editor's delete button appropriately reflects
-	 * the current diagram.
+	 * When a diagram becomes visible in the UML editor, ensure that the editor's delete button and copy/cut menu
+	 * appropriately reflects the current diagram.
 	 * 
 	 * @param e
 	 */
@@ -712,11 +717,14 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	{
 		if (currentlySelectedObjects != null && !currentlySelectedObjects.isEmpty())
 		{
-			parentEditor.reflectSelectedState(true);
+			parentEditor.enableDeleteButtonState();
+			boolean enableCopyCut = (currentlySelectedObjects.get(0) instanceof ClassNode)
+					&& (currentlySelectedObjects.size() == 1);
+			parentEditor.setCopyCutState(enableCopyCut);
 		}
 		else
 		{
-			parentEditor.reflectSelectedState(false);
+			parentEditor.reflectUnselectedState();
 		}
 	}
 
