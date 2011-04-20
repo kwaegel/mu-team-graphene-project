@@ -86,7 +86,6 @@ public class NodeDragListener extends MouseInputAdapter
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		System.out.println("mouse dragged event on drag listener");
 		// tell the node's parent diagram to move the node to the new location
 		ClassDiagram containingDiagram = panel.getParentDiagram();
 		Point delta = new Point(e.getX() - previousMouseLoc.x, e.getY() - previousMouseLoc.y);
