@@ -215,14 +215,17 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	/**
 	 * Deselect the currently selected object and disable the delete button.
 	 */
-	private void unselectCurrentObjects()
+	private void unselectCurrentObjects(ISelectable leaveSelected)
 	{
 		if (currentlySelectedObjects.size() != 0)
 		{
 			for (int i = 0; i < currentlySelectedObjects.size(); ++i)
 			{
 				ISelectable currentlySelectedObject = currentlySelectedObjects.get(i);
-				currentlySelectedObject.setSelected(false);
+				if (currentlySelectedObject != leaveSelected)
+				{
+					currentlySelectedObject.setSelected(false);
+				}
 			}
 			currentlySelectedObjects.clear();
 			parentEditor.reflectSelectedState(false);
@@ -238,7 +241,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	{
 		if (deselectOthers)
 		{
-			unselectCurrentObjects();
+			unselectCurrentObjects(selected);
 		}
 
 		if (!currentlySelectedObjects.contains(selected))
@@ -792,7 +795,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				}
 				else
 				{
-					unselectCurrentObjects();
+					unselectCurrentObjects(null);
 				}
 			}
 		}

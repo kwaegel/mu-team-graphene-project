@@ -282,7 +282,6 @@ public class NodePanel extends JPanel
 
 			// Set initial point when drawing drag lines.
 			m_initialDragPoint = e.getPoint();
-			System.err.println("Initial drag point set to " + m_initialDragPoint + " from " + e.getSource());
 		}
 
 		/**
@@ -323,8 +322,6 @@ public class NodePanel extends JPanel
 		public void mouseDragged(MouseEvent e)
 		{
 			m_dragPoint = e.getPoint();
-
-			System.out.println("end point at " + m_dragPoint + " from " + e.getSource());
 
 			// Get the bounds
 			NodePanel startNode = NodePanel.this;
