@@ -753,23 +753,21 @@ public class Relationship extends JComponent implements ISelectable
 			editOption.setActionCommand("Edit");
 			this.add(editOption);
 
-			boolean removePathNode = m_selectedControlPointIndex >= 0;
-			String deleteLabel = removePathNode ? "Delete path node" : "Delete";
+			boolean pathNodeSelected = m_selectedControlPointIndex >= 0;
 
-			if (removePathNode)
+			if (!pathNodeSelected)
 			{
-				JMenuItem deleteOption = new JMenuItem(deleteLabel);
-				deleteOption.addActionListener(this);
-				deleteOption.setActionCommand("Delete");
-				this.add(deleteOption);
+				JMenuItem addOption = new JMenuItem("Add path node");
+				addOption.addActionListener(this);
+				addOption.setActionCommand("AddNode");
+				this.add(addOption);
 			}
-			else
-			{
-				JMenuItem deleteOption = new JMenuItem("Add path node");
-				deleteOption.addActionListener(this);
-				deleteOption.setActionCommand("AddNode");
-				this.add(deleteOption);
-			}
+
+			String deleteLabel = pathNodeSelected ? "Delete path node" : "Delete";
+			JMenuItem deleteOption = new JMenuItem(deleteLabel);
+			deleteOption.addActionListener(this);
+			deleteOption.setActionCommand("Delete");
+			this.add(deleteOption);
 		}
 
 		@Override
