@@ -254,6 +254,8 @@ public class NodePanel extends JPanel
 		private Point m_initialDragPoint;
 		private Point m_dragPoint;
 
+		private Component m_lastHoveredNode;
+
 		/**
 		 * One click selects this panel's node Two clicks opens the edit panel.
 		 */
@@ -328,10 +330,20 @@ public class NodePanel extends JPanel
 			NodePanel endNode = null;
 
 			Component targetComponent = parentDiagram.getComponentUnder(e);
+
 			if (targetComponent instanceof NodePanel && targetComponent != NodePanel.this)
 			{
 				NodePanel node = (NodePanel) targetComponent;
 				node.setBackground(new Color(150, 250, 130));
+			}
+			else if (m_lastHoveredNode != null && m_lastHoveredNode != targetComponent)
+			{
+				m_lastHoveredNode.setBackground(Color.white);
+			}
+
+			if (targetComponent instanceof NodePanel)
+			{
+				m_lastHoveredNode = targetComponent;
 			}
 
 			parentDiagram.drawDragLine(m_initialDragPoint, m_dragPoint, startNode, endNode);

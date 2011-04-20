@@ -740,8 +740,7 @@ public class Relationship extends JComponent implements ISelectable
 	 */
 	private class RelationshipPopupMenu extends JPopupMenu implements ActionListener
 	{
-		private static final long serialVersionUID = 8918402885332092962L;
-
+		private static final long serialVersionUID = 8504144124921722292L;
 		private transient Point m_clickPoint;
 
 		public RelationshipPopupMenu()
