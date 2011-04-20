@@ -17,6 +17,13 @@ import javax.swing.JRadioButton;
 import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
+/**
+ * Allows user to modify a relationship. User will be able to choose a new type of relationship
+ * or switch the direction of the relationship. Changes occur immediately, although there is an 
+ * option to "Cancel" which will close the window and revert any changes. Pressing "Done" closes
+ * the window without reverting the changes.
+ * 
+ */
 public class RelationshipEditDialog extends JDialog implements ActionListener
 {
 	private boolean m_modelChanged;
