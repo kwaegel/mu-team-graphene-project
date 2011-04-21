@@ -693,8 +693,8 @@ public class Relationship extends JComponent implements ISelectable
 			{
 				// ensure the control point can't be dragged off the top or left of the screen
 				int cpSizeOffset = m_cpDrawSize / 2;
-				dragPoint.x = (dragPoint.x - cpSizeOffset < 0) ? cpSizeOffset : dragPoint.x; 
-				dragPoint.y = (dragPoint.y - cpSizeOffset < 0) ? cpSizeOffset : dragPoint.y; 
+				dragPoint.x = (dragPoint.x - cpSizeOffset < 0) ? cpSizeOffset : dragPoint.x;
+				dragPoint.y = (dragPoint.y - cpSizeOffset < 0) ? cpSizeOffset : dragPoint.y;
 				// move the control point
 				m_points.set(m_selectedControlPointIndex, dragPoint);
 			}
@@ -712,6 +712,9 @@ public class Relationship extends JComponent implements ISelectable
 			recalculateBounds();
 
 			// Repaint the relationship.
+			// this call needed for smooth relationship drawing
+			repaint();
+			// this call needed to ensure scroll pane appears when appropriate
 			revalidate();
 
 			fireChangeEvent();
