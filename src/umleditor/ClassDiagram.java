@@ -414,8 +414,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 
 	/**
 	 * Removes a list of relationships from the diagram. Called from a {@link ClassNode} whenever it gets deleted.
-	 * 
-	 * @param relationshipList
+	 * @param relationships
 	 */
 	public void removeRelationships(List<RelationshipModel> relationships)
 	{
