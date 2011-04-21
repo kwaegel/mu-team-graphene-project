@@ -291,8 +291,8 @@ public class JUnitTests
 		np3.attachToView(new JLayeredPane());
 		node3.attachPanel(np3);
 		RelationshipType[] possibleValues = RelationshipType.values();
-		Relationship rel = new Relationship(node1, node2, possibleValues[1], testDiagram);
-		Relationship rel2 = new Relationship(node2, node3, possibleValues[0], testDiagram);
+		Relationship rel = new Relationship(node1, node2, possibleValues[1]);
+		Relationship rel2 = new Relationship(node2, node3, possibleValues[0]);
 		node1.addRelationship(rel);
 		node2.addRelationship(rel);
 		node2.addRelationship(rel2);

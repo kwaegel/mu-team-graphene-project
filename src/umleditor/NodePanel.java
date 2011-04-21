@@ -5,14 +5,13 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
@@ -26,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  * appropriate format. Handles interactions between the user and the class.
  * 
  */
-public class NodePanel extends JPanel
+public class NodePanel extends JPanel implements IEditable
 {
 	/**
 	 * Generated id, recommended for all GUI components
@@ -280,6 +279,44 @@ public class NodePanel extends JPanel
 		this.setBackground(isSelected ? Color.pink : Color.white);
 	}
 
+	@Override
+	public JPopupMenu getPopupMenu()
+	{
+		JPopupMenu menu = new JPopupMenu();
+		menu.add(new AbstractAction("Cut")
+		{
+			private static final long serialVersionUID = -5298062676250211620L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				parentDiagram.cutNode();
+			}
+		});
+		menu.add(new AbstractAction("Copy")
+		{
+			private static final long serialVersionUID = 5944567330239631558L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				parentDiagram.copyNode();
+			}
+		});
+		menu.add(new AbstractAction("Edit")
+		{
+			private static final long serialVersionUID = 4527734957996948144L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				displayEditPanel();
+			}
+		});
+
+		return menu;
+	}
+
 	/**
 	 * Class to handle {@link ClassNode} selection and adding relationships.
 	 */
@@ -337,14 +374,7 @@ public class NodePanel extends JPanel
 			{
 				NodePanel panel = ((NodePanel) comp);
 				ClassNode targetNode = panel.getClassNode();
-				if (e.isPopupTrigger())
-				{
-					JPopupMenu nodePopup = new NodePanelPopup();
-					NodePanel selectedPanel = targetNode.getNodePanel();
-					nodePopup.show(selectedPanel, (int) selectedPanel.getMousePosition().getX(), (int) selectedPanel
-							.getMousePosition().getY());
-				}
-				else
+				if (!e.isPopupTrigger())
 				{
 					parentDiagram.addRelationship(targetNode);
 					panel.setAppropriateColor();
@@ -382,60 +412,6 @@ public class NodePanel extends JPanel
 				newHoveredNode.setBackground(m_nodeHoverColor);
 			}
 			m_lastHoveredNode = newHoveredNode;
-		}
-	}
-
-	/**
-	 * Creates a popup menu when the user right-clicks on the node panel
-	 */
-	private class NodePanelPopup extends JPopupMenu implements ActionListener
-	{
-		private static final long serialVersionUID = 8918402885332092962L;
-
-		public NodePanelPopup()
-		{
-			super();
-			// set up
-			JMenuItem cutOption = new JMenuItem("Cut");
-			cutOption.addActionListener(this);
-			cutOption.setActionCommand("Cut");
-			this.add(cutOption);
-
-			JMenuItem copyOption = new JMenuItem("Copy");
-			copyOption.addActionListener(this);
-			copyOption.setActionCommand("Copy");
-			this.add(copyOption);
-
-			JMenuItem editOption = new JMenuItem("Edit");
-			editOption.addActionListener(this);
-			editOption.setActionCommand("Edit");
-			this.add(editOption);
-
-			JMenuItem deleteOption = new JMenuItem("Delete");
-			deleteOption.addActionListener(this);
-			deleteOption.setActionCommand("Delete");
-			this.add(deleteOption);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			if (e.getActionCommand() == "Cut")
-			{
-				parentDiagram.cutNode();
-			}
-			else if (e.getActionCommand() == "Copy")
-			{
-				parentDiagram.copyNode();
-			}
-			else if (e.getActionCommand() == "Edit")
-			{
-				displayEditPanel();
-			}
-			else if (e.getActionCommand() == "Delete")
-			{
-				parentDiagram.deleteSelectedObjects();
-			}
 		}
 	}
 
