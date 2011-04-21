@@ -436,22 +436,6 @@ public class UMLEditor extends JFrame implements ActionListener
 				e.printStackTrace();
 			}
 		}
-
-		// PrinterJob printJob = PrinterJob.getPrinterJob();
-		// printJob.setPrintable(getCurrentDiagram());
-		// boolean print = printJob.printDialog();
-		// if (print)
-		// {
-		// try
-		// {
-		// printJob.print();
-		// }
-		// catch (PrinterException e)
-		// {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
 	}
 
 	/**
