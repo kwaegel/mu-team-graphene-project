@@ -22,17 +22,13 @@ import umleditor.UMLEditor;
 
 public class JUnitTests
 {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3943944413362019489L;
 
 	/**
 	 * Creates a testnode and tests the default settings (name, attributes, methods)
 	 */
 	@Test
-	public void testConstructors()
+	public void testNodeConstructor()
 	{
 		ClassNode testNode = new ClassNode();
 		assertTrue("Error: not constructed correctly, wrong number of attributes", testNode.getNumAttributes() == 1);
@@ -164,10 +160,10 @@ public class JUnitTests
 	}
 
 	/**
-	 * test setters
+	 * test attribute setter
 	 */
 	@Test
-	public void testSetters()
+	public void testAttributeSetter()
 	{
 		// test attribute setters
 		String attrib1 = "initialattrib";
@@ -179,10 +175,18 @@ public class JUnitTests
 		assertFalse("Error: name still same", testNode.getAttribute(0).equals("attribute 1"));
 		assertTrue("Error: now wrong number of attributes", testNode.getNumAttributes() == 1);
 
-		// test method setters
+		
+	}
+	
+	/**
+	 * test method setters
+	 */
+	@Test
+	public void testMehtodSetter()
+	{
 		String meth1 = "initialmeth";
-		ClassNode testNode2 = new ClassNode(); // Attribute 1 is automatically created on Node creation
-		testNode.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode2));
+		ClassNode testNode2 = new ClassNode(); // Method 1 is automatically created on Node creation
+		testNode2.attachPanel(new NodePanel(new ClassDiagram(new UMLEditor(), new JScrollPane()), testNode2));
 		assertTrue("Error: wrong name method name to start with", testNode2.getMethod(0).equals("method 1"));
 		testNode2.setMethod(0, meth1);
 		assertTrue("Error: name not set correctly", testNode2.getMethod(0).equals(meth1));
