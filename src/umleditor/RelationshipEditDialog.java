@@ -46,8 +46,9 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		setModalityType(ModalityType.DOCUMENT_MODAL);
 		setTitle("Edit relationship");
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		setModelChanged(false);
 		setResizable(false);
+		
+		setModelChanged(false);
 
 		setLayout(new MigLayout("wrap 1"));
 
@@ -59,7 +60,6 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 			@Override
 			public void windowClosing(WindowEvent we)
 			{
-				setTitle("Thwarted user attempt to close window.");
 				setModelChanged(false);
 				dispose();
 			}
