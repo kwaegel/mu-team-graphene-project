@@ -443,15 +443,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			int userChoice = fileSaveChooser.showSaveDialog(parentEditor);
 			if (userChoice == JFileChooser.APPROVE_OPTION)
 			{
-				saveFile = fileSaveChooser.getSelectedFile();
-				// add appropriate extension, if there the path does not have one already
-				String absoluteFilePath = saveFile.getAbsolutePath();
-				String acceptedExtension = FileExtensionFilter.ACCEPTED_FILE_EXTENSION;
-				if (!absoluteFilePath.endsWith(acceptedExtension))
-				{
-					absoluteFilePath += acceptedExtension;
-					saveFile = new File(absoluteFilePath);
-				}
+				File userSelectedFile = fileSaveChooser.getSelectedFile();
+				saveFile = FileUtils.attachAppropriateExtension(userSelectedFile);
 			}
 			else
 			{
