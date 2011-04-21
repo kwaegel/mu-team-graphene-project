@@ -12,7 +12,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -568,21 +567,19 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill)
-		{
-			case Solid:
-				g2d.fillPolygon(m_arrow);
-				break;
-			case Outline:
-			{
-				g2d.setColor(Color.white);
-				g2d.fillPolygon(m_arrow);
-				g2d.setColor(Color.black);
-				g2d.drawPolygon(m_arrow);
-			}
-				break;
-			case None:// Do not draw an arrow.
-				break;
+		switch (m_endFill) {
+		case Solid:
+			g2d.fillPolygon(m_arrow);
+			break;
+		case Outline: {
+			g2d.setColor(Color.white);
+			g2d.fillPolygon(m_arrow);
+			g2d.setColor(Color.black);
+			g2d.drawPolygon(m_arrow);
+		}
+			break;
+		case None:// Do not draw an arrow.
+			break;
 		}
 
 		// If the relationship is selected, draw a handle at each control node
@@ -722,7 +719,7 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	/**
 	 * Creates a popup menu when the user right-clicks on the node panel
 	 */
-	private class RelationshipPopupMenu extends JPopupMenu /*implements ActionListener*/
+	private class RelationshipPopupMenu extends JPopupMenu
 	{
 		private static final long serialVersionUID = 8504144124921722292L;
 		private transient Point m_clickPoint;
