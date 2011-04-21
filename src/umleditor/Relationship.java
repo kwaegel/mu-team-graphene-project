@@ -406,6 +406,7 @@ public class Relationship extends JComponent implements ISelectable
 
 			m_selectedControlPointIndex = -1;
 		}
+		repaint();
 	}
 
 	/**
@@ -574,19 +575,21 @@ public class Relationship extends JComponent implements ISelectable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill) {
-		case Solid:
-			g2d.fillPolygon(m_arrow);
-			break;
-		case Outline: {
-			g2d.setColor(Color.white);
-			g2d.fillPolygon(m_arrow);
-			g2d.setColor(Color.black);
-			g2d.drawPolygon(m_arrow);
-		}
-			break;
-		case None:// Do not draw an arrow.
-			break;
+		switch (m_endFill)
+		{
+			case Solid:
+				g2d.fillPolygon(m_arrow);
+				break;
+			case Outline:
+			{
+				g2d.setColor(Color.white);
+				g2d.fillPolygon(m_arrow);
+				g2d.setColor(Color.black);
+				g2d.drawPolygon(m_arrow);
+			}
+				break;
+			case None:// Do not draw an arrow.
+				break;
 		}
 
 		// If the relationship is selected, draw a handle at each control node
