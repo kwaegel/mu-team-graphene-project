@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -197,6 +198,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		newAttributeTextField.setPreferredSize(new Dimension(100, 25));
 		newAttributeTextField.setActionCommand("NewAttrib");
 		newAttributeTextField.addActionListener(this);
+		newAttributeTextField.addKeyListener(new EscapeListener());
 		everythingPanel.add(newAttributeTextField, "split 2, gapx 5");
 
 		JButton newAttributeButton = new JButton("New");
@@ -232,6 +234,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		newMethodTextField.setPreferredSize(new Dimension(100, 25));
 		newMethodTextField.setActionCommand("NewMethod");
 		newMethodTextField.addActionListener(this);
+		newMethodTextField.addKeyListener(new EscapeListener());
 		everythingPanel.add(newMethodTextField, "split 2, gapx 5");
 
 		JButton newMethodButton = new JButton("New");
@@ -347,6 +350,15 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	}
 
 	/**
+	 * Removes any changes made to the Class since the EditPanel was last opened.
+	 */
+	private void revert()
+	{
+		associatedNode.setPropertiesTo(copyOfOriginalNode);
+		associatedNode.updateNodePanel();
+	}
+
+	/**
 	 * Handles pressed events for all buttons in the EditPanel
 	 */
 	@Override
@@ -361,8 +373,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		}
 		else if (actionCommand == "Discard")
 		{
-			associatedNode.setPropertiesTo(copyOfOriginalNode);
-			associatedNode.updateNodePanel();
+			revert();
 			nextComponentToGainFocus = "ClassNameField";
 		}
 		else if (actionCommand.startsWith("New"))
@@ -461,8 +472,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		{
 			// if the user pressed escape, regardless of what has focus, want to
 			// revert changes and exit immediately, without doing anything further
-			associatedNode.setPropertiesTo(copyOfOriginalNode);
-			associatedNode.updateNodePanel();
+			revert();
 			super.dispose();
 			// don't continue with rest of method.
 			return;
@@ -513,6 +523,27 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 				{
 					associatedNode.setName(ntf.getText());
 				}
+			}
+		}
+	}
+
+	/**
+	 * Special key listener just for newAttributeTextField and newMehtodTextField, which we don't want to respond to
+	 * most key events like the other fields do, but should behave consistently when escape is pressed.
+	 */
+	private class EscapeListener extends KeyAdapter
+	{
+		/**
+		 * If the user pressed escape, exits without keeping any changes that have been made since the {@link EditPanel} opened.
+		 */
+		@Override
+		public void keyReleased(KeyEvent e)
+		{
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+			{
+				// if the user pressed escape, revert changes and exit immediately
+				revert();
+				EditPanel.super.dispose();
 			}
 		}
 	}
