@@ -414,6 +414,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 
 	/**
 	 * Removes a list of relationships from the diagram. Called from a {@link ClassNode} whenever it gets deleted.
+	 * 
 	 * @param relationships
 	 */
 	public void removeRelationships(List<RelationshipModel> relationships)
@@ -530,8 +531,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	{
 		JTabbedPane containingTabbedPane = (JTabbedPane) (view.getParent().getParent().getParent());
 		int selectedIndex = containingTabbedPane.getSelectedIndex();
-		TabTitleComponent tabComponent = (TabTitleComponent) containingTabbedPane
-				.getTabComponentAt(selectedIndex);
+		TabTitleComponent tabComponent = (TabTitleComponent) containingTabbedPane.getTabComponentAt(selectedIndex);
 		tabComponent.setTitle(title);
 	}
 
@@ -551,7 +551,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	}
 
 	/**
-	 * Returns a boolean confirming whether the file has been saved or not
+	 * Determines whether or not this Diagram was saved to this file
+	 * 
+	 * @param file
+	 *            - {@link File} this diagram might be saved to
+	 * @return <code>true</code> if the diagram is saved in this file.
 	 */
 	public boolean isSavedInFile(File file)
 	{

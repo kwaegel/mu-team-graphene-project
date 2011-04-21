@@ -22,12 +22,7 @@ public class ClassNode implements ISelectable
 	private Point m_location;
 
 	/**
-	 * Constructor with a default class name.
-	 * 
-	 * @param diagram
-	 *            - the diagram this node belongs to.
-	 * @param creationPoint
-	 *            - the point to create the node at.
+	 * Constructs a new {@link ClassNode} with a default method and attribute.
 	 */
 	public ClassNode()
 	{
@@ -74,7 +69,10 @@ public class ClassNode implements ISelectable
 	}
 
 	/**
-	 * Attaches the given node panel to this node. Called in NodePanel's constructor.
+	 * Attaches the given {@link NodePanel} to this node. Called in NodePanel's constructor.
+	 * 
+	 * @param panel
+	 *            panel to attach to this node
 	 */
 	public void attachPanel(NodePanel panel)
 	{
@@ -101,7 +99,7 @@ public class ClassNode implements ISelectable
 	 * 
 	 * {@inheritDoc}
 	 * 
-	 * @param otherNode
+	 * @param other
 	 *            - {@link ClassNode} to compare this one to.
 	 * @return - <code>true</code> if properties are equal, <code>false</code> if they are not
 	 */
