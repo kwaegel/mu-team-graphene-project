@@ -909,7 +909,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	}
 
 	/**
-	 * Removes the drag line that was draw as teh user dragged between nodes
+	 * Removes the drag line that was draw as the user dragged between nodes
 	 */
 	public void clearDragLine()
 	{
