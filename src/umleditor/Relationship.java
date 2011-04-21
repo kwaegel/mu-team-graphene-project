@@ -13,6 +13,8 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
@@ -86,6 +88,8 @@ public class Relationship extends JComponent implements ISelectable
 
 	private RelationshipModel m_model;
 
+	private RelationshipPopupMenu m_popupMenu;
+
 	private enum FillType
 	{
 		None, Outline, Solid
@@ -129,9 +133,12 @@ public class Relationship extends JComponent implements ISelectable
 	 * @param second
 	 * @param secondOffset
 	 */
-	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
+	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset,
+			RelationshipType type, ClassDiagram parentDiagram)
 	{
 		m_model = new RelationshipModel(first, firstOffset, second, secondOffset, type);
+
+		m_popupMenu = new RelationshipPopupMenu(parentDiagram);
 
 		rebuildGraphics();
 	}
@@ -143,9 +150,11 @@ public class Relationship extends JComponent implements ISelectable
 	 * @param second
 	 * @param type
 	 */
-	public Relationship(ClassNode first, ClassNode second, RelationshipType type)
+	public Relationship(ClassNode first, ClassNode second, RelationshipType type, ClassDiagram parentDiagram)
 	{
 		m_model = new RelationshipModel(first, second, type);
+
+		m_popupMenu = new RelationshipPopupMenu(parentDiagram);
 
 		rebuildGraphics();
 	}
@@ -156,9 +165,12 @@ public class Relationship extends JComponent implements ISelectable
 	 * @param model
 	 *            - the {@link RelationshipModel model} to use.
 	 */
-	public Relationship(RelationshipModel model)
+	public Relationship(RelationshipModel model, ClassDiagram parentDiagram)
 	{
 		m_model = model;
+
+		m_popupMenu = new RelationshipPopupMenu(parentDiagram);
+
 		rebuildGraphics();
 	}
 
@@ -511,11 +523,6 @@ public class Relationship extends JComponent implements ISelectable
 		}
 	}
 
-	private JPopupMenu getPopupMenu()
-	{
-		return new RelationshipPopupMenu();
-	}
-
 	/********** Drawing **********/
 
 	/**
@@ -567,21 +574,19 @@ public class Relationship extends JComponent implements ISelectable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill)
-		{
-			case Solid:
-				g2d.fillPolygon(m_arrow);
-				break;
-			case Outline:
-			{
-				g2d.setColor(Color.white);
-				g2d.fillPolygon(m_arrow);
-				g2d.setColor(Color.black);
-				g2d.drawPolygon(m_arrow);
-			}
-				break;
-			case None:// Do not draw an arrow.
-				break;
+		switch (m_endFill) {
+		case Solid:
+			g2d.fillPolygon(m_arrow);
+			break;
+		case Outline: {
+			g2d.setColor(Color.white);
+			g2d.fillPolygon(m_arrow);
+			g2d.setColor(Color.black);
+			g2d.drawPolygon(m_arrow);
+		}
+			break;
+		case None:// Do not draw an arrow.
+			break;
 		}
 
 		// If the relationship is selected, draw a handle at each control node
@@ -728,9 +733,7 @@ public class Relationship extends JComponent implements ISelectable
 		{
 			if (e.isPopupTrigger())
 			{
-				JPopupMenu popup = Relationship.this.getPopupMenu();
-
-				popup.show(e.getComponent(), e.getX(), e.getY());
+				m_popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 	}
@@ -743,7 +746,7 @@ public class Relationship extends JComponent implements ISelectable
 		private static final long serialVersionUID = 8504144124921722292L;
 		private transient Point m_clickPoint;
 
-		public RelationshipPopupMenu()
+		public RelationshipPopupMenu(ClassDiagram classDiagram)
 		{
 			super();
 			// set up
@@ -767,6 +770,10 @@ public class Relationship extends JComponent implements ISelectable
 			deleteOption.addActionListener(this);
 			deleteOption.setActionCommand("Delete");
 			this.add(deleteOption);
+
+			// so we can send delete events to the class diagram without keeping
+			// a reference to it around
+			this.addKeyListener(classDiagram);
 		}
 
 		@Override
@@ -790,7 +797,17 @@ public class Relationship extends JComponent implements ISelectable
 				{
 					removeSelectedControlPoint();
 				}
-				// parentDiagram.deleteSelectedObjects();
+				else
+				{
+					// so will be handled by ClassDiagram just as pressing the delete key would
+					// create a key pressed event that is equivalent to pressing the delete key
+					KeyEvent deleteEvent = new KeyEvent((Component) e.getSource(), e.getID(), e.getWhen(),
+							e.getModifiers(), KeyEvent.VK_DELETE, KeyEvent.CHAR_UNDEFINED);
+					// get the first (and only) key listener
+					KeyListener kl = (this.getKeyListeners())[0];
+					// dispatch the key event to the key listener as a pressed event
+					kl.keyPressed(deleteEvent);
+				}
 			}
 			else if (e.getActionCommand() == "AddNode")
 			{
