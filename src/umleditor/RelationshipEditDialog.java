@@ -68,6 +68,10 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		pack();
 	}
 
+	/**
+	 * Constructs the Edit Dialog window. Adds buttons allowing the user to
+	 * switch relationship direction and relationship type.
+	 */
 	private void createDialogComponents()
 	{
 		// Create radio buttons.
@@ -106,18 +110,25 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	}
 
 	/**
-	 * @return true of the model was changed.
+	 * @return true if the model was changed.
 	 */
 	private boolean wasModelChanged()
 	{
 		return m_modelChanged;
 	}
 
+	/**
+	 * Sets the m_modelChanged to true if the model was changed.
+	 */
 	private void setModelChanged(boolean modelChanged)
 	{
 		m_modelChanged = modelChanged;
 	}
 
+	/**
+	 * Changes the relationship type based on the ActionEvent and tells the 
+	 * Relationship Edit Dialog that it was changed.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
@@ -130,6 +141,10 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 
 	/** Actions **/
 
+	/**
+	 * Saves the changes the user has made if there was any and then closes
+	 * the Relationship Edit Dialog.
+	 */
 	private class SaveAction extends AbstractAction
 	{
 		private static final long serialVersionUID = 6910525348649499302L;
@@ -142,6 +157,10 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		}
 	}
 
+	/**
+	 * Reverts the relationship to its previous state if the model was changed
+	 * and then closes the Relationship Edit Dialog.
+	 */
 	private class CancelAction extends AbstractAction
 	{
 		private static final long serialVersionUID = 1653570971716173190L;
@@ -161,6 +180,10 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		}
 	}
 
+	/**
+	 * Switches the direction the arrow is pointing in the relationship
+	 * and then tells the Relationship Edit Dialog it was changed.
+	 */
 	private class SwitchAction extends AbstractAction
 	{
 		private static final long serialVersionUID = 7080930509494941236L;
