@@ -922,6 +922,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			maybeShowPopup(e);
 		}
 
+		/**
+		 * If something editable has been right-clicked, show it's popup
+		 * 
+		 * @param e
+		 */
 		private void maybeShowPopup(MouseEvent e)
 		{
 			if (e.isPopupTrigger())
@@ -929,21 +934,11 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				IEditable editableSource = (IEditable) e.getSource();
 				JPopupMenu menu = editableSource.getPopupMenu();
 				addMenuOptions(menu);
-				// System.out.println("Popup source: " + e.getComponent());
-				// System.out.println("Popup point: " + e.getPoint());
 
-				int x = e.getX();
-				int y = e.getY();
-
-				// TODO: fix this horrible hack. Figure out why we are not getting the point relative to the NodePanel.
-				if (editableSource instanceof NodePanel)
-				{
-					Point p = SwingUtilities.convertPoint(ClassDiagram.this.view, e.getPoint(), e.getComponent());
-					x = p.x;
-					y = p.y;
-				}
-
-				menu.show(e.getComponent(), x, y);
+				// e.getX() and e.getY() should just work here but don't - probably a bug in swing
+				// getting the mouse position ensures popup menu will always appear where clicked
+				Point mousePosition = e.getComponent().getMousePosition();
+				menu.show(e.getComponent(), mousePosition.x, mousePosition.y);
 			}
 		}
 
