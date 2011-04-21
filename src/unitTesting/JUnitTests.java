@@ -36,7 +36,6 @@ public class JUnitTests
 		assertTrue("Error: first attribute has wrong name", testNode.getAttribute(0).equals("attribute 1"));
 		assertTrue("Error: not constructed correctly, wrong number of methods", testNode.getNumMethods() == 1);
 		assertTrue("Error: first method has wrong name", testNode.getMethod(0).equals("method 1"));
-
 	}
 
 	/**
@@ -175,8 +174,6 @@ public class JUnitTests
 		assertTrue("Error: name not set correctly", testNode.getAttribute(0).equals(attrib1));
 		assertFalse("Error: name still same", testNode.getAttribute(0).equals("attribute 1"));
 		assertTrue("Error: now wrong number of attributes", testNode.getNumAttributes() == 1);
-
-		
 	}
 	
 	/**
