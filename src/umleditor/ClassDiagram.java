@@ -864,6 +864,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			else if (e.getActionCommand() == "Close")
 			{
 				parentEditor.closeCurrentTab();
+				parentEditor.requestFocus();
 			}
 		}
 	}
