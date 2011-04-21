@@ -13,9 +13,6 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -23,6 +20,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -33,7 +31,7 @@ import javax.swing.SwingUtilities;
  * classes they connect. They will be able to draw themselves using a reference to the ClassDiagram’s View’s graphics,
  * and will do so when there are changes to the view panel.
  */
-public class Relationship extends JComponent implements ISelectable
+public class Relationship extends JComponent implements ISelectable, IEditable
 {
 	/**
 	 * Generated UID for Relationship.
@@ -120,7 +118,7 @@ public class Relationship extends JComponent implements ISelectable
 		m_line = new Path2D.Float();
 		m_arrow = new Polygon();
 		enableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
-		addMouseListener(new PopupListener());
+		m_popupMenu = new RelationshipPopupMenu();
 	}
 
 	/***** Constructors *****/
@@ -133,12 +131,9 @@ public class Relationship extends JComponent implements ISelectable
 	 * @param second
 	 * @param secondOffset
 	 */
-	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset,
-			RelationshipType type, ClassDiagram parentDiagram)
+	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
 	{
 		m_model = new RelationshipModel(first, firstOffset, second, secondOffset, type);
-
-		m_popupMenu = new RelationshipPopupMenu(parentDiagram);
 
 		rebuildGraphics();
 	}
@@ -150,11 +145,9 @@ public class Relationship extends JComponent implements ISelectable
 	 * @param second
 	 * @param type
 	 */
-	public Relationship(ClassNode first, ClassNode second, RelationshipType type, ClassDiagram parentDiagram)
+	public Relationship(ClassNode first, ClassNode second, RelationshipType type)
 	{
 		m_model = new RelationshipModel(first, second, type);
-
-		m_popupMenu = new RelationshipPopupMenu(parentDiagram);
 
 		rebuildGraphics();
 	}
@@ -165,11 +158,9 @@ public class Relationship extends JComponent implements ISelectable
 	 * @param model
 	 *            - the {@link RelationshipModel model} to use.
 	 */
-	public Relationship(RelationshipModel model, ClassDiagram parentDiagram)
+	public Relationship(RelationshipModel model)
 	{
 		m_model = model;
-
-		m_popupMenu = new RelationshipPopupMenu(parentDiagram);
 
 		rebuildGraphics();
 	}
@@ -524,6 +515,12 @@ public class Relationship extends JComponent implements ISelectable
 		}
 	}
 
+	@Override
+	public JPopupMenu getPopupMenu()
+	{
+		return m_popupMenu;
+	}
+
 	/********** Drawing **********/
 
 	/**
@@ -726,29 +723,6 @@ public class Relationship extends JComponent implements ISelectable
 
 	/********** Inner classes **********/
 
-	class PopupListener extends MouseAdapter
-	{
-		@Override
-		public void mousePressed(MouseEvent e)
-		{
-			maybeShowPopup(e);
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e)
-		{
-			maybeShowPopup(e);
-		}
-
-		private void maybeShowPopup(MouseEvent e)
-		{
-			if (e.isPopupTrigger())
-			{
-				m_popupMenu.show(e.getComponent(), e.getX(), e.getY());
-			}
-		}
-	}
-
 	/**
 	 * Creates a popup menu when the user right-clicks on the node panel
 	 */
@@ -757,10 +731,12 @@ public class Relationship extends JComponent implements ISelectable
 		private static final long serialVersionUID = 8504144124921722292L;
 		private transient Point m_clickPoint;
 
-		public RelationshipPopupMenu(ClassDiagram classDiagram)
+		public RelationshipPopupMenu()
 		{
 			super();
 			// set up
+			add(new EditAction("Edit (action object)"));
+
 			JMenuItem editOption = new JMenuItem("Edit");
 			editOption.addActionListener(this);
 			editOption.setActionCommand("Edit");
@@ -784,7 +760,7 @@ public class Relationship extends JComponent implements ISelectable
 
 			// so we can send delete events to the class diagram without keeping
 			// a reference to it around
-			this.addKeyListener(classDiagram);
+			// this.addKeyListener(classDiagram);
 		}
 
 		@Override
@@ -799,31 +775,52 @@ public class Relationship extends JComponent implements ISelectable
 		{
 			if (e.getActionCommand() == "Edit")
 			{
-				SwingUtilities.convertPointToScreen(m_clickPoint, Relationship.this);
+				System.out.println("Location: " + this.getLocation());
+				System.out.println("Click point: " + m_clickPoint);
 				openEditDialog(m_clickPoint);
 			}
 			else if (e.getActionCommand() == "Delete")
 			{
-				if (m_selectedControlPointIndex >= 0)
-				{
-					removeSelectedControlPoint();
-				}
-				else
-				{
-					// so will be handled by ClassDiagram just as pressing the delete key would
-					// create a key pressed event that is equivalent to pressing the delete key
-					KeyEvent deleteEvent = new KeyEvent((Component) e.getSource(), e.getID(), e.getWhen(),
-							e.getModifiers(), KeyEvent.VK_DELETE, KeyEvent.CHAR_UNDEFINED);
-					// get the first (and only) key listener
-					KeyListener kl = (this.getKeyListeners())[0];
-					// dispatch the key event to the key listener as a pressed event
-					kl.keyPressed(deleteEvent);
-				}
+				// if (m_selectedControlPointIndex >= 0)
+				// {
+				// removeSelectedControlPoint();
+				// }
+				// else
+				// {
+				// // so will be handled by ClassDiagram just as pressing the delete key would
+				// // create a key pressed event that is equivalent to pressing the delete key
+				// KeyEvent deleteEvent = new KeyEvent((Component) e.getSource(), e.getID(), e.getWhen(),
+				// e.getModifiers(), KeyEvent.VK_DELETE, KeyEvent.CHAR_UNDEFINED);
+				// // get the first (and only) key listener
+				// KeyListener kl = (this.getKeyListeners())[0];
+				// // dispatch the key event to the key listener as a pressed event
+				// kl.keyPressed(deleteEvent);
+				// }
 			}
 			else if (e.getActionCommand() == "AddNode")
 			{
 				addControlPoint(m_clickPoint, true);
 			}
 		}
+	}
+
+	private class EditAction extends AbstractAction
+	{
+		private static final long serialVersionUID = -1625880835611486401L;
+
+		public EditAction(String name)
+		{
+			super(name);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			System.out.println("Action: " + e);
+			Point p = new Point(100, 100);
+			SwingUtilities.convertPointToScreen(p, Relationship.this);
+			openEditDialog(p);
+		}
+
 	}
 }

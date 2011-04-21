@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLayeredPane;
@@ -33,6 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -122,8 +124,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		}
 		for (RelationshipModel rm : listOfRelationships)
 		{
-			Relationship r = new Relationship(rm, this);
+			Relationship r = new Relationship(rm);
 			r.setEventPublisher(m_changePublisher);
+			// r.addMouseListener(new PopupListener());
 			view.add(r, "external");
 		}
 
@@ -195,6 +198,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	private void initNodePanel(Point addLocation, ClassNode newClassNode)
 	{
 		NodePanel newNodePanel = new NodePanel(this, newClassNode);
+		newNodePanel.addMouseListener(new PopupListener());
 		newNodePanel.attachToView(view);
 		newNodePanel.resetBounds(addLocation);
 		view.revalidate();
@@ -314,8 +318,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 					// remove the selected object
 					currentlySelectedObjects.clear();
 					parentEditor.reflectUnselectedState();
+					view.repaint(r.getBounds());
 				}
-				view.repaint(r.getBounds());
+
 			}
 
 			markAsChanged();
@@ -377,7 +382,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			{
 				RelationshipType selectedType = possibleValues[selection];
 
-				Relationship rel = new Relationship(firstNode, secondNode, selectedType, this);
+				Relationship rel = new Relationship(firstNode, secondNode, selectedType);
+				rel.addMouseListener(new PopupListener());
 
 				firstNode.addRelationship(rel);
 				secondNode.addRelationship(rel);
@@ -388,8 +394,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				// Add the relationship to the view.
 				// Using the "external" constraint prevents MigLayout from changing the bounds of the relationship.
 				view.add(rel, "external");
-				// rel.addMouseListener(m_relationshipDragController);
-				// rel.addMouseMotionListener(m_relationshipDragController);
 				rel.setEventPublisher(m_changePublisher);
 
 				rel.repaint();
@@ -896,5 +900,71 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	{
 		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
 		gp.setVisible(false);
+	}
+
+	/**
+	 * Shows a {@link JPopupMenu pop-up menu} on mouse press/release if the system pop-up trigger is matched.
+	 */
+	class PopupListener extends MouseAdapter
+	{
+		@Override
+		public void mousePressed(MouseEvent e)
+		{
+			maybeShowPopup(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e)
+		{
+			maybeShowPopup(e);
+		}
+
+		private void maybeShowPopup(MouseEvent e)
+		{
+			if (e.isPopupTrigger())
+			{
+				IEditable editableSource = (IEditable) e.getSource();
+				JPopupMenu menu = editableSource.getPopupMenu();
+				addMenuOptions(menu);
+				// System.out.println("Popup source: " + e.getComponent());
+				// System.out.println("Popup point: " + e.getPoint());
+
+				int x = e.getX();
+				int y = e.getY();
+
+				// TODO: fix this horrible hack. Figure out why we are not getting the point relative to the NodePanel.
+				if (editableSource instanceof NodePanel)
+				{
+					Point p = SwingUtilities.convertPoint(ClassDiagram.this.view, e.getPoint(), e.getComponent());
+					x = p.x;
+					y = p.y;
+				}
+
+				menu.show(e.getComponent(), x, y);
+			}
+		}
+
+		private void addMenuOptions(JPopupMenu menu)
+		{
+			menu.add(new JSeparator());
+			menu.add(new DeleteAction("Delete (From Diagram)"));
+		}
+	}
+
+	private class DeleteAction extends AbstractAction
+	{
+		private static final long serialVersionUID = -7188176402011656556L;
+
+		public DeleteAction(String name)
+		{
+			super(name);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			deleteSelectedObjects();
+		}
+
 	}
 }
