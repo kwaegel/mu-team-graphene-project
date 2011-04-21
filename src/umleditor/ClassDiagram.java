@@ -126,7 +126,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		{
 			Relationship r = new Relationship(rm);
 			r.setEventPublisher(m_changePublisher);
-			// r.addMouseListener(new PopupListener());
+			r.addMouseListener(new PopupListener());
 			view.add(r, "external");
 		}
 
@@ -947,7 +947,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		private void addMenuOptions(JPopupMenu menu)
 		{
 			menu.add(new JSeparator());
-			menu.add(new DeleteAction("Delete (From Diagram)"));
+			menu.add(new DeleteAction("Delete"));
 		}
 	}
 
