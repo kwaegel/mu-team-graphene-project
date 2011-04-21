@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -86,8 +85,6 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 
 	private RelationshipModel m_model;
 
-	private RelationshipPopupMenu m_popupMenu;
-
 	private enum FillType
 	{
 		None, Outline, Solid
@@ -118,7 +115,6 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 		m_line = new Path2D.Float();
 		m_arrow = new Polygon();
 		enableEvents(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
-		m_popupMenu = new RelationshipPopupMenu();
 	}
 
 	/***** Constructors *****/
@@ -518,7 +514,7 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	@Override
 	public JPopupMenu getPopupMenu()
 	{
-		return m_popupMenu;
+		return new RelationshipPopupMenu();
 	}
 
 	/********** Drawing **********/
@@ -735,32 +731,47 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 		{
 			super();
 			// set up
-			add(new EditAction("Edit (action object)"));
+			add(new AbstractAction("Edit")
+			{
+				private static final long serialVersionUID = 6974933978012550557L;
 
-			JMenuItem editOption = new JMenuItem("Edit");
-			editOption.addActionListener(this);
-			editOption.setActionCommand("Edit");
-			this.add(editOption);
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					Point p = new Point(100, 100);
+					SwingUtilities.convertPointToScreen(p, Relationship.this);
+					openEditDialog(p);
+				}
+			});
 
 			boolean pathNodeSelected = m_selectedControlPointIndex >= 0;
-
-			if (!pathNodeSelected)
+			if (pathNodeSelected)
 			{
-				JMenuItem addOption = new JMenuItem("Add path node");
-				addOption.addActionListener(this);
-				addOption.setActionCommand("AddNode");
-				this.add(addOption);
+				add(new AbstractAction("Delete path node")
+				{
+					private static final long serialVersionUID = 6974933978012550557L;
+
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						removeSelectedControlPoint();
+					}
+				});
 			}
+			else
+			{
+				add(new AbstractAction("Add path node")
+				{
+					private static final long serialVersionUID = -5158366025799128310L;
 
-			String deleteLabel = pathNodeSelected ? "Delete path node" : "Delete";
-			JMenuItem deleteOption = new JMenuItem(deleteLabel);
-			deleteOption.addActionListener(this);
-			deleteOption.setActionCommand("Delete");
-			this.add(deleteOption);
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						addControlPoint(m_clickPoint, true);
+					}
 
-			// so we can send delete events to the class diagram without keeping
-			// a reference to it around
-			// this.addKeyListener(classDiagram);
+				});
+			}
 		}
 
 		@Override
@@ -779,48 +790,10 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 				System.out.println("Click point: " + m_clickPoint);
 				openEditDialog(m_clickPoint);
 			}
-			else if (e.getActionCommand() == "Delete")
-			{
-				// if (m_selectedControlPointIndex >= 0)
-				// {
-				// removeSelectedControlPoint();
-				// }
-				// else
-				// {
-				// // so will be handled by ClassDiagram just as pressing the delete key would
-				// // create a key pressed event that is equivalent to pressing the delete key
-				// KeyEvent deleteEvent = new KeyEvent((Component) e.getSource(), e.getID(), e.getWhen(),
-				// e.getModifiers(), KeyEvent.VK_DELETE, KeyEvent.CHAR_UNDEFINED);
-				// // get the first (and only) key listener
-				// KeyListener kl = (this.getKeyListeners())[0];
-				// // dispatch the key event to the key listener as a pressed event
-				// kl.keyPressed(deleteEvent);
-				// }
-			}
 			else if (e.getActionCommand() == "AddNode")
 			{
 				addControlPoint(m_clickPoint, true);
 			}
 		}
-	}
-
-	private class EditAction extends AbstractAction
-	{
-		private static final long serialVersionUID = -1625880835611486401L;
-
-		public EditAction(String name)
-		{
-			super(name);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			System.out.println("Action: " + e);
-			Point p = new Point(100, 100);
-			SwingUtilities.convertPointToScreen(p, Relationship.this);
-			openEditDialog(p);
-		}
-
 	}
 }
