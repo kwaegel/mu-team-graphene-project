@@ -54,7 +54,9 @@ public class FileUtils
 	/**
 	 * Adds the appropriate extension to the given file, if the path does not have one already
 	 * 
-	 * @param file - file to add the UML extension to
+	 * @param file
+	 *            - {@link File} to add the UML extension to
+	 * @return equivalent {@link File} with appropriate extension added.
 	 */
 	public static File attachAppropriateExtension(File file)
 	{
