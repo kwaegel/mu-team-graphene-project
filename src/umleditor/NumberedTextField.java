@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 public class NumberedTextField extends JTextField
 {
 	/**
-	 * A list of field types that can be displayed by the text field.
+	 * Type associated with a {@link NumberedTextField}.
 	 */
 	public enum FieldType
 	{
