@@ -247,6 +247,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	 * Notify the classDiagram of object selection. Sending null indicates that no object was selected.
 	 * 
 	 * @param selected
+	 *            - the object being selected.
+	 * @param deselectOthers
+	 *            - pass in true to request that all other objects be deselected.
 	 */
 	public void setSelectedObject(ISelectable selected, boolean deselectOthers)
 	{

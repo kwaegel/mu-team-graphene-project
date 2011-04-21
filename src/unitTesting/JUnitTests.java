@@ -21,8 +21,14 @@ import umleditor.Relationship;
 import umleditor.Relationship.RelationshipType;
 import umleditor.UMLEditor;
 
+/**
+ * A collection of JUnit tests for the UMLEditor program.
+ */
 public class JUnitTests
 {
+	/**
+	 * Version UID.
+	 */
 	private static final long serialVersionUID = -3943944413362019489L;
 
 	/**
@@ -175,7 +181,7 @@ public class JUnitTests
 		assertFalse("Error: name still same", testNode.getAttribute(0).equals("attribute 1"));
 		assertTrue("Error: now wrong number of attributes", testNode.getNumAttributes() == 1);
 	}
-	
+
 	/**
 	 * test method setters
 	 */
@@ -362,7 +368,7 @@ public class JUnitTests
 
 		assertTrue("Error: nodes are not equal", node1.equals(node2));
 	}
-		
+
 	/**
 	 * Testing that new file has correct Untitled Diagram name and isSavedInFile correctly returns false
 	 */
@@ -371,7 +377,7 @@ public class JUnitTests
 	{
 		ClassDiagram testDiagram = new ClassDiagram(new UMLEditor(), new JScrollPane());
 		assertTrue(testDiagram.getName().equals("Untitled Diagram"));
-		
+
 		File blank = new File("Blank");
 		assertFalse(testDiagram.isSavedInFile(blank));
 	}

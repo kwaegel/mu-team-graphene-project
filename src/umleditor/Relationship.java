@@ -125,6 +125,8 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	 * @param firstOffset
 	 * @param second
 	 * @param secondOffset
+	 * @param type
+	 *            - the {@link RelationshipType type} to construct.
 	 */
 	public Relationship(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset, RelationshipType type)
 	{
@@ -164,6 +166,9 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 
 	/**
 	 * Opens an edit dialog for this relationship.
+	 * 
+	 * @param dialogLocation
+	 *            - where to create the edit dialog.
 	 */
 	public void openEditDialog(Point dialogLocation)
 	{
@@ -192,7 +197,7 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	}
 
 	/**
-	 * Get the model.
+	 * @return the {@link RelationshipModel model}.
 	 */
 	public RelationshipModel getModel()
 	{
@@ -339,6 +344,9 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	 * Add a control point at the given click point.
 	 * 
 	 * @param clickPoint
+	 *            - the point clicked.
+	 * @param convertLocalToDiagram
+	 *            - true to convert the click point to diagram coordinates.
 	 */
 	public void addControlPoint(Point clickPoint, boolean convertLocalToDiagram)
 	{
@@ -723,11 +731,12 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	{
 		private static final long serialVersionUID = 8504144124921722292L;
 		private transient Point m_clickPoint;
-		
+
 		/**
 		 * Represents the popup menu for relationships
 		 */
-		@SuppressWarnings("serial") // so we don't need generated ids for each abstract action
+		@SuppressWarnings("serial")
+		// so we don't need generated ids for each abstract action
 		public RelationshipPopupMenu()
 		{
 			super();

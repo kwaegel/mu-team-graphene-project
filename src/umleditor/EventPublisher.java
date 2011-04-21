@@ -20,6 +20,9 @@ public class EventPublisher extends EventListenerList
 
 	/**
 	 * Notifies any interested listeners that an object has been changed.
+	 * 
+	 * @param changedObject
+	 *            - the object being changed.
 	 */
 	public void fireChangeEvent(Object changedObject)
 	{

@@ -10,9 +10,23 @@ import javax.swing.JTextField;
  */
 public class NumberedTextField extends JTextField
 {
+	/**
+	 * A list of field types that can be displayed by the text field.
+	 */
 	public enum FieldType
 	{
-		Attribute, Method, ClassName
+		/**
+		 * Attribute type.
+		 */
+		Attribute,
+		/**
+		 * Method type.
+		 */
+		Method,
+		/**
+		 * ClassName type.
+		 */
+		ClassName
 	}
 
 	private static final long serialVersionUID = 3673040587471673525L;

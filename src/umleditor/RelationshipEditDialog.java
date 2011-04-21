@@ -35,6 +35,12 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 
 	private static final long serialVersionUID = 4774378332989799094L;
 
+	/**
+	 * Construct an edit dialog for the given relationship {@link RelationshipModel model}.
+	 * 
+	 * @param model
+	 *            - the model to edit.
+	 */
 	public RelationshipEditDialog(RelationshipModel model)
 	{
 		m_model = model;

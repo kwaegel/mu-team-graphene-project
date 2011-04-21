@@ -3,8 +3,7 @@ package umleditor;
 import javax.swing.event.ChangeEvent;
 
 /**
- * Used with EventPublisher. Informs the Event Publisher if an object has been 
- * selected.
+ * Used with EventPublisher. Informs the Event Publisher if an object has been selected.
  */
 public class SelectionEvent extends ChangeEvent
 {
@@ -12,11 +11,23 @@ public class SelectionEvent extends ChangeEvent
 
 	private transient boolean m_singleSelectionRequested;
 
+	/**
+	 * construct a new selector event. The source object will be the only one selected.
+	 * 
+	 * @param source
+	 *            - the object being selected.
+	 */
 	public SelectionEvent(ISelectable source)
 	{
 		this(source, true);
 	}
 
+	/**
+	 * @param source
+	 *            - the object being selected.
+	 * @param singleSelection
+	 *            - true to request that this object be the only one selected.
+	 */
 	public SelectionEvent(ISelectable source, boolean singleSelection)
 	{
 		super(source);
@@ -33,7 +44,7 @@ public class SelectionEvent extends ChangeEvent
 	}
 
 	/**
-	 * Returns true if only one object is selected
+	 * @return true if only one object is selected.
 	 */
 	public boolean isSingleSelectionRequested()
 	{

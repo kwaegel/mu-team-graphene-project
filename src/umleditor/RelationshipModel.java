@@ -12,6 +12,9 @@ import umleditor.Relationship.RelationshipType;
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
+/**
+ * This class holds data defining the relationship between two {@link ClassNode class nodes}.
+ */
 public class RelationshipModel
 {
 
@@ -43,6 +46,21 @@ public class RelationshipModel
 	 */
 	private transient Relationship m_relationship;
 
+	/**
+	 * Constructs a model given two class nodes and offsets for where to draw the ends. This gives more control over
+	 * where to initially draw the relationship line.
+	 * 
+	 * @param first
+	 *            - the first {@link ClassNode} to link.
+	 * @param firstOffset
+	 *            - the offset from the first ClassNode location to draw the relationship line.
+	 * @param second
+	 *            - the second {@link ClassNode} to link.
+	 * @param secondOffset
+	 *            - the offset from the second ClassNode location to draw the relationship line.
+	 * @param type
+	 *            - what type of relationship to create.
+	 */
 	public RelationshipModel(ClassNode first, Point firstOffset, ClassNode second, Point secondOffset,
 			RelationshipType type)
 	{
@@ -51,6 +69,16 @@ public class RelationshipModel
 		m_secondNodeOffset = secondOffset;
 	}
 
+	/**
+	 * Constructs a model given two class nodes and auto-generates the default drawing locations.
+	 * 
+	 * @param node1
+	 *            - the first {@link ClassNode} to link.
+	 * @param node2
+	 *            - the second {@link ClassNode} to link.
+	 * @param type
+	 *            - what type of relationship to create.
+	 */
 	public RelationshipModel(ClassNode node1, ClassNode node2, RelationshipType type)
 	{
 		m_firstNode = node1;
@@ -129,6 +157,9 @@ public class RelationshipModel
 
 	/**
 	 * Identical to the copy constructor, but can be used on an existing model.
+	 * 
+	 * @param otherModel
+	 *            - the {@link RelationshipModel model} to use.
 	 */
 	public void setModelState(RelationshipModel otherModel)
 	{
@@ -184,6 +215,8 @@ public class RelationshipModel
 	/**
 	 * Return a {@link java.util.Collection collection} containing the {@link ClassNode ClassNodes} this relationship is
 	 * linked to.
+	 * 
+	 * @return a list of class nodes.
 	 */
 	public Collection<ClassNode> getClassNodes()
 	{
@@ -201,21 +234,37 @@ public class RelationshipModel
 
 	/** Getters and Setters **/
 
+	/**
+	 * @return the {@link Relationship} that is using this model.
+	 */
 	public Relationship getRelationship()
 	{
 		return m_relationship;
 	}
 
+	/**
+	 * @param r
+	 *            - the {@link Relationship} that will be using this model.
+	 */
 	public void setRelationship(Relationship r)
 	{
 		m_relationship = r;
 	}
 
+	/**
+	 * @return the type of relationship this is.
+	 */
 	public RelationshipType getType()
 	{
 		return m_type;
 	}
 
+	/**
+	 * Change the type of this relationship.
+	 * 
+	 * @param type
+	 *            - the new {@link RelationshipType} to use.
+	 */
 	public void setType(RelationshipType type)
 	{
 		m_type = type;
@@ -223,51 +272,60 @@ public class RelationshipModel
 		m_relationship.repaint();
 	}
 
+	/**
+	 * @return - the list of points used to draw this relationship line along.
+	 */
 	public List<Point> getPoints()
 	{
 		return m_points;
 	}
 
-	public void setPoints(List<Point> points)
-	{
-		this.m_points = points;
-	}
-
+	/**
+	 * 
+	 * @return the first node this relationship is connecting togather.
+	 */
 	public ClassNode getFirstNode()
 	{
 		return m_firstNode;
 	}
 
-	public void setFirstNode(ClassNode firstNode)
-	{
-		this.m_firstNode = firstNode;
-	}
-
+	/**
+	 * @return the second node this relationship is connecting togather.
+	 */
 	public ClassNode getSecondNode()
 	{
 		return m_secondNode;
 	}
 
-	public void setSecondNode(ClassNode secondNode)
-	{
-		this.m_secondNode = secondNode;
-	}
-
+	/**
+	 * @return the offset between the first node and the draw point on the first node.
+	 */
 	public Point getFirstNodeOffset()
 	{
 		return m_firstNodeOffset;
 	}
 
+	/**
+	 * @param firstNodeOffset
+	 *            - the new offset to use for drawing on the first node.
+	 */
 	public void setFirstNodeOffset(Point firstNodeOffset)
 	{
 		this.m_firstNodeOffset = firstNodeOffset;
 	}
 
+	/**
+	 * @return the offset between the second node and the draw point on the second node.
+	 */
 	public Point getSecondNodeOffset()
 	{
 		return m_secondNodeOffset;
 	}
 
+	/**
+	 * @param secondNodeOffset
+	 *            - the new offset to use for drawing on the second node.
+	 */
 	public void setSecondNodeOffset(Point secondNodeOffset)
 	{
 		this.m_secondNodeOffset = secondNodeOffset;

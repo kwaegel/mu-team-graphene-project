@@ -4,13 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
+
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-
 
 /**
  * Modeless JDialog that contains two tabs: Help Contents and About. Help Contents contains information about how to use
@@ -58,7 +58,7 @@ public class HelpPanel extends JDialog
 		helpContents.setEditable(false);
 		URL helpURL = this.getClass().getResource("HelpContents.html");
 		helpContents.setContentType("text/html");
-		
+
 		try
 		{
 			helpContents.setPage(helpURL);
@@ -68,20 +68,24 @@ public class HelpPanel extends JDialog
 			e.printStackTrace();
 		}
 		scrollPane.setViewportView(helpContents);
-		
-		helpContents.addHyperlinkListener(new HyperlinkListener()
-        {
-            public void hyperlinkUpdate(HyperlinkEvent r)
-            {
-                try
-                {
-                	if(r.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-                		helpContents.setPage(r.getURL());
-                }catch(Exception e)
-                {}
-            }
-        });
 
+		helpContents.addHyperlinkListener(new HyperlinkListener()
+		{
+			@Override
+			public void hyperlinkUpdate(HyperlinkEvent r)
+			{
+				try
+				{
+					if (r.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+					{
+						helpContents.setPage(r.getURL());
+					}
+				}
+				catch (Exception e)
+				{
+				}
+			}
+		});
 
 		tabbedPane.addTab("Help Contents", null, scrollPane, "Help Contents");
 	}
