@@ -387,7 +387,7 @@ public class NodePanel extends JPanel implements IEditable
 		}
 
 		/**
-		 * When dragging to create a relationship, draws teh line behind the mouse, and colors nodes that are hovered
+		 * When dragging to create a relationship, draws the line behind the mouse, and colors nodes that are hovered
 		 * over.
 		 */
 		@Override

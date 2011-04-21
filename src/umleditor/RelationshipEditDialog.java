@@ -134,7 +134,6 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	{
 		String typeName = m_buttonGroup.getSelection().getActionCommand();
 		RelationshipType newType = RelationshipType.valueOf(typeName);
-		System.out.println("Selected " + newType);
 		m_model.setType(newType);
 		RelationshipEditDialog.this.setModelChanged(true);
 	}
