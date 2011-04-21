@@ -230,7 +230,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 		if (userChoice == JFileChooser.APPROVE_OPTION)
 		{
-			File fileToOpen = fileLoadChooser.getSelectedFile();
+			File fileToOpen = FileUtils.attachAppropriateExtension(fileLoadChooser.getSelectedFile());
 			int loadedIndex = wasAlreadyOpen(fileToOpen);
 
 			if (loadedIndex > -1)

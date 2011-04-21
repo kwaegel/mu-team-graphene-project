@@ -1,5 +1,7 @@
 package umleditor;
 
+import java.io.File;
+
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -47,6 +49,23 @@ public class FileUtils
 		// Alias field names
 
 		return xmlStream;
+	}
+
+	/**
+	 * Adds the appropriate extension to the given file, if the path does not have one already
+	 * 
+	 * @param file - file to add the UML extension to
+	 */
+	public static File attachAppropriateExtension(File file)
+	{
+		String absoluteFilePath = file.getAbsolutePath();
+		String acceptedExtension = FileExtensionFilter.ACCEPTED_FILE_EXTENSION;
+		if (!absoluteFilePath.endsWith(acceptedExtension))
+		{
+			absoluteFilePath += acceptedExtension;
+			file = new File(absoluteFilePath);
+		}
+		return (file);
 	}
 
 }
