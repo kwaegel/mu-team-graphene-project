@@ -838,11 +838,19 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			this.add(closeOption);
 		}
 
+		/**
+		 * Once a {@link ClassNode} has been copied, ensure that popup menu will now always have the Paste option
+		 * enabled.
+		 */
 		public void enablePasteOption()
 		{
 			pasteOption.setEnabled(true);
 		}
 
+		/**
+		 * Show the popup and record where exactly the user clicked, so can add or paste nodes in the appropriate
+		 * location.
+		 */
 		@Override
 		public void show(Component invoker, int x, int y)
 		{
@@ -850,6 +858,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			originalClickLocation = new Point(x, y);
 		}
 
+		/**
+		 * Handle selection of items in the popup menu.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
@@ -898,7 +909,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	}
 
 	/**
-	 * Removes the drag line
+	 * Removes the drag line that was draw as teh user dragged between nodes
 	 */
 	public void clearDragLine()
 	{
@@ -907,7 +918,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	}
 
 	/**
-	 * Shows a {@link JPopupMenu pop-up menu} on mouse press/release if the system pop-up trigger is matched.
+	 * Shows a {@link JPopupMenu pop-up menu} on mouse press/release if the system pop-up trigger is matched. Used for
+	 * {@link IEditable}s: ClassNodes and Relationships. Does not handle the popup for the ClassDiagram background -
+	 * that requires extra information and is handled by {@link DiagramBackgroundPopup}
 	 */
 	class PopupListener extends MouseAdapter
 	{
