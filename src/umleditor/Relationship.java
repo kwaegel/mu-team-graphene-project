@@ -322,8 +322,6 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 
 	/**
 	 * Create the line from a list of points.
-	 * 
-	 * @param pointList
 	 */
 	private void createPathFromPoints()
 	{

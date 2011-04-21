@@ -247,9 +247,10 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	 * Notify the classDiagram of object selection. Sending null indicates that no object was selected.
 	 * 
 	 * @param selected
-	 *            - the object being selected.
+	 *            - item to select
 	 * @param deselectOthers
-	 *            - pass in true to request that all other objects be deselected.
+	 *            - whether or not other items should be unselected when this one becomes selected. Will be true if this
+	 *            method is being called because the user Ctrl-clicked on a class in the diagram.
 	 */
 	public void setSelectedObject(ISelectable selected, boolean deselectOthers)
 	{
@@ -629,8 +630,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	 * Pastes a copy of the given node at the given location. Internal convenience method also useful for pasting from
 	 * popup menu
 	 * 
-	 * @param copy
 	 * @param pastePosition
+	 *            - place to insert the node
 	 */
 	private void pasteAtLoc(Point pastePosition)
 	{
