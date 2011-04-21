@@ -10,6 +10,9 @@ import javax.swing.JTextField;
  */
 public class NumberedTextField extends JTextField
 {
+	/**
+	 * Type associated with a {@link NumberedTextField}.
+	 */
 	public enum FieldType
 	{
 		Attribute, Method, ClassName
