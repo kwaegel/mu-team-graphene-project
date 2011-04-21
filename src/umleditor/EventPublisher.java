@@ -4,6 +4,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
+/**
+ * Notifies all current listeners of a change or selection if it is relevant 
+ * to the listener
+ */
 public class EventPublisher extends EventListenerList
 {
 	private static final long serialVersionUID = 8368345460586618761L;
@@ -12,6 +16,9 @@ public class EventPublisher extends EventListenerList
 	{
 	}
 
+	/**
+	 * Notifies any interested listeners that an object has been changed.
+	 */
 	public void fireChangeEvent(Object changedObject)
 	{
 		ChangeEvent changeEvent = new ChangeEvent(changedObject);

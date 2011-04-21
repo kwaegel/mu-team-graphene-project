@@ -896,6 +896,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		view.repaint();
 	}
 
+	/**
+	 * Removes the drag line
+	 */
 	public void clearDragLine()
 	{
 		GlassDrawingPane gp = (GlassDrawingPane) parentEditor.getGlassPane();
