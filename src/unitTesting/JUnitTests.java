@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
+import java.io.File;
 import java.util.Collection;
 
 import javax.swing.JLayeredPane;
@@ -363,5 +364,21 @@ public class JUnitTests
 		node2.setPropertiesTo(node1);
 
 		assertTrue("Error: nodes are not equal", node1.equals(node2));
+	}
+		
+	/**
+	 * Testing that new file has correct Untitled Diagram name and is not saved to a random file
+	 */
+	@Test
+	public void save()
+	{
+
+		ClassDiagram testDiagram = new ClassDiagram(new UMLEditor(), new JScrollPane());
+		File blank = new File("Blank");
+				
+		testDiagram.saveToFile(false);
+		assertTrue(testDiagram.getName().equals("Untitled Diagram"));
+		assertFalse(testDiagram.isSavedInFile(blank));
+		
 	}
 }
