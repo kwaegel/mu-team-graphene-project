@@ -745,20 +745,7 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 			});
 
 			boolean pathNodeSelected = m_selectedControlPointIndex >= 0;
-			if (pathNodeSelected)
-			{
-				add(new AbstractAction("Delete path node")
-				{
-					private static final long serialVersionUID = 6974933978012550557L;
-
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						removeSelectedControlPoint();
-					}
-				});
-			}
-			else
+			if (!pathNodeSelected)
 			{
 				add(new AbstractAction("Add path node")
 				{
