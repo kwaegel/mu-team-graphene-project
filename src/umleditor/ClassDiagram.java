@@ -742,13 +742,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		{
 			return NO_SUCH_PAGE;
 		}
-
-		// if(view.getWidth() > view.getHeight())
-		// {
-		// arg1.setOrientation(PageFormat.LANDSCAPE);
-		// System.out.println("setting to landscape");
-		// }
-
+		
 		Graphics2D g2d = (Graphics2D) arg0;
 
 		g2d.translate(arg1.getImageableX(), arg1.getImageableY());

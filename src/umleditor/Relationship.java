@@ -722,7 +722,7 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	/**
 	 * Creates a popup menu when the user right-clicks on the node panel
 	 */
-	private class RelationshipPopupMenu extends JPopupMenu implements ActionListener
+	private class RelationshipPopupMenu extends JPopupMenu /*implements ActionListener*/
 	{
 		private static final long serialVersionUID = 8504144124921722292L;
 		private transient Point m_clickPoint;
@@ -738,7 +738,7 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
-					Point p = new Point(100, 100);
+					Point p = m_clickPoint;
 					SwingUtilities.convertPointToScreen(p, Relationship.this);
 					openEditDialog(p);
 				}
@@ -766,21 +766,6 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 		{
 			m_clickPoint = new Point(x, y);
 			super.show(invoker, x, y);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			if (e.getActionCommand() == "Edit")
-			{
-				System.out.println("Location: " + this.getLocation());
-				System.out.println("Click point: " + m_clickPoint);
-				openEditDialog(m_clickPoint);
-			}
-			else if (e.getActionCommand() == "AddNode")
-			{
-				addControlPoint(m_clickPoint, true);
-			}
 		}
 	}
 }

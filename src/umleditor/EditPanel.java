@@ -338,14 +338,13 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		}
 		else if (nextComponentCode.equals("CloseButton"))
 		{
-			// int closeButtonIndex = 11 + 2 * associatedNode.getNumAttributes() + 2 * associatedNode.getNumMethods();
+			// close button is second to last component
 			everythingPanel.getComponent(everythingPanel.getComponentCount() - 2).requestFocus();
 		}
 		else if (nextComponentCode.equals("ClassNameField"))
 		{
-			int classNameFieldIndex = 1;
-			System.out.println(everythingPanel.getComponent(classNameFieldIndex));
-			everythingPanel.getComponent(classNameFieldIndex).requestFocus();
+			// class name field is second component in the everything panel
+			everythingPanel.getComponent(1).requestFocus();
 		}
 	}
 
