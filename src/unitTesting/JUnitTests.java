@@ -364,18 +364,15 @@ public class JUnitTests
 	}
 		
 	/**
-	 * Testing that new file has correct Untitled Diagram name and is not saved to a random file
+	 * Testing that new file has correct Untitled Diagram name and isSavedInFile correctly returns false
 	 */
 	@Test
-	public void save()
+	public void testGetNameAndSavedInFile()
 	{
-
 		ClassDiagram testDiagram = new ClassDiagram(new UMLEditor(), new JScrollPane());
-		File blank = new File("Blank");
-				
-		testDiagram.saveToFile(false);
 		assertTrue(testDiagram.getName().equals("Untitled Diagram"));
-		assertFalse(testDiagram.isSavedInFile(blank));
 		
+		File blank = new File("Blank");
+		assertFalse(testDiagram.isSavedInFile(blank));
 	}
 }
