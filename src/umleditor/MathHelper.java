@@ -77,7 +77,7 @@ public final class MathHelper
 	 *            - a {@link PathIterator} to check for intersection with.
 	 * @param clickArea
 	 *            - the {@link Rectangle2D rectangle} to check intersection with.
-	 * @return
+	 * @return - true if the click area intersects the path.
 	 */
 	public static boolean intersectsPath(PathIterator lineItr, Rectangle2D clickArea)
 	{

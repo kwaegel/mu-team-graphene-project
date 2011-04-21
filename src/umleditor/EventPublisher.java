@@ -5,13 +5,15 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 /**
- * Notifies all current listeners of a change or selection if it is relevant 
- * to the listener
+ * Notifies all current listeners of a change or selection if it is relevant to the listener
  */
 public class EventPublisher extends EventListenerList
 {
 	private static final long serialVersionUID = 8368345460586618761L;
 
+	/**
+	 * Default constructor.
+	 */
 	public EventPublisher()
 	{
 	}

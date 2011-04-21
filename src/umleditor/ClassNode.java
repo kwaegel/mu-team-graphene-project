@@ -311,9 +311,7 @@ public class ClassNode implements ISelectable
 	}
 
 	/**
-	 * Returns the NodePanel associated with this class node
-	 * 
-	 * @return
+	 * @return the NodePanel associated with this class node
 	 */
 	public NodePanel getNodePanel()
 	{

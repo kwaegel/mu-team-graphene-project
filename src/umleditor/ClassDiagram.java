@@ -56,7 +56,14 @@ import com.thoughtworks.xstream.XStream;
 public class ClassDiagram implements KeyListener, FocusListener, Printable, ChangeListener, SelectionListener
 {
 	// Lists of objects in the diagram
+	/**
+	 * A list containing all the {@link ClassNode class nodes} contained in this diagram.
+	 */
 	private List<ClassNode> listOfNodes = new LinkedList<ClassNode>();
+
+	/**
+	 * A list containing all the relationship {@link RelationshipModel models} contained in this diagram.
+	 */
 	private List<RelationshipModel> listOfRelationships = new LinkedList<RelationshipModel>();
 
 	// Publisher to handle change events
@@ -531,8 +538,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	{
 		JTabbedPane containingTabbedPane = (JTabbedPane) (view.getParent().getParent().getParent());
 		int selectedIndex = containingTabbedPane.getSelectedIndex();
-		TabTitleComponent tabComponent = (TabTitleComponent) containingTabbedPane
-				.getTabComponentAt(selectedIndex);
+		TabTitleComponent tabComponent = (TabTitleComponent) containingTabbedPane.getTabComponentAt(selectedIndex);
 		tabComponent.setTitle(title);
 	}
 

@@ -18,10 +18,9 @@ import net.miginfocom.swing.MigLayout;
 import umleditor.Relationship.RelationshipType;
 
 /**
- * Allows user to modify a relationship. User will be able to choose a new type of relationship
- * or switch the direction of the relationship. Changes occur immediately, although there is an 
- * option to "Cancel" which will close the window and revert any changes. Pressing "Done" closes
- * the window without reverting the changes.
+ * Allows user to modify a relationship. User will be able to choose a new type of relationship or switch the direction
+ * of the relationship. Changes occur immediately, although there is an option to "Cancel" which will close the window
+ * and revert any changes. Pressing "Done" closes the window without reverting the changes.
  * 
  */
 public class RelationshipEditDialog extends JDialog implements ActionListener
@@ -47,7 +46,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		setTitle("Edit relationship");
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setResizable(false);
-		
+
 		setModelChanged(false);
 
 		setLayout(new MigLayout("wrap 1"));
@@ -68,8 +67,8 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	}
 
 	/**
-	 * Constructs the Edit Dialog window. Adds buttons allowing the user to
-	 * switch relationship direction and relationship type.
+	 * Constructs the Edit Dialog window. Adds buttons allowing the user to switch relationship direction and
+	 * relationship type.
 	 */
 	private void createDialogComponents()
 	{
@@ -125,8 +124,8 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	}
 
 	/**
-	 * Changes the relationship type based on the ActionEvent and tells the 
-	 * Relationship Edit Dialog that it was changed.
+	 * Changes the relationship type based on the ActionEvent and tells the Relationship Edit Dialog that it was
+	 * changed.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e)
@@ -140,8 +139,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	/** Actions **/
 
 	/**
-	 * Saves the changes the user has made if there was any and then closes
-	 * the Relationship Edit Dialog.
+	 * Saves the changes the user has made if there was any and then closes the Relationship Edit Dialog.
 	 */
 	private class SaveAction extends AbstractAction
 	{
@@ -155,8 +153,8 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	}
 
 	/**
-	 * Reverts the relationship to its previous state if the model was changed
-	 * and then closes the Relationship Edit Dialog.
+	 * Reverts the relationship to its previous state if the model was changed and then closes the Relationship Edit
+	 * Dialog.
 	 */
 	private class CancelAction extends AbstractAction
 	{
@@ -178,8 +176,8 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	}
 
 	/**
-	 * Switches the direction the arrow is pointing in the relationship
-	 * and then tells the Relationship Edit Dialog it was changed.
+	 * Switches the direction the arrow is pointing in the relationship and then tells the Relationship Edit Dialog it
+	 * was changed.
 	 */
 	private class SwitchAction extends AbstractAction
 	{
@@ -200,7 +198,10 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	 * Pop up a relationship modification dialog.
 	 * 
 	 * @param model
-	 * @return
+	 *            - the {@link RelationshipModel model} to edit.
+	 * @param dialogLocation
+	 *            - the {@link Point} to create the edit dialog at.
+	 * @return true if the model has been modified
 	 */
 	public static boolean showEditDialog(RelationshipModel model, Point dialogLocation)
 	{
@@ -216,8 +217,12 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 	 * Pop up a dialog to create a new relationship model.
 	 * 
 	 * @param first
+	 *            - the first {@link ClassNode} to link together.
 	 * @param second
-	 * @return
+	 *            - the second {@link ClassNode} to link together.
+	 * @param dialogLocation
+	 *            - the {@link Point} to create the edit dialog at.
+	 * @return - the new {@link RelationshipModel} that has been created. Will be null if cancel was clicked.
 	 */
 	public static RelationshipModel showCreationDialog(ClassNode first, ClassNode second, Point dialogLocation)
 	{
