@@ -73,6 +73,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		this.setLocationByPlatform(true);
 		this.addWindowListener(new WindowCloseListener());
 
+		// Create a glass pane for temporary drawing.
+		this.setGlassPane(new GlassDrawingPane());
+
 		classDiagrams = new ArrayList<ClassDiagram>();
 
 		tabCloseListener = new TabCloseListener();
@@ -82,9 +85,6 @@ public class UMLEditor extends JFrame implements ActionListener
 		setUpTabbedPane();
 		createNewClassDiagram();
 		setUpHelpPanel();
-
-		// Create a glass pane for temporary drawing.
-		this.setGlassPane(new GlassDrawingPane());
 
 		this.pack();
 		this.setVisible(true);
@@ -211,6 +211,10 @@ public class UMLEditor extends JFrame implements ActionListener
 		tabbedPane.setFocusable(false);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		this.add(tabbedPane, BorderLayout.CENTER);
+
+		// Restrict the glass pane to only draw over the diagram.
+		GlassDrawingPane gp = (GlassDrawingPane) this.getGlassPane();
+		gp.setDrawableArea(tabbedPane.getBounds());
 	}
 
 	/**
