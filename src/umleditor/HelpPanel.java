@@ -123,8 +123,4 @@ public class HelpPanel extends JDialog
 	{
 		tabbedPane.setSelectedIndex(1);
 	}
-	
-	public void hyperlinkUpdate(HyperlinkEvent e) {
-		
-	}
 }
