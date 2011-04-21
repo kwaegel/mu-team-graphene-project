@@ -723,15 +723,17 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	{
 		private static final long serialVersionUID = 8504144124921722292L;
 		private transient Point m_clickPoint;
-
+		
+		/**
+		 * Represents the popup menu for relationships
+		 */
+		@SuppressWarnings("serial") // so we don't need generated ids for each abstract action
 		public RelationshipPopupMenu()
 		{
 			super();
 			// set up
 			add(new AbstractAction("Edit")
 			{
-				private static final long serialVersionUID = 6974933978012550557L;
-
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
@@ -746,8 +748,6 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 			{
 				add(new AbstractAction("Add path node")
 				{
-					private static final long serialVersionUID = -5158366025799128310L;
-
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
@@ -758,6 +758,9 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 			}
 		}
 
+		/**
+		 * Records the click location and shows the popup
+		 */
 		@Override
 		public void show(Component invoker, int x, int y)
 		{
