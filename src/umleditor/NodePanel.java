@@ -274,6 +274,10 @@ public class NodePanel extends JPanel implements IEditable
 		return (isSelected);
 	}
 
+	/**
+	 * sets the {@link NodePanel}'s background color appropriately. The NodePanel knows whether or not it has been
+	 * selected, so it can ensure that it is always colored correctly.
+	 */
 	public void setAppropriateColor()
 	{
 		this.setBackground(isSelected ? Color.pink : Color.white);

@@ -195,7 +195,6 @@ public class RelationshipModel
 	 */
 	public void removeFromLinkedNodes()
 	{
-		// TODO: Implement this.
 		m_firstNode.removeRelationship(this);
 		m_secondNode.removeRelationship(this);
 	}
