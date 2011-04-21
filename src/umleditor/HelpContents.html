@@ -1,0 +1,146 @@
+<html>
+<h1><a name="Top">UML Editor Team Graphene</a></h1>
+<h2>Help Contents</h2>
+<hr />
+<h3>Introduction</h3>
+<p>The UML Editor is designed to create, edit, open, and save UML class diagrams. The program
+is optimized for Windows 7 and assumes that you have Java 6 (update 20 or higher) installed.
+In these help contents, all "click" instructions refer to a left click. Any right clicks 
+will be specifically mentioned. Instructions such as File>Save indicate that 
+you should select "File" from the menu bar and the "Save" option will be an item in the 
+File menu. Commands such as Ctrl+C indicate that you should press the indciated keyboard
+buttons (Ctrl and C in this case) at the same time. <br />
+</p>
+
+<li><a href="#Limitations">Limitations</a></li>
+<li><a href="#Classes">Classes</a></li>
+<li><a href="#Relationships">Relationships</a></li>
+<li><a href="#Loading">Loading & Saving</a></li>
+<li><a href="#Printing">Printing</a></li>
+   
+<br />
+<h3><a name="Limitations">Limitations</a></h3>
+<p>UML Editor has the following limitations. First, only class diagrams may be added. Other types
+of UML diagrams are not supported. In addition, each diagram can only hold a maximum of
+500 classes. Another limtation is that labels and cardinality information for relationships
+is not included.<br />
+<a href="#Top">Return to Top</a></p>
+
+<br />
+<h3><a name="Classes">Classes</a></h3>
+<p>To add a class, click on the Add Class button (or press N on your keyboard). Then click
+inside the UML Editor window to create the class. To create multiple classes, hold down Shift
+on your keyboard while clicking inside the UML Editor window. New classes may also be added
+by right clicking in any open area inside the Editor window. In the context menu that appears,
+you may choose "Add Class" to add a class where the right click occured. <br />
+<br />
+To select a single class, simply click on it. The class will be highlighted to indicate that
+it was selected. To select multiple classes, hold down the Ctrl button on your keyboard while
+clicking on classes. As you select multiple classes each one will be highlighted to indicate
+that it was selected.<br />
+<br />
+To edit a class, double click on the class to launch the Edit Class window. You can modify
+the class name, attributes or methods. To add attributes or methods, fill out the blank
+field in each section and then press the New button. All fields will be updated in real time.
+To remove any changes made, press the Discard Changes. To confirm changes and close the 
+window, press the Close button. You may also access the Edit Class window by right clicking
+on any class and choosing "Edit." <br />
+<br />
+To move a class, hover your cursor over a class's name field. The cursor will change to
+the move symbol. Click down and drag the class to a new location and then release your
+click. Any relationships associated with the class will also be moved with the class.
+Multiple classes may be moved by using the same method. Simply select more than one
+class and then move your cursor over one of the selected classes. When you click and
+drag to move the class, all highlighted classes and any associated relationships are 
+moved as well.<br />
+<br />
+To delete a class, click on a class to select it. The Delete Button in the toolbar will 
+become active. Click on the Delete button (or press the Del key on your keyboard) and the
+class will be deleted along with any relationships to/from the class. You may also
+delete a class by right clicking on the class and choosing "Delete." To delete multiple
+classes, simply select any classes you wish to delete and then either press the Delete
+button on the toolbar or press the Del key on your keyboard.<br />
+<br />
+To cut, copy, and paste classes, first select a class. To cut, press Ctrl+X or choose
+Edit>Cut from the menu bar. To copy, press Ctrl+C or choose Edit>Copy from the menu bar.
+You may also Cut and Copy by right clicking on a class and choosing "Cut" or "Copy" 
+from the context menu. To paste, press Ctrl+V, right click on an open area and choose "Paste,"
+or choose Edit>Paste from the menu bar. When using the keyboard shortcuts and right click
+menu, the pasted classes will appear next to your mouse cursor. When pasting from
+the menu bar, pasted classes will appear in the center of the screen. <br />
+<a href="#Top">Return to Top</a>
+</p>
+
+<br />
+
+<h3><a name="Relationships">Relationships</a></h3>
+<p>To create a relationship, first ensure that two classes have been created. Then,
+using your mouse, click inside your first class (without the move symbol activated).
+Drag your mouse and release your click when your cursor is on the second class. You will
+see a line while you drag your mouse. After releasing your click on the second class, the 
+Relationship Chooser window will appear. Choose which type of relationship you want 
+(composition, aggregation, dependency, association, and generalization). The selected 
+relationship will be drawn between the two classes.<br />
+<br />
+To shape a relationship, click on a relationship to select it. Two endpoint, blue nodes 
+will appear. Click and drag on an endpoint to move it around the class. To create a new node
+along the relationship's path, Ctrl+click anywhere on the relationship (or right click on
+the relationship and choose "Create Node"). Then click and drag this node to change the shape
+ of the relationship. <br />
+<br />
+To edit a relationship, double click on the relationship or right click on the relationship
+and choose "Edit." The Edit Relationship window will appear. You may choose which new type 
+of relationship you would like drawn or change the direction of the relationship. <br />
+<br />
+To delete a relationship node, click on the node to select it (the node will turn red), 
+then press the Delete button on the toolbar (or the Del key on your keyboard) to delete the 
+node. The relationship will then redraw itself. Endpoint nodes may not be deleted.  <br />
+<br />
+To delete a relationship, click on a relationship to select it. Then press the Delete
+button on the toolbar (or the Delete key on your keyboard) to delete the relationship. A
+relationship may also be deleted by right clicking on the relationship and choosing 
+"Delete."<br />
+<a href="#Top">Return to Top</a>
+</p>
+
+<br />
+
+<h3><a name="Loading">Loading & Saving UML Diagrams</a></h3>
+<p>To save an unsaved UML diagram, choose File>Save from the menu bar (or press
+CTRL+S on your keyboard). A Save window will appear, allowing you to choose the
+name and location of your UML diagram. Choosing File>Save (or pressing Ctrl+S)
+will update the saved file. To explicitly save to a different location, choose
+File>Save As from the file menu. After saving a diagram, the diagram's name will serve
+as a title for the diagram in the tab bar. In addition, any changes to a saved diagram
+will result in an asterisk (*) next to the tab's title to indicate that there are 
+changes that need to be saved.<br />
+<br />
+To load a saved UML diagram, choose File>Load from the menu bar (or press Ctrl+O
+on your keyboard). A Load window will appear, allowing you to navigate to your
+saved diagram and load it. The loaded diagram will appear in a new tab.
+<br />
+<a href="#Top">Return to Top</a>
+</p>
+
+<br />
+
+<h3><a name="Printing">Printing</a></h3>
+<p>To print the UML diagram of your current tab, choose File>Print from the menu bar (or 
+press Ctrl+P on your keyboard). A Print window will appear. You may choose your printer, the number of copies 
+you would like to print, and a portrait or landscape orientation in addition to other options.
+To send the diagram to the printer, choose "Print." To cancel the print job, press "Cancel."
+The diagram will be printed on one page, with font size of the classes resized depending on
+the size of diagram.
+<br />
+<a href="#Top">Return to Top</a>
+</p>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+</html>
