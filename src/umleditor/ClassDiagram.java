@@ -122,7 +122,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		}
 		for (RelationshipModel rm : listOfRelationships)
 		{
-			Relationship r = new Relationship(rm);
+			Relationship r = new Relationship(rm, this);
 			r.setEventPublisher(m_changePublisher);
 			view.add(r, "external");
 		}
@@ -377,7 +377,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			{
 				RelationshipType selectedType = possibleValues[selection];
 
-				Relationship rel = new Relationship(firstNode, secondNode, selectedType);
+				Relationship rel = new Relationship(firstNode, secondNode, selectedType, this);
 
 				firstNode.addRelationship(rel);
 				secondNode.addRelationship(rel);

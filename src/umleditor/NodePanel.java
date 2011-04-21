@@ -418,12 +418,6 @@ public class NodePanel extends JPanel
 		}
 
 		@Override
-		public void show(Component invoker, int x, int y)
-		{
-			super.show(invoker, x, y);
-		}
-
-		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			if (e.getActionCommand() == "Cut")
