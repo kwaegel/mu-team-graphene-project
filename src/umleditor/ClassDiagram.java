@@ -243,7 +243,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	 */
 	public void setSelectedObject(ISelectable selected, boolean deselectOthers)
 	{
-		if (deselectOthers)
+		if (deselectOthers || relationshipSelected())
 		{
 			unselectCurrentObjects(selected);
 		}
@@ -269,6 +269,15 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		}
 
 		parentEditor.disableAddNewClassMode();
+	}
+
+	/**
+	 * @return Whether or not a relationship is selected. If a relationship is selected, it will be the only element in
+	 *         the list of currently selected objects.
+	 */
+	private boolean relationshipSelected()
+	{
+		return (!currentlySelectedObjects.isEmpty() && currentlySelectedObjects.get(0) instanceof Relationship);
 	}
 
 	/**
@@ -742,7 +751,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		{
 			return NO_SUCH_PAGE;
 		}
-		
+
 		Graphics2D g2d = (Graphics2D) arg0;
 
 		g2d.translate(arg1.getImageableX(), arg1.getImageableY());
