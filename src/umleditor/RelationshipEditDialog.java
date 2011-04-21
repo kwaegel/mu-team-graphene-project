@@ -30,7 +30,7 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 
 	private RelationshipModel m_model;
 
-	private ButtonGroup m_buttonGroup;
+	private static ButtonGroup m_buttonGroup;
 
 	private RelationshipModel m_backupModel;
 
@@ -60,7 +60,6 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 			@Override
 			public void windowClosing(WindowEvent we)
 			{
-				setModelChanged(false);
 				dispose();
 			}
 		});
@@ -151,7 +150,6 @@ public class RelationshipEditDialog extends JDialog implements ActionListener
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			RelationshipEditDialog.this.setModelChanged(true);
 			RelationshipEditDialog.this.dispose();
 		}
 	}
