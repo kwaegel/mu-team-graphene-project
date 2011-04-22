@@ -354,8 +354,16 @@ public class NodePanel extends JPanel implements IEditable
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
-			boolean deselectOthers = e.isControlDown() ? false : true;
-			parentDiagram.setSelectedObject(associatedNode, deselectOthers);
+			boolean eventFromDragLabel = e.getClickCount() == 20;
+			if ((isSelected && e.isControlDown() && !eventFromDragLabel) || (eventFromDragLabel && !e.isControlDown()))
+			{
+				parentDiagram.unselectObject(associatedNode);
+			}
+			else
+			{
+				boolean deselectOthers = e.isControlDown() ? false : true;
+				parentDiagram.setSelectedObject(associatedNode, deselectOthers);
+			}
 
 			// Set initial point when drawing drag lines.
 			m_initialDragPoint = e.getPoint();
@@ -378,7 +386,7 @@ public class NodePanel extends JPanel implements IEditable
 			{
 				NodePanel panel = ((NodePanel) comp);
 				ClassNode targetNode = panel.getClassNode();
-				if (!e.isPopupTrigger())
+				if (!e.isPopupTrigger() && !e.isControlDown())
 				{
 					parentDiagram.addRelationship(targetNode);
 					panel.setAppropriateColor();
@@ -393,29 +401,32 @@ public class NodePanel extends JPanel implements IEditable
 		@Override
 		public void mouseDragged(MouseEvent e)
 		{
-			// drag line drawing code
-			Point dragPoint = e.getPoint();
-			NodePanel startNode = NodePanel.this;
-			parentDiagram.drawDragLine(m_initialDragPoint, dragPoint, startNode);
-
-			// node hover coloring code
-			Component targetComponent = parentDiagram.getComponentUnder(e);
-			NodePanel newHoveredNode = null;
-			if (targetComponent instanceof NodePanel)
+			if (!e.isControlDown())
 			{
-				newHoveredNode = (NodePanel) targetComponent;
-			}
+				// drag line drawing code
+				Point dragPoint = e.getPoint();
+				NodePanel startNode = NodePanel.this;
+				parentDiagram.drawDragLine(m_initialDragPoint, dragPoint, startNode);
 
-			if (m_lastHoveredNode != null)
-			{
-				m_lastHoveredNode.setAppropriateColor();
-			}
+				// node hover coloring code
+				Component targetComponent = parentDiagram.getComponentUnder(e);
+				NodePanel newHoveredNode = null;
+				if (targetComponent instanceof NodePanel)
+				{
+					newHoveredNode = (NodePanel) targetComponent;
+				}
 
-			if (newHoveredNode != null && newHoveredNode != NodePanel.this)
-			{
-				newHoveredNode.setBackground(m_nodeHoverColor);
+				if (m_lastHoveredNode != null)
+				{
+					m_lastHoveredNode.setAppropriateColor();
+				}
+
+				if (newHoveredNode != null && newHoveredNode != NodePanel.this)
+				{
+					newHoveredNode.setBackground(m_nodeHoverColor);
+				}
+				m_lastHoveredNode = newHoveredNode;
 			}
-			m_lastHoveredNode = newHoveredNode;
 		}
 	}
 

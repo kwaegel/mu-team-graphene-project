@@ -57,8 +57,13 @@ public class NodeDragListener extends MouseInputAdapter
 		if (panel.isSelected())
 		{
 			// ensure that dragging an already selected nodes works as expected
+			// click count of 20 is indicator to node panel handling event that it came
+			// from the drag label
+			// want to 'reverse' behavior - if not ctrl down - remain selected when drag
+			// if ctrl down - deselect
+			int modifierBindings = (e.isControlDown()) ? 0 : MouseEvent.CTRL_DOWN_MASK;
 			MouseEvent e2 = new MouseEvent((Component) e.getSource(), e.getID(), e.getWhen(),
-					MouseEvent.CTRL_DOWN_MASK, e.getX(), e.getY(), e.getClickCount(), e.isPopupTrigger());
+					modifierBindings, e.getX(), e.getY(), 20, e.isPopupTrigger());
 			panel.dispatchEvent(e2);
 		}
 		else
