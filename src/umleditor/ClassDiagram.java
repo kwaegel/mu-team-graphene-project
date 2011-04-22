@@ -224,22 +224,45 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	}
 
 	/**
-	 * Deselect the currently selected object and disable the delete button.
+	 * Deselect the currently selected objects and disable the delete button.
 	 */
 	private void unselectCurrentObjects(ISelectable leaveSelected)
 	{
-		if (currentlySelectedObjects.size() != 0)
+		int index = 0;
+		while (currentlySelectedObjects.size() > index)
 		{
-			for (int i = 0; i < currentlySelectedObjects.size(); ++i)
+			ISelectable currentlySelectedObject = currentlySelectedObjects.get(index);
+			if (currentlySelectedObject != leaveSelected)
 			{
-				ISelectable currentlySelectedObject = currentlySelectedObjects.get(i);
-				if (currentlySelectedObject != leaveSelected)
-				{
-					currentlySelectedObject.setSelected(false);
-				}
+				currentlySelectedObject.setSelected(false);
+				currentlySelectedObjects.remove(currentlySelectedObject);
 			}
-			currentlySelectedObjects.clear();
+			else
+			{
+				++index;
+			}
+		}
+		
+		if (currentlySelectedObjects.isEmpty())
+		{
 			parentEditor.reflectUnselectedState();
+		}
+	}
+
+	/**
+	 * 
+	 * @param toDeselect
+	 */
+	public void unselectObject(ISelectable toDeselect)
+	{
+		if (currentlySelectedObjects.contains(toDeselect))
+		{
+			currentlySelectedObjects.remove(toDeselect);
+			toDeselect.setSelected(false);
+			if(currentlySelectedObjects.isEmpty())
+			{
+				parentEditor.reflectUnselectedState();
+			}
 		}
 	}
 
@@ -636,7 +659,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 	private void pasteAtLoc(Point pastePosition)
 	{
 		ClassNode copy = parentEditor.getCopyNode();
-		if (copy != null)
+		if (copy != null && pastePosition != null)
 		{
 			ClassNode nodeCopy = new ClassNode(copy);
 			initNodePanel(pastePosition, nodeCopy);
@@ -720,8 +743,9 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			nodePanelToMove.revalidate();
 		}
 
-		// call to repaint makes relationships redraw.
-		// TODO: rewrite this to only redraw the relationships that have moved.
+		// TODO: Fix!
+		view.validate();
+		view.revalidate();
 		view.repaint();
 
 		markAsChanged();
