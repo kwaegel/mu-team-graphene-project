@@ -242,7 +242,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 				++index;
 			}
 		}
-		
+
 		if (currentlySelectedObjects.isEmpty())
 		{
 			parentEditor.reflectUnselectedState();
@@ -259,7 +259,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		{
 			currentlySelectedObjects.remove(toDeselect);
 			toDeselect.setSelected(false);
-			if(currentlySelectedObjects.isEmpty())
+			if (currentlySelectedObjects.isEmpty())
 			{
 				parentEditor.reflectUnselectedState();
 			}
@@ -743,10 +743,13 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			nodePanelToMove.revalidate();
 		}
 
-		// TODO: Fix!
-		view.validate();
-		view.revalidate();
-		view.repaint();
+		// This is a horrible, horrible hack!
+		// TODO: Figure out what's wrong with relationships that paintComponent isn't called automatically.
+		for (int i = 0; i < listOfRelationships.size(); ++i)
+		{
+			listOfRelationships.get(i).getRelationship()
+					.paintComponent(listOfRelationships.get(i).getRelationship().getGraphics());
+		}
 
 		markAsChanged();
 	}
