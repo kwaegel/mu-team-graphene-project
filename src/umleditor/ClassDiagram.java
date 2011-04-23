@@ -743,6 +743,7 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			nodePanelToMove.revalidate();
 		}
 
+		view.repaint();
 		markAsChanged();
 	}
 
