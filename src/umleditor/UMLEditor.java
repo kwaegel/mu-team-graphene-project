@@ -182,8 +182,8 @@ public class UMLEditor extends JFrame implements ActionListener
 	{
 		toolBar = new JToolBar();
 
-		Icon addClassIcon = new ImageIcon("icons/class.gif");
-		Icon deleteIcon = new ImageIcon("icons/delete.gif");
+		Icon addClassIcon = loadImageIcon("/icons/class.gif", "Add class");
+		Icon deleteIcon = loadImageIcon("/icons/delete.gif", "Delete");
 
 		addClassButton = new JButton("Add Class", addClassIcon);
 		addClassButton.setActionCommand("ADD");
@@ -200,6 +200,23 @@ public class UMLEditor extends JFrame implements ActionListener
 		toolBar.add(deleteButton);
 
 		this.add(toolBar, BorderLayout.SOUTH);
+	}
+
+	/**
+	 * Returns an ImageIcon, or null if the path was invalid.
+	 */
+	protected ImageIcon loadImageIcon(String path, String description)
+	{
+		java.net.URL imgURL = getClass().getResource(path);
+		if (imgURL != null)
+		{
+			return new ImageIcon(imgURL, description);
+		}
+		else
+		{
+			System.err.println("Couldn't find file: " + path);
+			return null;
+		}
 	}
 
 	/**
