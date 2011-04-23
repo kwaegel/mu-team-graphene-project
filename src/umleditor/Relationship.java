@@ -524,6 +524,18 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 
 	/********** Drawing **********/
 
+	@Override
+	public void validate()
+	{
+		// Recalculate the position and bounds of the relationship.
+		m_model.recalculateEndPoints();
+		createPathFromPoints();
+		createArrow();
+		recalculateBounds();
+
+		super.validate();
+	}
+
 	/**
 	 * Draw a line representing the relationship in the ClassDiagram view panel. Nature of line drawn depends on
 	 * relationship type. Placement of line determined by location of NodePanels associated with first and second nodes.
@@ -537,7 +549,6 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-
 		Graphics2D g2d = (Graphics2D) g;
 
 		// Convert from local coordinates to parent coordinates.
@@ -559,13 +570,6 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 					8.0f }, 5.0f));
 		}
 
-		// these two lines copy-pasted to make relationships redraw
-		// These should be moved to the mouseDraged methods for better drawing performance.
-		m_model.recalculateEndPoints();
-		createPathFromPoints();
-		createArrow();
-		recalculateBounds();
-
 		// Draw a line through all the line points.
 		g2d.draw(m_line);
 
@@ -573,11 +577,13 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 		g2d.setStroke(oldStroke);
 
 		// Draw line end arrow.
-		switch (m_endFill) {
+		switch (m_endFill)
+		{
 		case Solid:
 			g2d.fillPolygon(m_arrow);
 			break;
-		case Outline: {
+		case Outline:
+		{
 			g2d.setColor(Color.white);
 			g2d.fillPolygon(m_arrow);
 			g2d.setColor(Color.black);
