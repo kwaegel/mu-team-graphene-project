@@ -214,8 +214,9 @@ public class UMLEditor extends JFrame implements ActionListener
 		}
 		else
 		{
-			System.err.println("Couldn't find file: " + path);
-			return null;
+			// Try loading from outside the JAR.
+			path = path.substring(1);
+			return new ImageIcon(path, description);
 		}
 	}
 
