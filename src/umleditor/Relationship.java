@@ -708,7 +708,7 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 			createPathFromPoints();
 
 			// If we are dragging nodes at the end of the line, also rebuild the arrows.
-			if (m_selectedControlPointIndex <= 1 || m_selectedControlPointIndex >= m_points.size() - 2)
+			if (m_selectedControlPointIndex >= m_points.size() - 2)
 			{
 				createArrow();
 			}
@@ -724,6 +724,40 @@ public class Relationship extends JComponent implements ISelectable, IEditable
 
 			fireChangeEvent();
 		}
+	}
+	
+	/**
+	 * Changes the offsets when the size of the associated nodes changes.
+	 */
+	public void readcalculateOffsets()
+	{
+		
+		List<Point> m_points = m_model.getPoints();
+		Point m_firstNodeOffset = m_model.getFirstNodeOffset();
+		Point m_secondNodeOffset = m_model.getSecondNodeOffset();
+		
+		
+		Rectangle bounds = m_model.getFirstNode().getPanelBounds();
+		Point closestPoint = MathHelper.getClosestEdgePoint(m_points.get(0), bounds);
+		m_points.set(0, closestPoint);
+		
+		
+		m_firstNodeOffset.x = m_points.get(0).x - bounds.x;
+		m_firstNodeOffset.y = m_points.get(0).y - bounds.y;
+		
+		
+		
+		bounds = m_model.getSecondNode().getPanelBounds();
+		int end = m_points.size() - 1;
+		closestPoint = MathHelper.getClosestEdgePoint(m_points.get(end), bounds);
+		m_points.set(end, closestPoint);
+
+		
+		m_secondNodeOffset.x = m_points.get(end).x - bounds.x;
+		m_secondNodeOffset.y = m_points.get(end).y - bounds.y;
+		
+		recalculateBounds();
+		repaint();
 	}
 
 	/********** Inner classes **********/
