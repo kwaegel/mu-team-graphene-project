@@ -332,6 +332,11 @@ public class ClassNode implements ISelectable
 		nodePanel.createDisplay();
 		nodePanel.resetBounds(null);
 		nodePanel.revalidate();
+		for (RelationshipModel model : m_relationships)
+		{
+			model.getRelationship().readcalculateOffsets();
+			model.getRelationship().validate();
+		}
 	}
 
 	/**
