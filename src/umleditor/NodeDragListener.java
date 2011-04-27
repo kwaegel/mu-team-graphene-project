@@ -94,7 +94,9 @@ public class NodeDragListener extends MouseInputAdapter
 		// tell the node's parent diagram to move the node to the new location
 		ClassDiagram containingDiagram = panel.getParentDiagram();
 		Point delta = new Point(e.getX() - previousMouseLoc.x, e.getY() - previousMouseLoc.y);
-		containingDiagram.setSelectedObject(panel.getClassNode(), false);
+		// following line prevents error where, if multiple nodes are selected, ctrl-clicking and then dragging in drag area causes strange behavior
+		if(!panel.isSelected()) 
+			containingDiagram.setSelectedObject(panel.getClassNode(), false);
 		containingDiagram.moveSelectedNodes(delta);
 	}
 
