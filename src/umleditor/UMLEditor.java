@@ -237,63 +237,78 @@ public class UMLEditor extends JFrame implements ActionListener
 
 	/**
 	 * Prompts the user for a file to load from, then reconstructs the class diagram from that file and displays it in a
-	 * new tab.
+	 * new tab. User can select multiple files, if so, all will be loaded in separate tabs.
 	 */
-	private void loadDiagramFromFile()
+	private void loadDiagrams()
 	{
 		JFileChooser fileLoadChooser = new JFileChooser();
 		fileLoadChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fileLoadChooser.setMultiSelectionEnabled(false);
+		fileLoadChooser.setMultiSelectionEnabled(true);
 		fileLoadChooser.setAcceptAllFileFilterUsed(false);
 		fileLoadChooser.setFileFilter(new FileExtensionFilter());
 		int userChoice = fileLoadChooser.showOpenDialog(this);
 
-		ClassDiagram loadedDiagram = null;
-
 		if (userChoice == JFileChooser.APPROVE_OPTION)
 		{
-			File fileToOpen = FileUtils.attachAppropriateExtension(fileLoadChooser.getSelectedFile());
-			int loadedIndex = wasAlreadyOpen(fileToOpen);
-
-			if (loadedIndex > -1)
+			File[] selectedFiles = fileLoadChooser.getSelectedFiles();
+			for (int i = 0; i < selectedFiles.length; ++i)
 			{
-				tabbedPane.setSelectedIndex(loadedIndex);
+				loadDiagramFromFile(selectedFiles[i]);
 			}
-			else
+		}
+	}
+
+	/**
+	 * Loads the UML diagram from the specified file
+	 * 
+	 * @param selectedFile
+	 *            - file to load diagram from
+	 */
+	private void loadDiagramFromFile(File selectedFile)
+	{
+		ClassDiagram loadedDiagram = null;
+
+		File fileToOpen = FileUtils.attachAppropriateExtension(selectedFile);
+		int loadedIndex = wasAlreadyOpen(fileToOpen);
+
+		if (loadedIndex > -1)
+		{
+			tabbedPane.setSelectedIndex(loadedIndex);
+		}
+		else
+		{
+			try
 			{
-				try
+				FileReader fileInStream;
+				BufferedReader buffInStream;
+
+				XStream xmlStream = FileUtils.getXmlReaderWriter();
+
+				fileInStream = new FileReader(fileToOpen);
+				buffInStream = new BufferedReader(fileInStream);
+
+				loadedDiagram = (ClassDiagram) xmlStream.fromXML(buffInStream);
+
+				buffInStream.close();
+			}
+			catch (IOException e)
+			{
+				System.err.println("Could not open file: " + e.getMessage());
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error loading file", JOptionPane.WARNING_MESSAGE);
+			}
+			finally
+			{
+				// If the diagram has been loaded correctly, finish initialization.
+				if (loadedDiagram != null)
 				{
-					FileReader fileInStream;
-					BufferedReader buffInStream;
-
-					XStream xmlStream = FileUtils.getXmlReaderWriter();
-
-					fileInStream = new FileReader(fileToOpen);
-					buffInStream = new BufferedReader(fileInStream);
-
-					loadedDiagram = (ClassDiagram) xmlStream.fromXML(buffInStream);
-
-					buffInStream.close();
-				}
-				catch (IOException e)
-				{
-					System.err.println("Could not open file: " + e.getMessage());
-					JOptionPane.showMessageDialog(null, e.getMessage(), "Error loading file",
-							JOptionPane.WARNING_MESSAGE);
-				}
-				finally
-				{
-					// If the diagram has been loaded correctly, finish initialization.
-					if (loadedDiagram != null)
-					{
-						JScrollPane scrollPane = new JScrollPane();
-						tabbedPane.add(scrollPane);
-						loadedDiagram.initAfterLoadFromFile(this, scrollPane, fileToOpen);
-						addDiagramToEditor(loadedDiagram, fileToOpen.getName());
-					}
+					JScrollPane scrollPane = new JScrollPane();
+					tabbedPane.add(scrollPane);
+					loadedDiagram.initAfterLoadFromFile(this, scrollPane, fileToOpen);
+					addDiagramToEditor(loadedDiagram, fileToOpen.getName());
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -378,7 +393,7 @@ public class UMLEditor extends JFrame implements ActionListener
 		else if (arg0.getActionCommand() == "LOAD")
 		{
 			disableAddNewClassMode();
-			loadDiagramFromFile();
+			loadDiagrams();
 			this.validate();
 		}
 		else if (arg0.getActionCommand() == "SAVE")
