@@ -28,9 +28,7 @@ public class ClassNode implements ISelectable
 	{
 		className = "NewClass" + (++nodesCreated);
 		listOfAttributes = new ArrayList<String>();
-		listOfAttributes.add("attribute 1");
 		listOfMethods = new ArrayList<String>();
-		listOfMethods.add("method 1");
 		m_relationships = new ArrayList<RelationshipModel>();
 	}
 

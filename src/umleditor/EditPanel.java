@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
@@ -67,12 +66,12 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	/**
 	 * Will contain the name of a new attribute to add, if user adds new attribute
 	 */
-	private JTextField newAttributeTextField;
+	private NumberedTextField newAttributeTextField;
 
 	/**
 	 * Will contain the name of a new method to add, if user adds new method
 	 */
-	private JTextField newMethodTextField;
+	private NumberedTextField newMethodTextField;
 
 	/**
 	 * The ClassDiagram to which the {@link ClassNode} being edited belongs.
@@ -188,21 +187,19 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			everythingPanel.add(attributeField, "split 2, gapx 5");
 
 			JButton deleteButton = new JButton("Delete");
-			deleteButton.setActionCommand("DeleteAttrib" + i);
+			deleteButton.setActionCommand("DeleteAttrib " + i);
 			deleteButton.addActionListener(this);
 			deleteButton.addKeyListener(this);
 			everythingPanel.add(deleteButton, "split 2");
 		}
 
-		newAttributeTextField = new JTextField();
+		newAttributeTextField = new NumberedTextField("", -1, NumberedTextField.FieldType.Attribute);
 		newAttributeTextField.setPreferredSize(new Dimension(100, 25));
-		newAttributeTextField.setActionCommand("NewAttrib");
-		newAttributeTextField.addActionListener(this);
-		newAttributeTextField.addKeyListener(new EscapeListener());
+		newAttributeTextField.addKeyListener(new NewFieldListener());
 		everythingPanel.add(newAttributeTextField, "split 2, gapx 5");
 
 		JButton newAttributeButton = new JButton("New");
-		newAttributeButton.setActionCommand("NewAttrib");
+		newAttributeButton.setActionCommand("NewAttribute");
 		newAttributeButton.addActionListener(this);
 		newAttributeButton.addKeyListener(this);
 		everythingPanel.add(newAttributeButton, "split 2");
@@ -225,16 +222,14 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			everythingPanel.add(methodField, "split 2, gapx 5");
 
 			JButton deleteButton = new JButton("Delete");
-			deleteButton.setActionCommand("DeleteMethod" + i);
+			deleteButton.setActionCommand("DeleteMethod " + i);
 			deleteButton.addActionListener(this);
 			deleteButton.addKeyListener(this);
 			everythingPanel.add(deleteButton, "split 2");
 		}
-		newMethodTextField = new JTextField();
+		newMethodTextField = new NumberedTextField("", -1, NumberedTextField.FieldType.Method);
 		newMethodTextField.setPreferredSize(new Dimension(100, 25));
-		newMethodTextField.setActionCommand("NewMethod");
-		newMethodTextField.addActionListener(this);
-		newMethodTextField.addKeyListener(new EscapeListener());
+		newMethodTextField.addKeyListener(new NewFieldListener());
 		everythingPanel.add(newMethodTextField, "split 2, gapx 5");
 
 		JButton newMethodButton = new JButton("New");
@@ -346,6 +341,28 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 			// class name field is second component in the everything panel
 			everythingPanel.getComponent(1).requestFocus();
 		}
+		else if (nextComponentCode.contains("Delete"))
+		{
+			int index = Integer.valueOf(nextComponentCode.substring(nextComponentCode.indexOf(' ') + 1));
+			boolean attrib = nextComponentCode.contains("Attrib");
+			if((attrib && associatedNode.getNumAttributes() == 0) || (!attrib && associatedNode.getNumMethods() == 0))
+			{
+				focusOnComponent("CloseButton");
+			}
+			else
+			{
+				if((attrib && associatedNode.getNumAttributes() == index) || (!attrib && associatedNode.getNumMethods() == index))
+					// we deleted the last method or attribute, focus on what is now the last
+					--index;
+				int nextIndex = 4; // class name label, edit box, separator, and attrib label
+				if(!attrib)
+					nextIndex += 2 * associatedNode.getNumAttributes() + 4;
+				nextIndex += 2 * index;
+				if(!nextComponentCode.contains("K"))
+					++nextIndex;
+				everythingPanel.getComponent(nextIndex).requestFocus();
+			}
+		}
 	}
 
 	/**
@@ -377,7 +394,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		}
 		else if (actionCommand.startsWith("New"))
 		{
-			if (actionCommand.endsWith("Attrib"))
+			if (actionCommand.endsWith("Attribute"))
 			{
 				// add new attribute to ClassNode
 				String newAttribName = newAttributeTextField.getText();
@@ -408,19 +425,22 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 		}
 		else if (actionCommand.startsWith("Delete"))
 		{
-			nextComponentToGainFocus = "CloseButton";
 			// get index of value to delete from action command (index will be at end of command)
-			int index = new Integer(actionCommand.substring(actionCommand.length() - 1));
+			int index = new Integer(actionCommand.substring(actionCommand.indexOf(' ') + 1));
+			nextComponentToGainFocus = "Delete";	
 			if (actionCommand.contains("Attrib"))
 			{
 				// delete attribute
 				associatedNode.removeAttribute(index);
+				nextComponentToGainFocus += "Attribute";
 			}
 			else
 			{
 				// delete method
 				associatedNode.removeMethod(index);
+				nextComponentToGainFocus += "Method";
 			}
+			nextComponentToGainFocus += " " + index;
 		}
 		// recreate display to reflect changes to ClassNode
 		this.displayNodeProperties();
@@ -496,12 +516,14 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 					associatedNode.removeAttribute(ntf.getNumberIndex());
 				else if (ntf.getType() == FieldType.Method)
 					associatedNode.removeMethod(ntf.getNumberIndex());
+				
 				// recreate display to reflect changes to ClassNode
 				this.displayNodeProperties();
 				// redraw the EditPanel
 				this.validate();
-				// focus on close button
-				focusOnComponent("CloseButton");
+			
+				String focusOnNext = "KDelete" + ntf.getType().toString() + " " + ntf.getNumberIndex();
+				focusOnComponent(focusOnNext);
 			}
 			else
 			{
@@ -530,7 +552,7 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 	 * Special key listener just for newAttributeTextField and newMehtodTextField, which we don't want to respond to
 	 * most key events like the other fields do, but should behave consistently when escape is pressed.
 	 */
-	private class EscapeListener extends KeyAdapter
+	private class NewFieldListener extends KeyAdapter
 	{
 		/**
 		 * If the user pressed escape, exits without keeping any changes that have been made since the {@link EditPanel} opened.
@@ -543,6 +565,19 @@ public class EditPanel extends JDialog implements FocusListener, ActionListener,
 				// if the user pressed escape, revert changes and exit immediately
 				revert();
 				EditPanel.super.dispose();
+			}
+			else if (e.getKeyCode() == KeyEvent.VK_ENTER)
+			{
+				NumberedTextField originatingField = (NumberedTextField) e.getSource();
+				if (originatingField.getText().isEmpty())
+				{
+					EditPanel.super.dispose();
+				}
+				else
+				{
+					String command = "New" + originatingField.getType();
+					EditPanel.this.actionPerformed(new ActionEvent(originatingField, e.getID(), command));
+				}
 			}
 		}
 	}
