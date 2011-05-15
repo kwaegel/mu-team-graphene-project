@@ -13,7 +13,6 @@ import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -291,7 +290,7 @@ public class UMLEditor extends JFrame implements ActionListener
 
 				buffInStream.close();
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				System.err.println("Could not open file: " + e.getMessage());
 				JOptionPane.showMessageDialog(null, e.getMessage(), "Error loading file", JOptionPane.WARNING_MESSAGE);
