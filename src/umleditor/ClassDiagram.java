@@ -743,7 +743,6 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 			nodePanelToMove.revalidate();
 		}
 
-
 		view.repaint();
 		markAsChanged();
 	}
@@ -984,7 +983,8 @@ public class ClassDiagram implements KeyListener, FocusListener, Printable, Chan
 		{
 			if (e.isPopupTrigger())
 			{
-				IEditable editableSource = (IEditable) e.getSource();
+				JComponent source = (JComponent) e.getSource();
+				IEditable editableSource = (IEditable) (source instanceof IEditable ? source : source.getParent());
 				JPopupMenu menu = editableSource.getPopupMenu();
 				addMenuOptions(menu);
 
